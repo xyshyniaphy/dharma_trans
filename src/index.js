@@ -73,8 +73,8 @@ async function parseJsonRequest(request) {
 	}
 }
 
-// Common function to find potential words in the text using the dictionary
-function findWordsToLookup(text, dictionary) {
+// Combined function to find words in the text and format the dictionary results
+function getFilteredDictionary(text, dictionary) {
 	const wordsToLookup = new Set();
 	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
 	for (let i = 0; i < text.length; i++) {
@@ -85,16 +85,12 @@ function findWordsToLookup(text, dictionary) {
 			}
 		}
 	}
-	return wordsToLookup;
-}
 
-// Common function to format dictionary lookup results
-function formatLookupResults(wordsToLookup, dictionary) {
 	const results = [];
 	for (const word of wordsToLookup) {
 		if (dictionary.has(word)) {
 			const englishTranslation = dictionary.get(word);
-			results.push(`cn:${word} en:${englishTranslation}`);
+			results.push(`ch:${word} en:${englishTranslation}`);
 		}
 	}
 	return results.join('\n');
@@ -130,8 +126,6 @@ export default {
 				return new Response("File not found", { status: 404 });
 			}
 		}
-
-
 
 		// Handle /map_dict path
 		if (path === "/map_dict") {
@@ -180,9 +174,7 @@ export default {
 					throw new Error('Invalid input: "api_key" field must be a non-empty string.');
 				}
 
-				const dictionaryEntries = Array.from(dictionaryMap.entries())
-					.map(([ch, en]) => `ch:${ch} en:${en}`)
-					.join('\n');
+				const filteredDictionary = getFilteredDictionary(text, dictionaryMap);
 
 				const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
 Translate the following Chinese text into English.
@@ -190,7 +182,7 @@ Mandatory Instructions:
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
 Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
 Specified Terms to Use:
-${dictionaryEntries}
+${filteredDictionary}
 Chinese Text to Translate: ${text}`;
 
 				// Initialize OpenAI client
