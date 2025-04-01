@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import OpenAI from 'openai';
 
 // Global cache for the dictionary Map
 let dictionaryMap = null;
@@ -130,6 +131,8 @@ export default {
 			}
 		}
 
+
+
 		// Handle /map_dict path
 		if (path === "/map_dict") {
 			if (request.method !== 'POST') {
@@ -187,26 +190,22 @@ Specified Terms to Use:
 ${dictionaryEntries}
 Chinese Text to Translate: ${text}`;
 
-				const response = await fetch('https://openrouter.ai/v1/chat/completions', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+				// Initialize OpenAI client
+				const openai = new OpenAI({
+					baseURL: 'https://openrouter.ai/api/v1',
+					apiKey: env.OPENROUTER_API_KEY,
+					defaultHeaders: {
+						'HTTP-Referer': 'https://x.hdcx.site', // Optional. Replace with your site URL.
+						'X-Title': 'hdcx', // Optional. Replace with your site name.
 					},
-					body: JSON.stringify({
-						model: model_name,
-						messages: [{ role: 'system', content: prompt }],
-					}),
 				});
 
-				if (!response.ok) {
-					const errorText = await response.text();
-					console.error('OpenRouter API error:', errorText);
-					return new Response(`Failed to translate text: ${response.statusText}`, { status: response.status });
-				}
+				const completion = await openai.chat.completions.create({
+					model: model_name,
+					messages: [{ role: 'user', content: prompt }],
+				});
 
-				const result = await response.json();
-				const translatedText = result.choices[0].message.content;
+				const translatedText = completion.choices[0].message.content;
 
 				return new Response(JSON.stringify({
 					text: translatedText,
