@@ -1,23 +1,18 @@
-import csv
-from io import StringIO
-import json
+from urllib.parse import urlparse
 
 async def on_fetch(request, env):
-    path = request.path
+    # Get the full URL from request.url and parse it
+    url = request.url
+    parsed_url = urlparse(url)
+    path = parsed_url.path  # Extract the path component
+
     if path.startswith("/access/"):
         key = path[len("/access/"):]
         bucket = env.my_r2_bucket
         response = await bucket.get(key)
         if response.status == 200:
             csv_content = await response.text()
-            csv_file = StringIO(csv_content)
-            reader = csv.DictReader(csv_file)
-            data = list(reader)
-            json_data = json.dumps(data)
-            return Response(
-                json_data,
-                headers={"Content-Type": "application/json"},
-            )
+            return Response(csv_content)
         else:
             return Response("File not found", status=404)
     else:
