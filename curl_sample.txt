@@ -1,4 +1,4 @@
-curl -X POST https://dharma-trans-api.xyshy.workers.dev/translate \-H "Content-Type: application/json" \-d '{  "text": "法王 1993 年去欧美弘法,院寺主管对此也非常重视",  "model_name": "deepseek/deepseek-chat-v3-0324:free"}'
+curl -X POST https://dharma-trans-api.xyshy.workers.dev/translate \-H "Content-Type: application/json" \-d '{  "text": "法王 1993 年去欧美弘法,院寺主管对此也非常重视", "api_key":"your openrouter api key" ， "model_name": "deepseek/deepseek-chat-v3-0324:free"}'
 
 
 
