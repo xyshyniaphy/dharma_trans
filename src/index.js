@@ -4,6 +4,9 @@ import OpenAI from 'openai';
 // Global cache for the dictionary Map
 let dictionaryMap = null;
 
+// Global variable to track the last modified timestamp of dic.csv
+let lastModifiedTimestamp = null;
+
 // Function to load and parse the dictionary from R2
 async function loadDictionary(env) {
 	if (dictionaryMap) {
@@ -17,6 +20,14 @@ async function loadDictionary(env) {
 			console.error('Dictionary file "dic.csv" not found in R2 bucket.');
 			throw new Error('Dictionary file not found.');
 		}
+
+		// Check if the dictionary file has been updated
+		const currentTimestamp = r2Object.uploaded;
+		if (lastModifiedTimestamp && currentTimestamp <= lastModifiedTimestamp) {
+			console.log('Dictionary is already up-to-date.');
+			return dictionaryMap;
+		}
+		lastModifiedTimestamp = currentTimestamp;
 
 		const csvText = await r2Object.text();
 		const parseResult = Papa.parse(csvText, {
@@ -75,6 +86,8 @@ async function parseJsonRequest(request) {
 
 // Combined function to find words in the text and format the dictionary results
 function getFilteredDictionary(text, dictionary) {
+	const startTime = process.hrtime.bigint(); // Start time in nanoseconds
+
 	const wordsToLookup = new Set();
 	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
 	for (let i = 0; i < text.length; i++) {
@@ -93,7 +106,10 @@ function getFilteredDictionary(text, dictionary) {
 			results.push(`ch:${word} en:${englishTranslation}`);
 		}
 	}
-	return results.join('\n');
+
+	const endTime = process.hrtime.bigint(); // End time in nanoseconds
+	const executionTimeMicroseconds = Number((endTime - startTime) / BigInt(1000)); // Convert to microseconds
+	return { results: results.join('\n'), executionTimeMicroseconds };
 }
 
 export default {
@@ -174,10 +190,13 @@ export default {
 					throw new Error('Invalid input: "api_key" field must be a non-empty string.');
 				}
 
-				const filteredDictionary = getFilteredDictionary(text, dictionaryMap);
+				// Ensure dictionary is up-to-date
+				await loadDictionary(env);
+
+				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text, dictionaryMap);
 
 				const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
-Translate the following Chinese text into English.
+Translate the following Chinese text into formal buddism English.
 Mandatory Instructions:
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
 Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
@@ -208,6 +227,7 @@ Chinese Text to Translate: ${text}`;
 					text: translatedText,
 					model_name: model_name,
 					prompt: prompt,
+					dic_lookup_time: executionTimeMicroseconds, // Add dictionary lookup time
 				}), {
 					headers: { 'Content-Type': 'application/json; charset=utf-8' },
 				});
@@ -215,6 +235,15 @@ Chinese Text to Translate: ${text}`;
 				console.error('Error processing /translate request:', error);
 				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
 			}
+		}
+
+		if (path === "/reset_dict") {
+			if (request.method !== 'GET') {
+				return new Response('Method Not Allowed. Please use GET.', { status: 405 });
+			}
+
+			dictionaryMap = null; // Reset the global dictionary map
+			return new Response('Successfully reset dictionary map', { status: 200 });
 		}
 
 		if (request.method !== 'POST') {
