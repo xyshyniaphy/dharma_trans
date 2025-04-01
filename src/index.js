@@ -181,6 +181,8 @@ Translate the following Chinese text into English.
 Mandatory Instructions:
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
 Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
+Do not explain, But give a list of used chinese terms and coressponding english terms
+When one chinese term has multiple english terms, put the second english term into translated text too in a parentheses
 Specified Terms to Use:
 ${filteredDictionary}
 Chinese Text to Translate: ${text}`;
