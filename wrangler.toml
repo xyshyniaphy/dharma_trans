@@ -1,0 +1,19 @@
+name = "chinese-dict-lookup" # You can change this name if you like
+main = "src/index.js"
+compatibility_date = "2023-10-30" # Use a recent compatibility date
+
+# Bind your R2 bucket. Replace 'your-actual-r2-bucket-name' with the actual name.
+[[r2_buckets]]
+binding = "MY_R2_BUCKET"
+bucket_name = "your-actual-r2-bucket-name"
+preview_bucket_name = "your-actual-r2-bucket-name-preview" # Optional: for local dev/preview
+
+# If you need environment variables (like API keys for external services later)
+# [vars]
+# MY_VAR = "my-variable"
+
+# If you need secrets (like CLOUDFLARE_AUTH_TOKEN if you use the AI API later)
+# [[unsafe.bindings]]
+# name = "SECRETS"
+# type = "secret_text"
+# text = "CLOUDFLARE_AUTH_TOKEN"

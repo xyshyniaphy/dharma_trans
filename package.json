@@ -1,0 +1,16 @@
+{
+  "name": "chinese-dict-lookup-worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "dependencies": {
+    "opencc-js": "^1.0.5",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
