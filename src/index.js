@@ -208,8 +208,12 @@ Chinese Text to Translate: ${text}`;
 				const result = await response.json();
 				const translatedText = result.choices[0].message.content;
 
-				return new Response(translatedText, {
-					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+				return new Response(JSON.stringify({
+					text: translatedText,
+					model_name: model_name,
+					prompt: prompt,
+				}), {
+					headers: { 'Content-Type': 'application/json; charset=utf-8' },
 				});
 			} catch (error) {
 				console.error('Error processing /translate request:', error);

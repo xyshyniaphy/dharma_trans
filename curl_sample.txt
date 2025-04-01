@@ -1,0 +1,11 @@
+curl -X POST https://dharma-trans-api.xyshy.workers.dev/translate \
+-H "Content-Type: application/json" \
+-d '{
+  "text": "法王 1993 年去欧美弘法,院寺主管对此也非常重视",
+  "model_name": "deepseek/deepseek-v3-base:free"
+}'
+
+
+
+curl https://dharma-trans-api.xyshy.workers.dev \-H "Content-Type: application/json" \-d '{"text": "学院聽眾的根基與以往完全不同，法王講法方式也存在巨大的差異。"}'
+cn:学院 en:Larung Gar
