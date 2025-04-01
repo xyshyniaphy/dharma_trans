@@ -168,13 +168,16 @@ export default {
 			let inputData;
 			try {
 				inputData = await request.json();
-				const { text, model_name } = inputData;
+				const { text, model_name, api_key } = inputData;
 
 				if (typeof text !== 'string' || text.length === 0) {
 					throw new Error('Invalid input: "text" field must be a non-empty string.');
 				}
 				if (typeof model_name !== 'string' || model_name.length === 0) {
 					throw new Error('Invalid input: "model_name" field must be a non-empty string.');
+				}
+				if (typeof api_key !== 'string' || api_key.length === 0) {
+					throw new Error('Invalid input: "api_key" field must be a non-empty string.');
 				}
 
 				const dictionaryEntries = Array.from(dictionaryMap.entries())
@@ -193,7 +196,7 @@ Chinese Text to Translate: ${text}`;
 				// Initialize OpenAI client
 				const openai = new OpenAI({
 					baseURL: 'https://openrouter.ai/api/v1',
-					apiKey: env.OPENROUTER_API_KEY,
+					apiKey: api_key, // Use the provided API key
 					defaultHeaders: {
 						'HTTP-Referer': 'https://x.hdcx.site', // Optional. Replace with your site URL.
 						'X-Title': 'hdcx', // Optional. Replace with your site name.
