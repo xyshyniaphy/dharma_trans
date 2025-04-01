@@ -65,6 +65,28 @@ function segmentText(text) {
 
 export default {
 	async fetch(request, env, ctx) {
+
+		{// Get dictionary for test
+			const url = new URL(request.url);
+			const path = url.pathname;
+
+			if (path.startsWith("/access/")) {
+			const key = path.slice("/access/".length);
+			if (!key) {
+				return new Response("No file key provided", { status: 400 });
+			}
+
+			const object = await env.MY_R2_BUCKET.get(key);
+			if (object) {
+				const content = await object.text();
+				return new Response(content);
+			} else {
+				return new Response("File not found", { status: 404 });
+			}
+			}
+		}
+
+
 		// Ensure dictionary is loaded, potentially loading it on the first request
 		// Use ctx.waitUntil to allow dictionary loading to happen out of band
         // after the first request, but ensure it completes before subsequent requests need it.
@@ -88,6 +110,7 @@ export default {
 		try {
 			const body = await request.json();
 			inputText = body.text;
+			const convert = body.convert; // Get the new 'convert' parameter
 			if (typeof inputText !== 'string' || inputText.length === 0) {
 				return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
 			}
@@ -97,22 +120,21 @@ export default {
 
 		try {
 			// 1. Convert input text to Simplified Chinese
-			const simplifiedText = await converter(inputText);
+			let simplifiedText = inputText;
+			if (convert === true) { // Check if convert is true
+				simplifiedText = await converter(inputText);
+			}
 
 			// 2. Segment the simplified text and find potential words
             // This is a basic segmentation and substring matching approach.
 			const wordsToLookup = new Set(); // Use a Set to avoid duplicate lookups
-            const maxWordLength = 10; // Maximum length of Chinese word to check in the dictionary
-
             // Iterate through the simplified text to find substrings that match dictionary keys
             for (let i = 0; i < simplifiedText.length; i++) {
-                for (let len = 1; len <= maxWordLength && i + len <= simplifiedText.length; len++) {
+                const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary (in characters)
+                for (let len = 1; len <= maxChineseWordLength && i + len <= simplifiedText.length; len++) {
                     const potentialWord = simplifiedText.substring(i, i + len);
                     if (dictionaryMap.has(potentialWord)) {
                         wordsToLookup.add(potentialWord);
-                        // Optimization idea: if a longer word is found, could potentially skip
-                        // checking shorter words starting at the same position 'i'.
-                        // For simplicity, we check all possible lengths up to maxWordLength.
                     }
                 }
             }
