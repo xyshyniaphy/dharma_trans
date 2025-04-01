@@ -80,6 +80,65 @@ export default {
 				return new Response("File not found", { status: 404 });
 			}
 			}
+
+			// Handle /map_dict path
+			if (path === "/map_dict") {
+				if (request.method !== 'POST') {
+					return new Response('Method Not Allowed. Please use POST.', { status: 405 });
+				}
+
+				try {
+					await loadDictionary(env);
+				} catch (error) {
+					return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
+				}
+
+				if (!dictionaryMap) {
+					return new Response('Dictionary not available.', { status: 500 });
+				}
+
+				let inputText;
+				try {
+					const body = await request.json();
+					inputText = body.text;
+					if (typeof inputText !== 'string' || inputText.length === 0) {
+						return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
+					}
+				} catch (error) {
+					return new Response('Invalid JSON input.', { status: 400 });
+				}
+
+				try {
+					// Find potential words in the original text
+					const wordsToLookup = new Set();
+					for (let i = 0; i < inputText.length; i++) {
+						const maxChineseWordLength = 10;
+						for (let len = 1; len <= maxChineseWordLength && i + len <= inputText.length; len++) {
+							const potentialWord = inputText.substring(i, i + len);
+							if (dictionaryMap.has(potentialWord)) {
+								wordsToLookup.add(potentialWord);
+							}
+						}
+					}
+
+					// Lookup words in the dictionary and format output
+					const results = [];
+					for (const word of wordsToLookup) {
+						if (dictionaryMap.has(word)) {
+							const englishTranslation = dictionaryMap.get(word);
+							results.push(`cn:${word} en:${englishTranslation}`);
+						}
+					}
+
+					// Return the results
+					return new Response(results.join('\n'), {
+						headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+					});
+				} catch (error) {
+					console.error('Error processing request:', error);
+					return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+				}
+			}
 		}
 
 
