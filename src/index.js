@@ -162,34 +162,41 @@ export default {
 				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
 			}
 
-			let inputText;
+			let inputData;
 			try {
-				inputText = await parseJsonRequest(request);
-			} catch (error) {
-				return new Response(error.message, { status: 400 });
-			}
+				inputData = await request.json();
+				const { text, model_name } = inputData;
 
-			const dictionaryEntries = Array.from(dictionaryMap.entries())
-				.map(([ch, en]) => `ch:${ch} en:${en}`)
-				.join('\n');
+				if (typeof text !== 'string' || text.length === 0) {
+					throw new Error('Invalid input: "text" field must be a non-empty string.');
+				}
+				if (typeof model_name !== 'string' || model_name.length === 0) {
+					throw new Error('Invalid input: "model_name" field must be a non-empty string.');
+				}
 
-			const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
+				const dictionaryEntries = Array.from(dictionaryMap.entries())
+					.map(([ch, en]) => `ch:${ch} en:${en}`)
+					.join('\n');
+
+				const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
 Translate the following Chinese text into English.
 Mandatory Instructions:
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
 Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
 Specified Terms to Use:
 ${dictionaryEntries}
-Chinese Text to Translate: ${inputText}`;
+Chinese Text to Translate: ${text}`;
 
-			try {
-				const response = await fetch('https://openrouter.ai/api/v1/translate', {
+				const response = await fetch('https://openrouter.ai/v1/chat/completions', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
 					},
-					body: JSON.stringify({ prompt }),
+					body: JSON.stringify({
+						model: model_name,
+						messages: [{ role: 'system', content: prompt }],
+					}),
 				});
 
 				if (!response.ok) {
@@ -199,13 +206,13 @@ Chinese Text to Translate: ${inputText}`;
 				}
 
 				const result = await response.json();
-				const translatedText = result.translation;
+				const translatedText = result.choices[0].message.content;
 
 				return new Response(translatedText, {
 					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
 				});
 			} catch (error) {
-				console.error('Error calling OpenRouter API:', error);
+				console.error('Error processing /translate request:', error);
 				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
 			}
 		}
