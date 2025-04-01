@@ -1,8 +1,4 @@
 import Papa from 'papaparse';
-import { Converter } from 'opencc-js';
-
-// Initialize the Traditional to Simplified converter
-const converter = Converter({ from: 't', to: 's' });
 
 // Global cache for the dictionary Map
 let dictionaryMap = null;
@@ -31,17 +27,17 @@ async function loadDictionary(env) {
 			throw new Error('Failed to parse dictionary CSV.');
 		}
 
-		// Create a Map for fast lookups: Key = Simplified Chinese, Value = English
-		const tempMap = new Map();
-		for (const row of parseResult.data) {
-			if (row.length >= 2 && row[0] && row[1]) {
-				// Assuming column 1 is Chinese, column 2 is English
-				// Convert the dictionary key (Chinese word) to Simplified Chinese
-				const simplifiedKey = await converter(row[0].trim());
-				tempMap.set(simplifiedKey, row[1].trim());
-			} else {
-				console.warn('Skipping invalid row in CSV:', row);
-			}
+			// Create a Map for fast lookups: Key = Chinese (Original), Value = English
+			const tempMap = new Map();
+			for (const row of parseResult.data) {
+				if (row.length >= 2 && row[0] && row[1]) {
+					// Assuming column 1 is Chinese, column 2 is English
+					// Use the original Chinese word as the key
+					const originalKey = row[0].trim();
+					tempMap.set(originalKey, row[1].trim());
+				} else {
+					console.warn('Skipping invalid row in CSV:', row);
+				}
 		}
 		dictionaryMap = tempMap;
 		console.log(`Dictionary loaded successfully with ${dictionaryMap.size} entries.`);
@@ -110,7 +106,7 @@ export default {
 		try {
 			const body = await request.json();
 			inputText = body.text;
-			const convert = body.convert; // Get the new 'convert' parameter
+			// const convert = body.convert; // Removed: No longer converting based on parameter
 			if (typeof inputText !== 'string' || inputText.length === 0) {
 				return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
 			}
@@ -119,20 +115,17 @@ export default {
 		}
 
 		try {
-			// 1. Convert input text to Simplified Chinese
-			let simplifiedText = inputText;
-			if (convert === true) { // Check if convert is true
-				simplifiedText = await converter(inputText);
-			}
+			// 1. Use input text directly (no conversion)
+			let textToProcess = inputText;
 
-			// 2. Segment the simplified text and find potential words
+			// 2. Find potential words in the original text
             // This is a basic segmentation and substring matching approach.
 			const wordsToLookup = new Set(); // Use a Set to avoid duplicate lookups
-            // Iterate through the simplified text to find substrings that match dictionary keys
-            for (let i = 0; i < simplifiedText.length; i++) {
+            // Iterate through the text to find substrings that match dictionary keys
+            for (let i = 0; i < textToProcess.length; i++) {
                 const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary (in characters)
-                for (let len = 1; len <= maxChineseWordLength && i + len <= simplifiedText.length; len++) {
-                    const potentialWord = simplifiedText.substring(i, i + len);
+                for (let len = 1; len <= maxChineseWordLength && i + len <= textToProcess.length; len++) {
+                    const potentialWord = textToProcess.substring(i, i + len);
                     if (dictionaryMap.has(potentialWord)) {
                         wordsToLookup.add(potentialWord);
                     }

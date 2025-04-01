@@ -7,7 +7,6 @@
     "dev": "wrangler dev"
   },
   "dependencies": {
-    "opencc-js": "^1.0.5",
     "papaparse": "^5.4.1"
   },
   "devDependencies": {
