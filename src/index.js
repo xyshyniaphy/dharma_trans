@@ -86,7 +86,7 @@ async function parseJsonRequest(request) {
 
 // Combined function to find words in the text and format the dictionary results
 function getFilteredDictionary(text, dictionary) {
-	const startTime = process.hrtime.bigint(); // Start time in nanoseconds
+	const startTime = Date.now(); // Start time in milliseconds
 
 	const wordsToLookup = new Set();
 	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
@@ -107,8 +107,8 @@ function getFilteredDictionary(text, dictionary) {
 		}
 	}
 
-	const endTime = process.hrtime.bigint(); // End time in nanoseconds
-	const executionTimeMicroseconds = Number((endTime - startTime) / BigInt(1000)); // Convert to microseconds
+	const endTime = Date.now(); // End time in milliseconds
+	const executionTimeMicroseconds = (endTime - startTime) * 1000; // Convert to microseconds
 	return { results: results.join('\n'), executionTimeMicroseconds };
 }
 
@@ -243,7 +243,8 @@ Chinese Text to Translate: ${text}`;
 			}
 
 			dictionaryMap = null; // Reset the global dictionary map
-			return new Response('Successfully reset dictionary map', { status: 200 });
+			await loadDictionary(env);
+			return new Response('Successfully reseted dictionary map', { status: 200 });
 		}
 
 		if (request.method !== 'POST') {
