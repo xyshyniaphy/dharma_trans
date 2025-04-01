@@ -86,7 +86,7 @@ async function parseJsonRequest(request) {
 
 // Combined function to find words in the text and format the dictionary results
 function getFilteredDictionary(text, dictionary) {
-	const startTime = Date.now(); // Start time in milliseconds
+	const startTime = performance.now(); // Start time in milliseconds
 
 	const wordsToLookup = new Set();
 	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
@@ -107,7 +107,7 @@ function getFilteredDictionary(text, dictionary) {
 		}
 	}
 
-	const endTime = Date.now(); // End time in milliseconds
+	const endTime = performance.now(); // End time in milliseconds
 	const executionTimeMicroseconds = (endTime - startTime) * 1000; // Convert to microseconds
 	return { results: results.join('\n'), executionTimeMicroseconds };
 }
