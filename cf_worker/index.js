@@ -9,7 +9,7 @@ export default {
         return new Response("No file key provided", { status: 400 });
       }
 
-      const object = await env.my_r2_bucket.get(key);
+      const object = await env.MY_R2_BUCKET.get(key);
       if (object) {
         const content = await object.text();
         return new Response(content);
