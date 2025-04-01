@@ -58,121 +58,122 @@ function segmentText(text) {
 	return segments.filter(segment => segment.length > 0); // Remove empty strings
 }
 
+// Common function to validate and parse JSON input
+async function parseJsonRequest(request) {
+	try {
+		const body = await request.json();
+		const inputText = body.text;
+		if (typeof inputText !== 'string' || inputText.length === 0) {
+			throw new Error('Invalid input: "text" field must be a non-empty string.');
+		}
+		return inputText;
+	} catch (error) {
+		throw new Error('Invalid JSON input.');
+	}
+}
+
+// Common function to find potential words in the text using the dictionary
+function findWordsToLookup(text, dictionary) {
+	const wordsToLookup = new Set();
+	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
+	for (let i = 0; i < text.length; i++) {
+		for (let len = 1; len <= maxChineseWordLength && i + len <= text.length; len++) {
+			const potentialWord = text.substring(i, i + len);
+			if (dictionary.has(potentialWord)) {
+				wordsToLookup.add(potentialWord);
+			}
+		}
+	}
+	return wordsToLookup;
+}
+
+// Common function to format dictionary lookup results
+function formatLookupResults(wordsToLookup, dictionary) {
+	const results = [];
+	for (const word of wordsToLookup) {
+		if (dictionary.has(word)) {
+			const englishTranslation = dictionary.get(word);
+			results.push(`cn:${word} en:${englishTranslation}`);
+		}
+	}
+	return results.join('\n');
+}
+
 export default {
 	async fetch(request, env, ctx) {
+		// Ensure dictionary is loaded, potentially loading it on the first request
+		try {
+			await loadDictionary(env);
+		} catch (error) {
+			return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
+		}
 
-		{// Get dictionary for test
-			const url = new URL(request.url);
-			const path = url.pathname;
+		if (!dictionaryMap) {
+			return new Response('Dictionary not available.', { status: 500 });
+		}
 
-			if (path.startsWith("/access/")) {
-				const key = path.slice("/access/".length);
-				if (!key) {
-					return new Response("No file key provided", { status: 400 });
-				}
+		const url = new URL(request.url);
+		const path = url.pathname;
 
-				const object = await env.MY_R2_BUCKET.get(key);
-				if (object) {
-					const content = await object.text();
-					return new Response(content);
-				} else {
-					return new Response("File not found", { status: 404 });
-				}
+		if (path.startsWith("/access/")) {
+			const key = path.slice("/access/".length);
+			if (!key) {
+				return new Response("No file key provided", { status: 400 });
 			}
 
-			// Handle /map_dict path
-			if (path === "/map_dict") {
-				if (request.method !== 'POST') {
-					return new Response('Method Not Allowed. Please use POST.', { status: 405 });
-				}
+			const object = await env.MY_R2_BUCKET.get(key);
+			if (object) {
+				const content = await object.text();
+				return new Response(content);
+			} else {
+				return new Response("File not found", { status: 404 });
+			}
+		}
 
-				try {
-					await loadDictionary(env);
-				} catch (error) {
-					return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
-				}
-
-				if (!dictionaryMap) {
-					return new Response('Dictionary not available.', { status: 500 });
-				}
-
-				let inputText;
-				try {
-					const body = await request.json();
-					inputText = body.text;
-					if (typeof inputText !== 'string' || inputText.length === 0) {
-						return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
-					}
-				} catch (error) {
-					return new Response('Invalid JSON input.', { status: 400 });
-				}
-
-				try {
-					// Find potential words in the original text
-					const wordsToLookup = new Set();
-					for (let i = 0; i < inputText.length; i++) {
-						const maxChineseWordLength = 10;
-						for (let len = 1; len <= maxChineseWordLength && i + len <= inputText.length; len++) {
-							const potentialWord = inputText.substring(i, i + len);
-							if (dictionaryMap.has(potentialWord)) {
-								wordsToLookup.add(potentialWord);
-							}
-						}
-					}
-
-					// Lookup words in the dictionary and format output
-					const results = [];
-					for (const word of wordsToLookup) {
-						if (dictionaryMap.has(word)) {
-							const englishTranslation = dictionaryMap.get(word);
-							results.push(`cn:${word} en:${englishTranslation}`);
-						}
-					}
-
-					// Return the results
-					return new Response(results.join('\n'), {
-						headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-					});
-				} catch (error) {
-					console.error('Error processing request:', error);
-					return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
-				}
+		// Handle /map_dict path
+		if (path === "/map_dict") {
+			if (request.method !== 'POST') {
+				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
 			}
 
-			// Handle /translate path
-			if (path === "/translate") {
-				if (request.method !== 'POST') {
-					return new Response('Method Not Allowed. Please use POST.', { status: 405 });
-				}
+			let inputText;
+			try {
+				inputText = await parseJsonRequest(request);
+			} catch (error) {
+				return new Response(error.message, { status: 400 });
+			}
 
-				try {
-					// Load the dictionary if not already loaded
-					await loadDictionary(env);
-				} catch (error) {
-					return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
-				}
+			try {
+				const wordsToLookup = findWordsToLookup(inputText, dictionaryMap);
+				const results = formatLookupResults(wordsToLookup, dictionaryMap);
 
-				if (!dictionaryMap) {
-					return new Response('Dictionary not available.', { status: 500 });
-				}
+				return new Response(results, {
+					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+				});
+			} catch (error) {
+				console.error('Error processing request:', error);
+				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+			}
+		}
 
-				let inputText;
-				try {
-					const body = await request.json();
-					inputText = body.text;
-					if (typeof inputText !== 'string' || inputText.length === 0) {
-						return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
-					}
-				} catch (error) {
-					return new Response('Invalid JSON input.', { status: 400 });
-				}
+		// Handle /translate path
+		if (path === "/translate") {
+			if (request.method !== 'POST') {
+				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
+			}
 
-				// Prepare the dictionary context for the prompt
-				const dictionaryEntries = Array.from(dictionaryMap.entries())
-					.map(([ch, en]) => `ch:${ch} en:${en}`)
-					.join('\n');
+			let inputText;
+			try {
+				inputText = await parseJsonRequest(request);
+			} catch (error) {
+				return new Response(error.message, { status: 400 });
+			}
 
-				const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
+			const dictionaryEntries = Array.from(dictionaryMap.entries())
+				.map(([ch, en]) => `ch:${ch} en:${en}`)
+				.join('\n');
+
+			const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
 Translate the following Chinese text into English.
 Mandatory Instructions:
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
@@ -181,49 +182,32 @@ Specified Terms to Use:
 ${dictionaryEntries}
 Chinese Text to Translate: ${inputText}`;
 
-				try {
-					// Call OpenRouter API
-					const response = await fetch('https://openrouter.ai/api/v1/translate', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`, // Ensure the API key is set in the environment
-						},
-						body: JSON.stringify({ prompt }),
-					});
+			try {
+				const response = await fetch('https://openrouter.ai/api/v1/translate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+					},
+					body: JSON.stringify({ prompt }),
+				});
 
-					if (!response.ok) {
-						const errorText = await response.text();
-						console.error('OpenRouter API error:', errorText);
-						return new Response(`Failed to translate text: ${response.statusText}`, { status: response.status });
-					}
-
-					const result = await response.json();
-					const translatedText = result.translation; // Assuming the API returns the translation in this field
-
-					return new Response(translatedText, {
-						headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-					});
-				} catch (error) {
-					console.error('Error calling OpenRouter API:', error);
-					return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+				if (!response.ok) {
+					const errorText = await response.text();
+					console.error('OpenRouter API error:', errorText);
+					return new Response(`Failed to translate text: ${response.statusText}`, { status: response.status });
 				}
+
+				const result = await response.json();
+				const translatedText = result.translation;
+
+				return new Response(translatedText, {
+					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+				});
+			} catch (error) {
+				console.error('Error calling OpenRouter API:', error);
+				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
 			}
-		}
-
-		// Ensure dictionary is loaded, potentially loading it on the first request
-		// Use ctx.waitUntil to allow dictionary loading to happen out of band
-		// after the first request, but ensure it completes before subsequent requests need it.
-		// For simplicity here, we await directly, which might add latency to the first request.
-		try {
-			await loadDictionary(env);
-		} catch (error) {
-			return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
-		}
-
-		if (!dictionaryMap) {
-			// This should ideally not happen if loadDictionary throws, but as a safeguard
-			return new Response('Dictionary not available.', { status: 500 });
 		}
 
 		if (request.method !== 'POST') {
@@ -232,49 +216,18 @@ Chinese Text to Translate: ${inputText}`;
 
 		let inputText;
 		try {
-			const body = await request.json();
-			inputText = body.text;
-			// const convert = body.convert; // Removed: No longer converting based on parameter
-			if (typeof inputText !== 'string' || inputText.length === 0) {
-				return new Response('Invalid input: "text" field must be a non-empty string.', { status: 400 });
-			}
+			inputText = await parseJsonRequest(request);
 		} catch (error) {
-			return new Response('Invalid JSON input.', { status: 400 });
+			return new Response(error.message, { status: 400 });
 		}
 
 		try {
-			// 1. Use input text directly (no conversion)
-			let textToProcess = inputText;
+			const wordsToLookup = findWordsToLookup(inputText, dictionaryMap);
+			const results = formatLookupResults(wordsToLookup, dictionaryMap);
 
-			// 2. Find potential words in the original text
-			// This is a basic segmentation and substring matching approach.
-			const wordsToLookup = new Set(); // Use a Set to avoid duplicate lookups
-			// Iterate through the text to find substrings that match dictionary keys
-			for (let i = 0; i < textToProcess.length; i++) {
-				const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary (in characters)
-				for (let len = 1; len <= maxChineseWordLength && i + len <= textToProcess.length; len++) {
-					const potentialWord = textToProcess.substring(i, i + len);
-					if (dictionaryMap.has(potentialWord)) {
-						wordsToLookup.add(potentialWord);
-					}
-				}
-			}
-
-			// 3. Lookup words in the dictionary and format output
-			const results = [];
-			for (const word of wordsToLookup) {
-				// Check again, although Set logic should ensure it's present
-				if (dictionaryMap.has(word)) {
-					const englishTranslation = dictionaryMap.get(word);
-					results.push(`cn:${word} en:${englishTranslation}`);
-				}
-			}
-
-			// 4. Return the results
-			return new Response(results.join('\n'), {
+			return new Response(results, {
 				headers: { 'Content-Type': 'text/plain; charset=utf-8' },
 			});
-
 		} catch (error) {
 			console.error('Error processing request:', error);
 			return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
