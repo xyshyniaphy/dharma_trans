@@ -1,7 +1,8 @@
 name = "dharma-trans-api"
-main = "entry.py"
+main = "index.js"
 compatibility_date = "2024-04-16"
-compatibility_flags = ["python_workers"]
 
-[r2]
-my_r2_bucket = {bucket_name = "aitrans"}
+
+[r2_buckets]
+binding = "my_r2_bucket"  # Name of the binding used in code
+bucket_name = "aitrans"  # Your actual R2 bucket name
