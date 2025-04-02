@@ -4,12 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Spinner, Container, Stack } from 'react-bootstrap';
 import Config from './Config';
 
-interface OpenRouterModel {
-    id: string;
-    name: string;
-}
-
-
 const apiUrl = import.meta.env.OPENAI_URL;
 const promptApiUrl = import.meta.env.DHARMA_PROMPT_API_URL;
 
@@ -27,8 +21,7 @@ const fetchPrompt = async (text: string): Promise<string> => {
 
 const App: React.FC = () => {
     const [apiKey, setApiKey] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
-    const [selectedModel, setSelectedModel] = useState<string>(localStorage.getItem('SELECTED_MODEL') || 'google/gemini-2.0-pro-exp-02-05:free');
-    const [models, setModels] = useState<OpenRouterModel[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string>(localStorage.getItem('SELECTED_MODEL') || 'google/gemini-2.5-pro-exp-03-25:free');
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
@@ -36,36 +29,6 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
 
-
-    const fetchAndFilterModels = async () => {
-        if (!apiKey) return;
-        try {
-            const response = await fetch(`${apiUrl}/api/v1/models`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                },
-            });
-            if (!response.ok) throw new Error('Failed to fetch models');
-            const data = await response.json();
-            const allModels = data.data as OpenRouterModel[];
-
-            let filteredModels = allModels.filter(model =>
-                model.name?.toLowerCase().includes('free') &&
-                !model.name?.toLowerCase().includes('distill') &&
-                !model.name?.toLowerCase().includes('learnlm')
-            ).filter(model =>
-                model.name?.toLowerCase().includes('pro') ||
-                model.name?.toLowerCase().includes('gemini pro') ||
-                model.name?.toLowerCase().includes('deepseek: r1') ||
-                model.name?.toLowerCase().includes('qwq')
-            );
-            setModels(filteredModels);
-        } catch (error) {
-            console.error('Error fetching/filtering models:', error);
-            alert('Failed to fetch or filter models. Please check your API key and network connection.');
-        }
-    };
 
     const processText = async () => {
         if (!apiKey) {
@@ -157,9 +120,7 @@ const App: React.FC = () => {
     };
 
     useEffect(() => {
-        if (apiKey) {
-            fetchAndFilterModels();
-        } else {
+        if (!apiKey) {
             setShowConfigModal(true); // Open Config modal if no API key on initial load
         }
     }, [apiKey]);
@@ -170,15 +131,10 @@ const App: React.FC = () => {
             {/* Config Modal */}
             <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
                 <Config
-                    apiKey={apiKey}
                     setApiKey={setApiKey}
-                    selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
-                    models={models}
-                    setModels={setModels}
                     showModal={showConfigModal}
                     setShowModal={setShowConfigModal}
-                    fetchAndFilterModels={fetchAndFilterModels}
                 />
             </Modal>
 

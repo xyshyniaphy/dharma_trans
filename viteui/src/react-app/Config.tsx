@@ -8,33 +8,48 @@ interface OpenRouterModel {
     name: string;
 }
 
+const fetchAndFilterModels = async () => {
+    try {
+        const response = await fetch('https://openrouter.ai/api/v1/models');
+        const data = await response.json();
+        const filteredModels = data.data.filter((model: any) => 
+            model.id.includes('gpt') || model.id.includes('claude') || model.id.includes('gemini')
+        );
+        return filteredModels;
+    } catch (error) {
+        console.error('Error fetching models:', error);
+        return [];
+    }
+};
+
 interface ConfigProps {
-    apiKey: string;
     setApiKey: (apiKey: string) => void;
-    selectedModel: string;
     setSelectedModel: (model: string) => void;
-    models: OpenRouterModel[];
-    setModels: (models: OpenRouterModel[]) => void;
     showModal: boolean;
     setShowModal: (show: boolean) => void;
-    fetchAndFilterModels: () => Promise<void>;
 }
 
-const Config: React.FC<ConfigProps> = ({ apiKey, setApiKey, selectedModel, setSelectedModel, models, setModels, showModal, setShowModal, fetchAndFilterModels }) => {
+const Config: React.FC<ConfigProps> = ({ setApiKey, setSelectedModel, showModal, setShowModal }) => {
+    const [models, setModels] = useState<OpenRouterModel[]>([]);
+    const [apiKey, setApiKeyState] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
+    const [selectedModelState, setSelectedModelState] = useState<string>(localStorage.getItem('SELECTED_MODEL') || '');
+    
     const handleApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setApiKeyState(event.target.value);
         setApiKey(event.target.value);
     };
 
     const handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedModelState(event.target.value);
         setSelectedModel(event.target.value);
     };
 
     const saveApiKey = () => {
         if (apiKey) {
             localStorage.setItem('OPENROUTER_API_KEY', apiKey);
-            localStorage.setItem('SELECTED_MODEL', selectedModel);
+            localStorage.setItem('SELECTED_MODEL', selectedModelState);
             setShowModal(false);
-            fetchAndFilterModels();
+            fetchAndFilterModels().then(setModels);
         } else {
             alert('请输入有效的API密钥');
         }
@@ -55,7 +70,7 @@ const Config: React.FC<ConfigProps> = ({ apiKey, setApiKey, selectedModel, setSe
                 </div>
                 <div className="mb-3">
                     <label htmlFor="modelSelect" className="form-label">选择模型:</label>
-                    <select className="form-select" id="modelSelect" value={selectedModel} onChange={handleModelChange} disabled={models.length === 0}>
+                    <select className="form-select" id="modelSelect" value={selectedModelState} onChange={handleModelChange} disabled={models.length === 0}>
                         {models.length === 0 && <option>请先输入有效API Key</option>}
                         {models.map((model: OpenRouterModel) => (
                             <option key={model.id} value={model.id}>{model.name}</option>
@@ -67,7 +82,7 @@ const Config: React.FC<ConfigProps> = ({ apiKey, setApiKey, selectedModel, setSe
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>取消</Button>
+                <Button variant="primary" onClick={() => setShowModal(false)}>取消</Button>
                 <Button variant="primary" onClick={saveApiKey} disabled={!apiKey}>保存</Button>
             </Modal.Footer>
         </Modal>
