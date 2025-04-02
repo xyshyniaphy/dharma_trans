@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Config from './Config';
 
 interface OpenRouterModel {
@@ -19,6 +19,7 @@ const App: React.FC = () => {
     const [status, setStatus] = useState<string>('');
     const [showModal, setShowModal] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
 
     const samplePrompt = `
 你是一个精通简体中文的专业翻译。
@@ -67,7 +68,7 @@ const App: React.FC = () => {
 
     const processText = async () => {
         if (!apiKey) {
-            setShowModal(true);
+            setShowConfigModal(true); // Open Config modal if no API key
             return;
         }
         if (!inputText) {
@@ -144,7 +145,7 @@ const App: React.FC = () => {
             if (error instanceof Error) {
                 setOutputText(`处理出错: ${error.message}`);
                 if (error.message.includes('401') || error.message.toLowerCase().includes('invalid key')) {
-                    setShowModal(true);
+                    setShowConfigModal(true); // Open Config modal on 401 error
                 }
             } else {
                 setOutputText('发生未知错误');
@@ -158,7 +159,7 @@ const App: React.FC = () => {
         if (apiKey) {
             fetchAndFilterModels();
         } else {
-            setShowModal(true);
+            setShowConfigModal(true); // Open Config modal if no API key on initial load
         }
     }, [apiKey]);
 
@@ -168,17 +169,20 @@ const App: React.FC = () => {
                 <div className="card-body">
                     <h1 className="text-center mb-4">中文智能排版</h1>
 
-                    <Config
-                        apiKey={apiKey}
-                        setApiKey={setApiKey}
-                        selectedModel={selectedModel}
-                        setSelectedModel={setSelectedModel}
-                        models={models}
-                        setModels={setModels}
-                        showModal={showModal}
-                        setShowModal={setShowModal}
-                        fetchAndFilterModels={fetchAndFilterModels}
-                    />
+                    {/* Config Modal */}
+                    <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
+                        <Config
+                            apiKey={apiKey}
+                            setApiKey={setApiKey}
+                            selectedModel={selectedModel}
+                            setSelectedModel={setSelectedModel}
+                            models={models}
+                            setModels={setModels}
+                            showModal={showConfigModal}
+                            setShowModal={setShowConfigModal}
+                            fetchAndFilterModels={fetchAndFilterModels}
+                        />
+                    </Modal>
 
                     <div className="mb-4">
                         <label htmlFor="inputText" className="form-label fw-bold">输入文本：</label>
@@ -194,7 +198,7 @@ const App: React.FC = () => {
                             )}
                             {isProcessing ? ' 处理中...' : ' 自动优化'}
                         </button>
-                        <button onClick={() => setShowModal(true)} className="btn btn-outline-secondary">
+                        <button onClick={() => setShowConfigModal(true)} className="btn btn-outline-secondary">
                             <i className="bi bi-key"></i> 设置密钥和模型
                         </button>
                     </div>
