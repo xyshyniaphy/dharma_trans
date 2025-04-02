@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Spinner, Card, Container, Stack, Row, Col } from 'react-bootstrap';
 import Config from './Config';
-
+import { PROMPT_CONFIG } from '../dev.config';
 
 interface OpenRouterModel {
     id: string;
@@ -21,20 +21,18 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
 
-    const samplePrompt = `
-你是一个精通简体中文的专业翻译。
-仔细思考后,对以下中文文本进行排版，使其更加优美，并输入为Markdown格式。
-要求：
-1. 删除重复字词和语气词，删除多余空格。
-2. 不添加新内容，不改变原意，不精简，不总结。
-3. 正确使用标点符号。
-4. 保持段落结构不变。
-5. 输出简体中文。
-
-原文：
-{text}
-
-请以Markdown格式输出优化后的文本。只输出优化后的文本，不要包含其他说明或解释。思考过程尽量简洁。`;
+    const fetchPrompt = async (): Promise<string> => {
+        const text = inputText;
+        const response = await fetch('https://dharma-trans-api.xyshy.workers.dev/get_prompt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text })
+        });
+        const data = await response.json();
+        return data.prompt;
+    };
 
     const fetchAndFilterModels = async () => {
         if (!apiKey) return;
@@ -80,7 +78,7 @@ const App: React.FC = () => {
         setOutputText('');
         setThinkingText('');
         try {
-            const prompt = samplePrompt.replace('{text}', inputText);
+            const prompt = await fetchPrompt();
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -165,7 +163,6 @@ const App: React.FC = () => {
 
     return (
         <Container fluid className="d-flex justify-content-center align-items-center">
-            <h1 className="text-center">中翻英</h1>
 
             {/* Config Modal */}
             <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
@@ -184,11 +181,12 @@ const App: React.FC = () => {
 
             <Stack gap={3} className="w-100">
                 <Form.Group>
+                    <Form.Label className="text-center fw-bold fs-1">中翻英</Form.Label>
                     <Form.Label className="fw-bold">输入文本：</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={8}
-                        placeholder="请在此输入需要优化的中文文本..."
+                        placeholder="请在此输入需要翻译的中文文本..."
                         value={inputText}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
                     />
@@ -206,7 +204,7 @@ const App: React.FC = () => {
                         ) : (
                             <i className="bi bi-magic"></i>
                         )}
-                        {isProcessing ? ' 处理中...' : ' 自动优化'}
+                        {isProcessing ? ' 处理中...' : ' 翻译'}
                     </Button>
                     <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
                         <i className="bi bi-key"></i> 设置密钥和模型
@@ -215,12 +213,12 @@ const App: React.FC = () => {
                 <div id="status" className="text-center text-muted small ">{status || ' '}</div>
 
                 <Form.Group>
-                    <Form.Label className="fw-bold">处理结果：</Form.Label>
+                    <Form.Label className="fw-bold">翻译结果：</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={8}
                         readOnly
-                        placeholder="优化后的文本将显示在这里..."
+                        placeholder="翻译后的文本将显示在这里..."
                         value={outputText}
                     />
                 </Form.Group>

@@ -6,4 +6,8 @@ curl https://dharma-trans-api.xyshy.workers.dev \-H "Content-Type: application/j
 cn:学院 en:Larung Gar
 
 
+
+curl https://dharma-trans-api.xyshy.workers.dev/get_prompt \-H "Content-Type: application/json" \-d '{"text": "学院聽眾的根基與以往完全不同，法王講法方式也存在巨大的差異。"}'
+
+
 npx wrangler tail
