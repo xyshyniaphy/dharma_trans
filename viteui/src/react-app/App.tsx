@@ -1,14 +1,29 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Spinner, Card, Container, Stack, Row, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Spinner, Container, Stack } from 'react-bootstrap';
 import Config from './Config';
-import { PROMPT_CONFIG } from '../dev.config';
 
 interface OpenRouterModel {
     id: string;
     name: string;
 }
+
+
+const apiUrl = import.meta.env.OPENAI_URL;
+const promptApiUrl = import.meta.env.DHARMA_PROMPT_API_URL;
+
+const fetchPrompt = async (text: string): Promise<string> => {
+    const response = await fetch(promptApiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text })
+    });
+    const data = await response.json();
+    return data.prompt;
+};
 
 const App: React.FC = () => {
     const [apiKey, setApiKey] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
@@ -21,23 +36,11 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
 
-    const fetchPrompt = async (): Promise<string> => {
-        const text = inputText;
-        const response = await fetch('https://dharma-trans-api.xyshy.workers.dev/get_prompt', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ text })
-        });
-        const data = await response.json();
-        return data.prompt;
-    };
 
     const fetchAndFilterModels = async () => {
         if (!apiKey) return;
         try {
-            const response = await fetch('https://openrouter.ai/api/v1/models', {
+            const response = await fetch(`${apiUrl}/api/v1/models`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
@@ -78,8 +81,8 @@ const App: React.FC = () => {
         setOutputText('');
         setThinkingText('');
         try {
-            const prompt = await fetchPrompt();
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            const prompt = await fetchPrompt(inputText);
+            const response = await fetch(`${apiUrl}/chat/completions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -213,12 +216,12 @@ const App: React.FC = () => {
                 <div id="status" className="text-center text-muted small ">{status || ' '}</div>
 
                 <Form.Group>
-                    <Form.Label className="fw-bold">翻译结果：</Form.Label>
+                    <Form.Label className="fw-bold">处理结果：</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={8}
                         readOnly
-                        placeholder="翻译后的文本将显示在这里..."
+                        placeholder="优化后的文本将显示在这里..."
                         value={outputText}
                     />
                 </Form.Group>
