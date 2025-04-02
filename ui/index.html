@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文翻译</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Include html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        textarea {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        #outputText {
+            background-color: #f8f9fa;
+        }
+        #pdfPreview {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="text-center mb-4">中文智能排版</h1>
+                
+                <!-- API Key Modal -->
+                <div class="modal fade" id="apiKeyModal" data-bs-backdrop="static" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">设置密钥和模型</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="apiKeyInput" class="form-label">请输入您的 OpenRouter API 密钥：</label>
+                                    <input type="text" class="form-control" id="apiKeyInput">
+                                    <div class="mt-2">
+                                        <a href="https://zhuanlan.zhihu.com/p/28203837581" target="_blank" class="text-primary">点击查看API获取教程 (二、OpenRouter国内使用教程)</a>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modelSelect" class="form-label">选择模型:(推荐Google: Gemini Pro 2.0 Experimental (free))</label>
+                                    <select class="form-control" id="modelSelect"></select>
+                                    <p class="text-muted">注意，模型选择会影响处理速度和质量，请根据需要选择合适的模型。</br>Deepseek r1是新秀</br>Qwen是阿里巴巴的通义千问,最新版为QwQ32B</br></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="saveApiKey()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="inputText" class="form-label fw-bold">输入文本：</label>
+                    <textarea class="form-control mb-2" id="inputText" rows="8" placeholder="请在此输入需要优化的中文文本..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
+                    <button onclick="processText()" id="processBtn" class="btn btn-primary">
+                        <i class="bi bi-magic"></i> 自动优化
+                    </button>
+                    <button onclick="showPrintableVersion()" id="pdfBtn" class="btn btn-secondary">
+                        <i class="bi bi-printer"></i> 打印预览
+                    </button>
+                    
+                    <button onclick="showApiKeyModal()" class="btn btn-outline-primary">
+                        <i class="bi bi-key"></i> 设置密钥和模型
+                    </button>
+                </div>
+
+                <div id="status" class="text-center text-muted small mb-3"></div>
+
+                <div>
+                    <label for="outputText" class="form-label fw-bold">处理结果：</label>
+                    <textarea class="form-control" id="outputText" rows="4" readonly placeholder="优化后的文本将显示在这里..."></textarea>
+                </div>
+                <div class="mt-3">
+                    <label for="thinkingText" class="form-label fw-bold">模型思考过程：</label>
+                    <textarea class="form-control" id="thinkingText" rows="6"  readonly placeholder="模型的思考过程将显示在这里..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdfPreview"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Key Management
+        let OPENROUTER_API_KEY = localStorage.getItem('OPENROUTER_API_KEY');
+        const MODEL = 'google/gemini-2.0-pro-exp-02-05:free';
+        
+        // Check for API key on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!OPENROUTER_API_KEY) {
+                showApiKeyModal();
+            }
+        });
+
+        async function fetchAndFilterModels() {
+            if (!OPENROUTER_API_KEY) {
+                return; // Should not happen, but good to check
+            }
+
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/models', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch models');
+                }
+
+                const data = await response.json();
+                let models = data.data;
+
+                // First pass: Filter out models that do NOT contain "free" (case-insensitive)
+                models = models.filter(model => model.name.toLowerCase().includes('free')
+                && !model.name.toLowerCase().includes('distill')
+                && !model.name.toLowerCase().includes('learnlm')
+            );
+
+                // Second pass: Include models that contain "pro" or "preview" (case-insensitive)
+                models = models.filter(model => model.name.toLowerCase().includes('pro') 
+                || model.name.toLowerCase().includes('gemini pro')
+                || model.name.toLowerCase().includes('deepseek: r1')
+                || model.name.toLowerCase().includes('qwq')
+            
+            );
+
+                const modelSelect = document.getElementById('modelSelect');
+                modelSelect.innerHTML = ''; // Clear existing options
+
+                for (const model of models) {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.textContent = model.name;
+                    modelSelect.appendChild(option);
+                }
+
+                // Pre-select model if it exists in localStorage
+                const savedModel = localStorage.getItem('SELECTED_MODEL');
+                if (savedModel) {
+                    modelSelect.value = savedModel;
+                }
+                else{
+                    modelSelect.value = MODEL;
+                }
+
+            } catch (error) {
+                console.error('Error fetching/filtering models:', error);
+                alert('Failed to fetch or filter models. Please check your API key and network connection.');
+            }
+        }
+
+        function showApiKeyModal() {
+            const modal = new bootstrap.Modal(document.getElementById('apiKeyModal'));
+            fetchAndFilterModels(); // Fetch and populate models when modal is shown
+            // Pre-fill the API key input if it exists in localStorage
+            const apiKey = localStorage.getItem('OPENROUTER_API_KEY');
+            if (apiKey) {
+                document.getElementById('apiKeyInput').value = apiKey;
+            }
+            modal.show();
+        }
+
+        // Add a paste event listener to fetch models when API key is pasted
+       document.getElementById('apiKeyInput').addEventListener('paste', (event) => {
+    // Use setTimeout to ensure the pasted value is available in the input field
+    setTimeout(() => {
+        const apiKey = document.getElementById('apiKeyInput').value.trim();
+        if (apiKey) {
+            OPENROUTER_API_KEY = apiKey; // Update the variable, but don't save to localStorage
+            fetchAndFilterModels();
+        }
+    }, 0);
+});
+
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (apiKey) {
+                OPENROUTER_API_KEY = apiKey;
+                localStorage.setItem('OPENROUTER_API_KEY', apiKey);
+                bootstrap.Modal.getInstance(document.getElementById('apiKeyModal')).hide();
+            } else {
+                alert('请输入有效的API密钥');
+            }
+        }
+
+        // Add a change listener to save the selected model
+        document.getElementById('modelSelect').addEventListener('change', function() {
+            const selectedModel = this.value;
+            if (selectedModel) {
+                localStorage.setItem('SELECTED_MODEL', selectedModel);
+            }
+        });
+
+
+
+
+
+
+        
+        
+        const samplePrompt = `
+你是现代中国大陆人，是一个佛教徒,懂得专业佛教知识，懂得佛教专用的字和词句,使用现代用语       
+在经过仔细思考后,对以下中文文本进行多层级排版，使其更加优美，并输入为Markdown格式。
+要求：
+1. 需要删除重复字，需要删除语气词,删除多余的空格
+2. 不要加入新内容，不要改变原来的意思，不要进行精简，不要总结
+3. 如果使用了错误的佛教用语，在字数不变的情况下才可以修正为正确的佛教用语，否则不要改变用语,但是可以改正错别字
+4. 不要调整段落结构
+5. 需要修正标点符号
+6. 转换为简体中文，加入适当的标题、分段和强调
+
+原文：
+{text}
+
+以Markdown格式输出优化后的文本。只输入优化后的文本，不要输出其他内容。不要做出解释，思考时尽量简洁扼要`;
+
+        async function processText() {
+            if (!OPENROUTER_API_KEY) {
+                showApiKeyModal();
+                return;
+            }
+
+            const inputText = document.getElementById('inputText').value.trim();
+            if (!inputText) {
+                alert('请输入需要处理的文本');
+                return;
+            }
+
+            const processBtn = document.getElementById('processBtn');
+            const status = document.getElementById('status');
+            const outputText = document.getElementById('outputText');
+
+            document.getElementById('thinkingText').value = '';// reset thinkingText
+
+            processBtn.disabled = true;
+            status.textContent = '正在处理中...';
+            outputText.value = '';
+            outputText.style.display = 'none'; // Hide output initially
+
+            try {
+                const prompt = samplePrompt.replace('{text}', inputText);
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                        'HTTP-Referer': window.location.origin,
+                    },
+                    body: JSON.stringify({
+                        model: localStorage.getItem('SELECTED_MODEL') || MODEL,
+                        messages: [
+                            { role: 'user', content: prompt }
+                        ],
+                        stream: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API请求失败');
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value);
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            if (data === '[DONE]') continue;
+                            try {
+                                const parsed = JSON.parse(data);
+                                const delta = parsed.choices[0].delta;
+                                const thinkingText = document.getElementById('thinkingText');
+                                const outputText = document.getElementById('outputText');
+
+                                if (delta.reasoning) {
+                                    // Focus and scroll to thinkingText
+                                    thinkingText.focus();
+                                    thinkingText.value += delta.reasoning.replace(/\\n/g, '\n');
+                                    thinkingText.scrollTop = thinkingText.scrollHeight;
+                                    thinkingText.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                                } else if (delta.content) {
+                                    // Focus and scroll to outputText
+                                    outputText.style.display = ''; // Show output when content is received
+                                    outputText.focus();
+                                    outputText.value += delta.content;
+                                    outputText.scrollTop = outputText.scrollHeight;
+                                    outputText.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                }
+                            } catch (error) {
+                                console.error('Error parsing JSON:', error);
+                                outputText.value = 'Error parsing JSON response: ' + error.message;
+                            }
+                        }
+                    }
+                }
+                outputText.style.display = '';
+                status.textContent = '处理完成';
+            } catch (error) {
+                console.error('Error:', error);
+                status.textContent = '处理出错，请重试';
+                if (error.message.includes('API')) {
+                    outputText.value = 'API请求失败: ' + error.message;
+                    showApiKeyModal();
+                } else {
+                    outputText.value = '处理出错: ' + error.message;
+                }
+            } finally {
+                processBtn.disabled = false;
+            }
+        }
+
+        
+        
+        
+        function showPrintableVersion() {
+    const outputText = document.getElementById('outputText').value.replace(/```markdown/g, '\n');
+    if (!outputText) {
+        alert('没有可打印的内容');
+        return;
+    }
+
+    // Create new window with print-friendly content
+    const printWindow = window.open('', '_blank');
+    
+    // Setup print-friendly HTML content
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>打印预览</title>
+            <style>
+                @media screen, print {
+                    body { 
+                        font-family: "SimSun", "宋体", serif;
+                        max-width: 210mm;
+                        margin: 15mm auto;
+                        padding: 0 15mm;
+                        background: white;
+                    }
+                    * { 
+                        box-sizing: border-box;
+                    }
+                    p { 
+                        margin-bottom: 10px; 
+                        line-height: 1.6;
+                        font-size: 12pt;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
+                    h1 { 
+                        font-size: 18pt;
+                        page-break-after: avoid;
+                        break-after: avoid;
+                    }
+                    h2 { 
+                        font-size: 16pt;
+                        page-break-after: avoid;
+                        break-after: avoid;
+                    }
+                    h3 { 
+                        font-size: 14pt;
+                        page-break-after: avoid;
+                        break-after: avoid;
+                    }
+                    h4, h5, h6 { 
+                        font-size: 12pt;
+                        page-break-after: avoid;
+                        break-after: avoid;
+                    }
+                    h1, h2, h3, h4, h5, h6 { 
+                        margin-top: 15px; 
+                        margin-bottom: 10px;
+                        line-height: 1.4;
+                    }
+                    li {
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
+                    table {
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    @page {
+                        size: A5 landscape;
+                        margin: 0;
+                    }
+                }
+                .print-controls {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #fff;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                @media print {
+                    .print-controls {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-controls">
+                <button onclick="window.print()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">打印</button>
+                <button onclick="window.close()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">关闭</button>
+            </div>
+            <div class="content">
+                ${marked.parse(outputText)}
+            </div>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+}
+                
+    </script>
+</body>
+</html>
