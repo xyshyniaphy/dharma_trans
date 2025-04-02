@@ -1,4 +1,0 @@
-name = "dharma-trans-ui"
-main = "index.js"
-compatibility_date = "2024-02-28"
-nodejs_compat = true

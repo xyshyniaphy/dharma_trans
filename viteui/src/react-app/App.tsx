@@ -17,7 +17,6 @@ const App: React.FC = () => {
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
     const [status, setStatus] = useState<string>('');
-    const [showModal, setShowModal] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
 
