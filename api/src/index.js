@@ -112,6 +112,20 @@ function getFilteredDictionary(text, dictionary) {
 	return { results: results.join('\n'), executionTimeMicroseconds };
 }
 
+// Function to generate translation prompt
+function get_prompt(text, filteredDictionary) {
+  return `You are an expert translator fluent in Chinese and English, specializing in buddism text.
+Translate the following Chinese text into formal buddism English.
+Mandatory Instructions:
+You MUST use the specified English translations for the corresponding Chinese terms provided below.
+Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
+Do not explain, But give a list of used chinese terms and coressponding english terms after the end of the translation.
+When one chinese term has multiple english terms, put the second english term into translated text too in a parentheses
+Specified Terms to Use:
+${filteredDictionary}
+Chinese Text to Translate: ${text}`;
+}
+
 export default {
 	async fetch(request, env, ctx) {
 		// Ensure dictionary is loaded, potentially loading it on the first request
@@ -169,6 +183,40 @@ export default {
 			}
 		}
 
+		// Handle /get_prompt path
+		if (path === "/get_prompt") {
+			if (request.method !== 'POST') {
+				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
+			}
+
+			let inputData;
+			try {
+				inputData = await request.json();
+				const { text } = inputData;
+
+				if (typeof text !== 'string' || text.length === 0) {
+					throw new Error('Invalid input: "text" field must be a non-empty string.');
+				}
+
+				// Ensure dictionary is up-to-date
+				await loadDictionary(env);
+
+				const { results: filteredDictionary } = getFilteredDictionary(text, dictionaryMap);
+
+				const prompt = get_prompt(text, filteredDictionary);
+
+				return new Response(JSON.stringify({
+					prompt: prompt,
+					text: text
+				}), {
+					headers: { 'Content-Type': 'application/json; charset=utf-8' },
+				});
+			} catch (error) {
+				console.error('Error processing /get_prompt request:', error);
+				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+			}
+		}
+
 		// Handle /translate path
 		if (path === "/translate") {
 			if (request.method !== 'POST') {
@@ -195,16 +243,7 @@ export default {
 
 				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text, dictionaryMap);
 
-				const prompt = `You are an expert translator fluent in Chinese and English, specializing in buddism text.
-Translate the following Chinese text into formal buddism English.
-Mandatory Instructions:
-You MUST use the specified English translations for the corresponding Chinese terms provided below.
-Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
-Do not explain, But give a list of used chinese terms and coressponding english terms after the end of the translation.
-When one chinese term has multiple english terms, put the second english term into translated text too in a parentheses
-Specified Terms to Use:
-${filteredDictionary}
-Chinese Text to Translate: ${text}`;
+				const prompt = get_prompt(text, filteredDictionary);
 
 				// Initialize OpenAI client
 				const openai = new OpenAI({
