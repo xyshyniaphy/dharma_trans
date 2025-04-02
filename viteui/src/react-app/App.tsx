@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Spinner, Card, Container, Row, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Spinner, Card, Container, Stack, Row, Col } from 'react-bootstrap';
 import Config from './Config';
 
 interface OpenRouterModel {
@@ -183,59 +183,60 @@ const App: React.FC = () => {
                         />
                     </Modal>
 
-                    <Form.Group className="mb-4">
-                        <Form.Label className="fw-bold">输入文本：</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={8}
-                            placeholder="请在此输入需要优化的中文文本..."
-                            value={inputText}
-                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                            className="mb-2"
-                        />
-                    </Form.Group>
+                    <Stack gap={3}>
+                        <Form.Group>
+                            <Form.Label className="fw-bold">输入文本：</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={8}
+                                placeholder="请在此输入需要优化的中文文本..."
+                                value={inputText}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                            />
+                        </Form.Group>
 
-                    <div className="d-flex justify-content-center gap-2 mb-4 flex-wrap">
-                        <Button
-                            onClick={processText}
-                            id="processBtn"
-                            variant="primary"
-                            disabled={isProcessing || !inputText}
-                        >
-                            {isProcessing ? (
-                                <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
-                            ) : (
-                                <i className="bi bi-magic"></i>
-                            )}
-                            {isProcessing ? ' 处理中...' : ' 自动优化'}
-                        </Button>
-                        <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
-                            <i className="bi bi-key"></i> 设置密钥和模型
-                        </Button>
-                    </div>
+                        <div className="d-flex justify-content-center gap-2">
+                            <Button
+                                onClick={processText}
+                                id="processBtn"
+                                variant="primary"
+                                disabled={isProcessing || !inputText}
+                            >
+                                {isProcessing ? (
+                                    <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
+                                ) : (
+                                    <i className="bi bi-magic"></i>
+                                )}
+                                {isProcessing ? ' 处理中...' : ' 自动优化'}
+                            </Button>
+                            <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
+                                <i className="bi bi-key"></i> 设置密钥和模型
+                            </Button>
+                        </div>
 
-                    <div id="status" className="text-center text-muted small mb-3">{status || ' '}</div>
+                        <div id="status" className="text-center text-muted small mb-3">{status || ' '}</div>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">处理结果：</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={8}
-                            readOnly
-                            placeholder="优化后的文本将显示在这里..."
-                            value={outputText}
-                        />
-                    </Form.Group>
-                    <Form.Group className="mt-3">
-                        <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={4}
-                            readOnly
-                            placeholder="模型的思考过程将显示在这里..."
-                            value={thinkingText}
-                        />
-                    </Form.Group>
+                        <Form.Group>
+                            <Form.Label className="fw-bold">处理结果：</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={8}
+                                readOnly
+                                placeholder="优化后的文本将显示在这里..."
+                                value={outputText}
+                            />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label className="fw-bold">模型思考过程：</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={4}
+                                readOnly
+                                placeholder="模型的思考过程将显示在这里..."
+                                value={thinkingText}
+                            />
+                        </Form.Group>
+                    </Stack>
                 </Card.Body>
             </Card>
         </Container>
