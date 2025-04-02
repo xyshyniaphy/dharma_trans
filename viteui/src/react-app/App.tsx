@@ -1,7 +1,8 @@
-// src/App.tsx
+// src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import Config from './Config';
 
 interface OpenRouterModel {
     id: string;
@@ -34,14 +35,6 @@ const App: React.FC = () => {
 
 请以Markdown格式输出优化后的文本。只输出优化后的文本，不要包含其他说明或解释。思考过程尽量简洁。`;
 
-    const handleApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setApiKey(event.target.value);
-    };
-
-    const handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedModel(event.target.value);
-    };
-
     const fetchAndFilterModels = async () => {
         if (!apiKey) return;
         try {
@@ -69,17 +62,6 @@ const App: React.FC = () => {
         } catch (error) {
             console.error('Error fetching/filtering models:', error);
             alert('Failed to fetch or filter models. Please check your API key and network connection.');
-        }
-    };
-
-    const saveApiKey = () => {
-        if (apiKey) {
-            localStorage.setItem('OPENROUTER_API_KEY', apiKey);
-            localStorage.setItem('SELECTED_MODEL', selectedModel);
-            setShowModal(false);
-            fetchAndFilterModels();
-        } else {
-            alert('请输入有效的API密钥');
         }
     };
 
@@ -134,22 +116,19 @@ const App: React.FC = () => {
                         try {
                             const parsed = JSON.parse(data);
                             const delta = parsed.choices?.[0]?.delta;
-                            if (delta) { // Check if delta exists
+                            if (delta) {
                                 if (delta.reasoning) {
-                                    // Assuming reasoning is string, replace \n
-                                    setThinkingText((prev: string) => prev + String(delta.reasoning).replace(/\\n/g, '\n')); // Added type for prev
+                                    setThinkingText((prev: string) => prev + String(delta.reasoning).replace(/\\n/g, '\n'));
                                 } else if (delta.content) {
-                                    setOutputText((prev: string) => prev + delta.content); // Added type for prev
+                                    setOutputText((prev: string) => prev + delta.content);
                                 }
                             } else if (parsed.error) {
-                                 console.error("API Error in stream:", parsed.error);
-                                 throw new Error(`API Error: ${parsed.error.message || 'Unknown error'}`);
+                                console.error("API Error in stream:", parsed.error);
+                                throw new Error(`API Error: ${parsed.error.message || 'Unknown error'}`);
                             }
                         } catch (error) {
-                            // Log the problematic data chunk
                             console.error('Error parsing JSON data:', data, error);
-                            // Display a generic parsing error, avoid showing raw data to user
-                            setOutputText((prev: string) => prev + '\n[Error parsing response chunk]\n'); // Added type for prev
+                            setOutputText((prev: string) => prev + '\n[Error parsing response chunk]\n');
                         }
                     }
                 }
@@ -189,40 +168,21 @@ const App: React.FC = () => {
                 <div className="card-body">
                     <h1 className="text-center mb-4">中文智能排版</h1>
 
-                    <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>设置密钥和模型</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <div className="mb-3">
-                                <label htmlFor="apiKeyInput" className="form-label">请输入您的 OpenRouter API 密钥：</label>
-                                <input type="text" className="form-control" id="apiKeyInput" value={apiKey} onChange={handleApiKeyChange} />
-                                <div className="mt-2">
-                                    <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</a>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="modelSelect" className="form-label">选择模型:</label>
-                                <select className="form-select" id="modelSelect" value={selectedModel} onChange={handleModelChange} disabled={models.length === 0}> { /* Use form-select and disable if no models */}
-                                    {models.length === 0 && <option>请先输入有效API Key</option>} { /* Placeholder if no models */}
-                                    {models.map((model: OpenRouterModel) => ( // Added type for model
-                                        <option key={model.id} value={model.id}>{model.name}</option>
-                                    ))}
-                                </select>
-                                <div className="form-text">
-                                    推荐: Google Gemini Pro (free), Mistral 7B Instruct (free), Qwen Chat (free). 模型影响速度和质量。
-                                </div>
-                            </div>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={() => setShowModal(false)}>取消</Button>
-                            <Button variant="primary" onClick={saveApiKey} disabled={!apiKey}>保存</Button>
-                        </Modal.Footer>
-                    </Modal>
+                    <Config
+                        apiKey={apiKey}
+                        setApiKey={setApiKey}
+                        selectedModel={selectedModel}
+                        setSelectedModel={setSelectedModel}
+                        models={models}
+                        setModels={setModels}
+                        showModal={showModal}
+                        setShowModal={setShowModal}
+                        fetchAndFilterModels={fetchAndFilterModels}
+                    />
 
                     <div className="mb-4">
                         <label htmlFor="inputText" className="form-label fw-bold">输入文本：</label>
-                        <textarea className="form-control mb-2" id="inputText" rows={8} placeholder="请在此输入需要优化的中文文本..." value={inputText} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}></textarea> { /* Added type for e */}
+                        <textarea className="form-control mb-2" id="inputText" rows={8} placeholder="请在此输入需要优化的中文文本..." value={inputText} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}></textarea>
                     </div>
 
                     <div className="d-flex justify-content-center gap-2 mb-4 flex-wrap">
