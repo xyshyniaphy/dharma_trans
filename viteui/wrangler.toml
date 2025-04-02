@@ -1,0 +1,17 @@
+name = "dharma-trans-viteui" # Updated project name
+compatibility_date = "2024-02-28" # Copied from old config
+node_compat = true # Copied from old config
+
+# Point to the worker entry point (assuming Hono setup in api/)
+# Check your project structure if this differs
+main = "api/index.ts"
+
+# Configuration for Vite integration (adjust as needed)
+[build]
+command = "npm run build"
+watch_dir = "src" # Watch the React app source
+
+# Configuration for Pages Functions / Workers integration
+# Ensure your static assets are served correctly
+[site]
+bucket = "./dist" # Point to Vite's build output directory
