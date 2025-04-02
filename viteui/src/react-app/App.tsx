@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Spinner, Card, Container, Stack, Row, Col } from 'react-bootstrap';
 import Config from './Config';
 
+
 interface OpenRouterModel {
     id: string;
     name: string;
@@ -163,77 +164,77 @@ const App: React.FC = () => {
     }, [apiKey]);
 
     return (
-        <Container className="d-flex justify-content-center align-items-center xxl-1">
-                    <h1 className="text-center">中翻英</h1>
+        <Container fluid className="d-flex justify-content-center align-items-center">
+            <h1 className="text-center">中翻英</h1>
 
-                    {/* Config Modal */}
-                    <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
-                        <Config
-                            apiKey={apiKey}
-                            setApiKey={setApiKey}
-                            selectedModel={selectedModel}
-                            setSelectedModel={setSelectedModel}
-                            models={models}
-                            setModels={setModels}
-                            showModal={showConfigModal}
-                            setShowModal={setShowConfigModal}
-                            fetchAndFilterModels={fetchAndFilterModels}
-                        />
-                    </Modal>
+            {/* Config Modal */}
+            <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
+                <Config
+                    apiKey={apiKey}
+                    setApiKey={setApiKey}
+                    selectedModel={selectedModel}
+                    setSelectedModel={setSelectedModel}
+                    models={models}
+                    setModels={setModels}
+                    showModal={showConfigModal}
+                    setShowModal={setShowConfigModal}
+                    fetchAndFilterModels={fetchAndFilterModels}
+                />
+            </Modal>
 
-                    <Stack >
-                        <Form.Group>
-                            <Form.Label className="fw-bold">输入文本：</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={8}
-                                placeholder="请在此输入需要优化的中文文本..."
-                                value={inputText}
-                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                            />
-                        </Form.Group>
+            <Stack gap={3} className="w-100">
+                <Form.Group>
+                    <Form.Label className="fw-bold">输入文本：</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={8}
+                        placeholder="请在此输入需要优化的中文文本..."
+                        value={inputText}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                    />
+                </Form.Group>
 
-                        
-                            <Button
-                                onClick={processText}
-                                id="processBtn"
-                                variant="primary"
-                                disabled={isProcessing || !inputText}
-                            >
-                                {isProcessing ? (
-                                    <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
-                                ) : (
-                                    <i className="bi bi-magic"></i>
-                                )}
-                                {isProcessing ? ' 处理中...' : ' 自动优化'}
-                            </Button>
-                            <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
-                                <i className="bi bi-key"></i> 设置密钥和模型
-                            </Button>
-                       
-                        <div id="status" className="text-center text-muted small ">{status || ' '}</div>
+                
+                    <Button
+                        onClick={processText}
+                        id="processBtn"
+                        variant="primary"
+                        disabled={isProcessing || !inputText}
+                    >
+                        {isProcessing ? (
+                            <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
+                        ) : (
+                            <i className="bi bi-magic"></i>
+                        )}
+                        {isProcessing ? ' 处理中...' : ' 自动优化'}
+                    </Button>
+                    <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
+                        <i className="bi bi-key"></i> 设置密钥和模型
+                    </Button>
+               
+                <div id="status" className="text-center text-muted small ">{status || ' '}</div>
 
-                        <Form.Group>
-                            <Form.Label className="fw-bold">处理结果：</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={8}
-                                readOnly
-                                placeholder="优化后的文本将显示在这里..."
-                                value={outputText}
-                            />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={4}
-                                readOnly
-                                placeholder="模型的思考过程将显示在这里..."
-                                value={thinkingText}
-                            />
-                        </Form.Group>
-                    </Stack>
+                <Form.Group>
+                    <Form.Label className="fw-bold">处理结果：</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={8}
+                        readOnly
+                        placeholder="优化后的文本将显示在这里..."
+                        value={outputText}
+                    />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label className="fw-bold">模型思考过程：</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={4}
+                        readOnly
+                        placeholder="模型的思考过程将显示在这里..."
+                        value={thinkingText}
+                    />
+                </Form.Group>
+            </Stack>
         </Container>
     );
 };
