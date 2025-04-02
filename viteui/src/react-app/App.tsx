@@ -163,10 +163,8 @@ const App: React.FC = () => {
     }, [apiKey]);
 
     return (
-        <Container>
-            <Card className="shadow-sm">
-                <Card.Body>
-                    <h1 className="text-center mb-4">中文智能排版</h1>
+        <Container className="d-flex justify-content-center align-items-center xxl-1">
+                    <h1 className="text-center">中翻英</h1>
 
                     {/* Config Modal */}
                     <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
@@ -183,7 +181,7 @@ const App: React.FC = () => {
                         />
                     </Modal>
 
-                    <Stack gap={3}>
+                    <Stack >
                         <Form.Group>
                             <Form.Label className="fw-bold">输入文本：</Form.Label>
                             <Form.Control
@@ -195,7 +193,7 @@ const App: React.FC = () => {
                             />
                         </Form.Group>
 
-                        <div className="d-flex justify-content-center gap-2">
+                        
                             <Button
                                 onClick={processText}
                                 id="processBtn"
@@ -212,9 +210,8 @@ const App: React.FC = () => {
                             <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary">
                                 <i className="bi bi-key"></i> 设置密钥和模型
                             </Button>
-                        </div>
-
-                        <div id="status" className="text-center text-muted small mb-3">{status || ' '}</div>
+                       
+                        <div id="status" className="text-center text-muted small ">{status || ' '}</div>
 
                         <Form.Group>
                             <Form.Label className="fw-bold">处理结果：</Form.Label>
@@ -237,8 +234,6 @@ const App: React.FC = () => {
                             />
                         </Form.Group>
                     </Stack>
-                </Card.Body>
-            </Card>
         </Container>
     );
 };
