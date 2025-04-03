@@ -71,8 +71,7 @@ const Input: React.FC<InputProps> = ({
                 </Form.Group>
             )}
 
-            {isProcessing ? null : (
-                 outputText && ( // Only show if there is output text
+            {outputText && ( // Only show if there is output text
                     <Form.Group className="flex-grow-1">
                         <Form.Label className="fw-bold">翻译结果：</Form.Label>
                         <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
@@ -82,7 +81,7 @@ const Input: React.FC<InputProps> = ({
                         </div>
                     </Form.Group>
                  )
-            )}
+            }
         </Stack>
     );
 };
