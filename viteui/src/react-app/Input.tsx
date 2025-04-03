@@ -32,7 +32,6 @@ const Input: React.FC<InputProps> = ({
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
     
-
     // Auto-scroll thinking text area
     React.useEffect(() => {
         if (textAreaRef.current) {
@@ -40,13 +39,15 @@ const Input: React.FC<InputProps> = ({
         }
     }, [thinkingText]);
 
+    const outTxt = translation?.output ?? outputText;
+    const thinkTxt = translation?.thinking ?? thinkingText;
+
     return (
         <Stack gap={3} className="h-90 overflow-auto">
             <Form.Group className="flex-grow-1">
                 <Form.Label className="fw-bold">输入文本：</Form.Label>
                 <Form.Control
                     as="textarea"
-                    readOnly={isProcessing}
                     className="h-90"
                     placeholder="请在此输入需要翻译的中文文本..."
                     value={inputText}
@@ -66,7 +67,7 @@ const Input: React.FC<InputProps> = ({
                 </Button>
             </div>
 
-            {thinkingText && (
+            {thinkTxt && (
                 <Form.Group className="flex-grow-1">
                     <Form.Label className="fw-bold">模型思考过程：</Form.Label>
                     <Form.Control
@@ -75,12 +76,12 @@ const Input: React.FC<InputProps> = ({
                         className="h-90"
                         readOnly
                         placeholder="模型的思考过程将显示在这里..."
-                        value={thinkingText}
+                        value={thinkTxt}
                     />
                 </Form.Group>
             )}
 
-            {outputText && ( // Only show if there is output text
+            {outTxt && ( // Only show if there is output text
                     <Form.Group className="flex-grow-1">
                         {translation && (
                             <Button variant="link" className="p-0 ms-2" onClick={removeFromHistory}>
@@ -91,7 +92,7 @@ const Input: React.FC<InputProps> = ({
 
                         <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {outputText}
+                                {outTxt}
                             </ReactMarkdown>
                         </div>
                     </Form.Group>

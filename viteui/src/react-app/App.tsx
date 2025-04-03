@@ -27,6 +27,10 @@ const App: React.FC = () => {
     const processText = async () => {
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
+    const setTransAndTxt = (trans: Translation) => {
+        setTranslate(trans);
+        setInputText(trans.input);
+    };
 
     useEffect(() => {
         if (isProcessing || status !== '翻译完成') {
@@ -61,6 +65,10 @@ const App: React.FC = () => {
         if(!translate) return;
         const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
         setTransHistory(updatedHistory);
+        setStatus('');
+        setOutputText('');
+        setThinkingText('');
+        setTranslate(undefined);
     };
 
     return (
@@ -79,7 +87,7 @@ const App: React.FC = () => {
                     {/* Left Panel */}
                     <ViewHistory
                         transHistory={transHistory}
-                        setTrans={setTranslate}
+                        setTrans={setTransAndTxt}
                     />
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
