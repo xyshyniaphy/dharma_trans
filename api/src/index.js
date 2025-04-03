@@ -5,7 +5,10 @@ import OpenAI from 'openai';
 let dictionaryMap = null;
 
 // Global variable to track the last modified timestamp of dic.csv
-let lastModifiedTimestamp = null;
+let lastDicModifiedTimestamp = null;
+
+// Global variable to track the last modified timestamp of base_prompt.txt
+let lastPromptModifiedTimestamp = null;
 
 // Function to load and parse the dictionary from R2
 async function loadDictionary(env) {
@@ -23,11 +26,11 @@ async function loadDictionary(env) {
 
 		// Check if the dictionary file has been updated
 		const currentTimestamp = r2Object.uploaded;
-		if (lastModifiedTimestamp && currentTimestamp <= lastModifiedTimestamp) {
+		if (lastDicModifiedTimestamp && currentTimestamp <= lastDicModifiedTimestamp) {
 			console.log('Dictionary is already up-to-date.');
 			return dictionaryMap;
 		}
-		lastModifiedTimestamp = currentTimestamp;
+		lastDicModifiedTimestamp = currentTimestamp;
 
 		const csvText = await r2Object.text();
 		const parseResult = Papa.parse(csvText, {
@@ -113,19 +116,28 @@ function getFilteredDictionary(text, dictionary) {
 }
 
 // Function to generate translation prompt
-function get_prompt(text, filteredDictionary) {
-  return `You are an expert translator fluent in Chinese and English, specializing in buddism text.
-Translate the following Chinese text into formal buddism English.
-Mandatory Instructions:
-You will output in GitHub Flavored markdown format, with proper emphasis and formatting.
-You will output translate result in English only and will output thinkin process and all other in chinese.
-You MUST use the specified English translations for the corresponding Chinese terms provided below.
-Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
-Do not explain, But give a list of used chinese terms and coressponding english terms after the end of the translation.
-Also give another list of chinese terms and coressponding english terms that you will use if I do not give you the dictionary.
-When one chinese term has multiple english terms, put the second english term into translated text too in a parentheses
-Specified Terms to Use:
-${filteredDictionary}
+async function getBasePrompt(env, lastModifiedTimestamp) {
+  const key = 'base_prompt.txt';
+  const r2Object = await env.MY_R2_BUCKET.get(key);
+  if (!r2Object) {
+    console.log('Base prompt not found');
+    return null;
+  }
+  const currentTimestamp = r2Object.uploaded;
+  if (lastModifiedTimestamp && currentTimestamp <= lastModifiedTimestamp) {
+    console.log('Base prompt is already up-to-date.');
+    return null;
+  }
+  return {
+    content: await r2Object.text(),
+    timestamp: currentTimestamp
+  };
+}
+
+function get_prompt(text, filteredDictionary, basePrompt) {
+  const basePromptContent = basePrompt ? basePrompt.content + '\n\n' : '';
+  return `
+${basePromptContent}${filteredDictionary}
 Chinese Text to Translate: ${text}`;
 }
 
@@ -206,7 +218,12 @@ export default {
 
 				const { results: filteredDictionary } = getFilteredDictionary(text, dictionaryMap);
 
-				const prompt = get_prompt(text, filteredDictionary);
+				const basePrompt = await getBasePrompt(env, lastDicModifiedTimestamp);
+				if (basePrompt) {
+					lastDicModifiedTimestamp = basePrompt.timestamp;
+				}
+
+				const prompt = get_prompt(text, filteredDictionary, basePrompt);
 
 				return new Response(JSON.stringify({
 					prompt: prompt,
@@ -246,7 +263,12 @@ export default {
 
 				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text, dictionaryMap);
 
-				const prompt = get_prompt(text, filteredDictionary);
+				const basePrompt = await getBasePrompt(env, lastDicModifiedTimestamp);
+				if (basePrompt) {
+					lastDicModifiedTimestamp = basePrompt.timestamp;
+				}
+
+				const prompt = get_prompt(text, filteredDictionary, basePrompt);
 
 				// Initialize OpenAI client
 				const openai = new OpenAI({
