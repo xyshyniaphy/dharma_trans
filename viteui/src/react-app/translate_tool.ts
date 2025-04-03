@@ -67,10 +67,12 @@ const m_processText = async (apiKey: string, inputText: string, selectedModel: s
                         if (delta) {
                             if (delta.reasoning) {
                                 if (delta.reasoning !== '\n'){
-                                    setThinkingText((prev: string) => (prev + String(delta.reasoning)).replace(/\\n$/, '\n'));
+                                    const reasoning = String(delta.reasoning);
+                                    setThinkingText((prev: string) => (prev + String(reasoning)));
                                 }
                             } else if (delta.content) {
-                                setOutputText((prev: string) => prev + delta.content);
+                                const content = (delta.content);
+                                setOutputText((prev: string) => prev + content);
                             }
                         } else if (parsed.error) {
                             console.error("API Error in stream:", parsed.error);
@@ -86,6 +88,9 @@ const m_processText = async (apiKey: string, inputText: string, selectedModel: s
         if (buffer.trim()) {
             console.log("Remaining buffer:", buffer);
         }
+        
+        setThinkingText((prev: string) => prev.replace(/\\n$/, '\n'));
+        setOutputText((prev: string) => prev.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, ''));
 
         setStatus('翻译完成');
     } catch (error: any) {

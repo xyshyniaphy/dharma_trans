@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 // Props interface for the Input component
 interface InputProps {
@@ -41,6 +42,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
     // Ref for auto-scrolling the thinking text area
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
 
     // Auto-scroll thinking text area when content changes
     React.useEffect(() => {
@@ -78,7 +80,7 @@ const Input: React.FC<InputProps> = ({
                     disabled={isProcessing || !inputText}
                     className="flex-grow-1"
                 >
-                    {isProcessing ? status : ' 翻译'}
+                    {isProcessing ? status : ' 翻译 (' + selectedModel + ')'}
                 </Button>
             </div>
 

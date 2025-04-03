@@ -25,6 +25,7 @@ const App: React.FC = () => {
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
+        setTranslate(undefined);
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
     const setTransAndTxt = (trans: Translation | undefined) => {
