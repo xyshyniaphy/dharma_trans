@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav, Button, Collapse } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Collapse } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -20,7 +20,6 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
-    const [showHistory, setShowHistory] = useState(false);
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
@@ -60,8 +59,6 @@ const App: React.FC = () => {
                         setInputText={setInputText}
                         setOutputText={setOutputText}
                         setThinkingText={setThinkingText}
-                        show={showHistory}
-                        onHide={() => setShowHistory(false)}
                     />
                 </Col>
                 <Col md={9} className="p-3">
