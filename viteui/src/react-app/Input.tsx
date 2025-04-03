@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
-import { useLocalStorage } from './hooks/useLocalStorage';
 
 // Props interface for the Input component
 interface InputProps {
@@ -27,6 +26,7 @@ interface InputProps {
     processText: () => void; // Callback to trigger text processing
     translation?: Translation; // Translation object containing results
     removeFromHistory: () => void; // Callback to remove from history
+    selectedModel: string; // Selected model for translation
 }
 
 const Input: React.FC<InputProps> = ({
@@ -38,11 +38,11 @@ const Input: React.FC<InputProps> = ({
     setInputText,
     processText,
     translation,
-    removeFromHistory
+    removeFromHistory,
+    selectedModel
 }) => {
     // Ref for auto-scrolling the thinking text area
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
 
     // Auto-scroll thinking text area when content changes
     React.useEffect(() => {
@@ -108,7 +108,7 @@ const Input: React.FC<InputProps> = ({
                                 <FontAwesomeIcon icon={faTrash} />
                             </Button>
                         )}  
-                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
+                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName}) ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
 
                         <div className="h-90 overflow-auto border p-2 rounded markdown-body">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>

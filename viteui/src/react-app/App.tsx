@@ -94,7 +94,7 @@ const App: React.FC = () => {
         <Container fluid className="vh-95">
             <Navbar expand="lg">
                 <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
-                <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>中翻英</Navbar.Brand>
+                <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>中文智能翻译 - Darma Translate</Navbar.Brand>
                 <Button onClick={() => setShowConfigModal(true)}>设置</Button>
             </Navbar>
             <hr />
@@ -118,6 +118,7 @@ const App: React.FC = () => {
                         processText={processText}
                         translation={translate}
                         removeFromHistory={removeFromHistory}
+                        selectedModel={selectedModel}
                     />
                    
                 </Col>
