@@ -142,7 +142,7 @@ export default {
 		const url = new URL(request.url);
 		const path = url.pathname;
 
-		if (path.startsWith("/access/")) {
+		if (path.includes("/access/")) {
 			const key = path.slice("/access/".length);
 			if (!key) {
 				return new Response("No file key provided", { status: 400 });
@@ -158,7 +158,7 @@ export default {
 		}
 
 		// Handle /map_dict path
-		if (path === "/map_dict") {
+		if (path.endsWith("/map_dict")) {
 			if (request.method !== 'POST') {
 				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
 			}
@@ -184,7 +184,7 @@ export default {
 		}
 
 		// Handle /get_prompt path
-		if (path === "/get_prompt") {
+		if (path.endsWith("/get_prompt")) {
 			if (request.method !== 'POST') {
 				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
 			}
@@ -218,7 +218,7 @@ export default {
 		}
 
 		// Handle /translate path
-		if (path === "/translate") {
+		if (path.endsWith("/translate")) {
 			if (request.method !== 'POST') {
 				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
 			}
@@ -276,7 +276,7 @@ export default {
 			}
 		}
 
-		if (path === "/reset_dict") {
+		if (path.endsWith("/reset_dict")) {
 			if (request.method !== 'GET') {
 				return new Response('Method Not Allowed. Please use GET.', { status: 405 });
 			}

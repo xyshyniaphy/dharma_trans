@@ -12,5 +12,11 @@
     "binding": "ASSETS",
     "directory": "./public",
     "not_found_handling": "single-page-application"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "t.hdcx.site",
+      "custom_domain": true
+    }
+  ]
 }
