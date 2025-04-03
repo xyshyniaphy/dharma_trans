@@ -1,7 +1,8 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Spinner, Container, Stack } from 'react-bootstrap';
+import { Button, Form, Spinner, Container, Stack } from 'react-bootstrap';
+import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 
 const apiUrl = import.meta.env.OPENAI_URL;
@@ -21,8 +22,8 @@ const fetchPrompt = async (text: string): Promise<string> => {
 };
 
 const App: React.FC = () => {
-    const [apiKey, setApiKeyState] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
-    const [selectedModel, setSelectedModel] = useState<string>(localStorage.getItem('SELECTED_MODEL') || 'google/gemini-2.5-pro-exp-03-25:free');
+    const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
+    const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
