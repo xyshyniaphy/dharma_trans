@@ -3,16 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
+import { Translation } from './translation_interface';
+
 interface OpenRouterModel {
     id: string;
     name: string;
-}
-
-interface Translation {
-    input: string;
-    output: string;
-    thinking: string;
-    timestamp: number;
 }
 
 const fetchAndFilterModels = async () => {
@@ -26,7 +21,8 @@ const fetchAndFilterModels = async () => {
         ).filter((model: OpenRouterModel) =>
             (model.name.toLowerCase().includes('pro') &&model.name.toLowerCase().includes('gemini pro') )||
             model.name.toLowerCase().includes('deepseek') ||
-            model.name.toLowerCase().includes('qwq')
+            model.name.toLowerCase().includes('qwq') ||
+            model.name.toLowerCase().includes('gemma')
         );
         return filteredModels;
     } catch (error) {

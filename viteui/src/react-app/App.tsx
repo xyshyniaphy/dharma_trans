@@ -1,21 +1,15 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav, Spinner, Button } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Spinner, Button } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
 import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
+import { Translation } from './translation_interface';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
-
-interface Translation {
-    input: string;
-    output: string;
-    thinking: string;
-    timestamp: number;
-}
 
 const App: React.FC = () => {
     const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
@@ -42,7 +36,8 @@ const App: React.FC = () => {
                 input: inputText,
                 output: outputText,
                 thinking: thinkingText,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                modelName: selectedModel
             }];
             setTransHistory(newHistory);
             setStatus('');
@@ -115,7 +110,7 @@ const App: React.FC = () => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'rgba(1, 1, 1, 0.2)',
+                backgroundColor: 'rgba(196, 196, 196, 0.2)',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
