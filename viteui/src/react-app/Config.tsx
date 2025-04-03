@@ -1,7 +1,7 @@
 // src/react-app/Config.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 interface OpenRouterModel {
     id: string;
@@ -25,7 +25,6 @@ const fetchAndFilterModels = async () => {
 interface ConfigProps {
     onClose: () => void;
     showModal: boolean;
-    setShowModal: (show: boolean) => void;
     apiKey: string;
     setApiKeyState: (value: string) => void;
     selectedModel: string;
@@ -34,7 +33,7 @@ interface ConfigProps {
 
 
 
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, setShowModal, apiKey, setApiKeyState, selectedModel, setSelectedModel }) => {
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel }) => {
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
@@ -62,35 +61,37 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, setShowModal, apiKe
         if  (models.length > 0 && tempApiKey.length >= 10 && tempModel !== '') {
             setApiKeyState(tempApiKey);
             setSelectedModel(tempModel);
-            setShowModal(false);
+            onClose();
         }
     }
 
     return (
-        <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
+        <Modal show={showModal} onHide={onClose} backdrop="static" keyboard={false}>
             <Modal.Header closeButton>
                 <Modal.Title>设置密钥和模型</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="mb-3">
-                    <label htmlFor="apiKeyInput" className="form-label">请输入您的 OpenRouter API 密钥：</label>
-                    <input type="text" className="form-control" id="apiKeyInput" value={tempApiKey} onChange={handleTempApiKeyChange} />
-                    <div className="mt-2">
-                        <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</a>
-                    </div>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="modelSelect" className="form-label">选择模型:</label>
-                    <select className="form-select" id="modelSelect" value={tempModel} onChange={handleTempModelChange} disabled={models.length === 0}>
-                        {models.length === 0 && <option>请先输入有效API Key</option>}
-                        {models.map((model: OpenRouterModel) => (
-                            <option key={model.id} value={model.id}>{model.name}</option>
-                        ))}
-                    </select>
-                    <div className="form-text">
-                        推荐: Google Gemini Pro (free), Mistral 7B Instruct (free), Qwen Chat (free). 模型影响速度和质量。
-                    </div>
-                </div>
+                <Form>
+                    <Form.Group className="mb-3">
+                        <Form.Label htmlFor="apiKeyInput">请输入您的 OpenRouter API 密钥：</Form.Label>
+                        <Form.Control type="text" id="apiKeyInput" value={tempApiKey} onChange={handleTempApiKeyChange} />
+                        <div className="mt-2">
+                            <Button variant="link" href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</Button>
+                        </div>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label htmlFor="modelSelect">选择模型:</Form.Label>
+                        <Form.Select id="modelSelect" value={tempModel} onChange={handleTempModelChange} disabled={models.length === 0}>
+                            {models.length === 0 && <option>请先输入有效API Key</option>}
+                            {models.map((model: OpenRouterModel) => (
+                                <option key={model.id} value={model.id}>{model.name}</option>
+                            ))}
+                        </Form.Select>
+                        <Form.Text>
+                            推荐: Google Gemini Pro (free), Mistral 7B Instruct (free), Qwen Chat (free). 模型影响速度和质量。
+                        </Form.Text>
+                    </Form.Group>
+                </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={onClose}>取消</Button>

@@ -120,6 +120,11 @@ const App: React.FC = () => {
         }
     };
 
+    const handleHideConfigModal = () => {
+        console.log('Hiding config modal');
+        setShowConfigModal(false);
+    };
+
     useEffect(() => {
         if (!apiKey) {
             setShowConfigModal(true); // Open Config modal if no API key on initial load
@@ -130,11 +135,10 @@ const App: React.FC = () => {
         <Container fluid className="d-flex justify-content-center align-items-center">
 
             {/* Config Modal */}
-            <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
+            <Modal show={showConfigModal} onHide={handleHideConfigModal} backdrop="static" keyboard={false}>
                 <Config
-                    onClose={() => setShowConfigModal(false)}
+                    onClose={handleHideConfigModal}
                     showModal={showConfigModal}
-                    setShowModal={setShowConfigModal}
                     apiKey={apiKey}
                     setApiKeyState={setApiKeyState}
                     selectedModel={selectedModel}
