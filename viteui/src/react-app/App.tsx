@@ -58,6 +58,12 @@ const App: React.FC = () => {
         }
     }, [apiKey]);
 
+    const removeFromHistory = () => {
+        if(!translate) return;
+        const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
+        setTransHistory(updatedHistory);
+    };
+
     return (
         <Container fluid className="vh-95">
             <Navbar expand="lg">
@@ -90,7 +96,7 @@ const App: React.FC = () => {
                         setInputText={setInputText}
                         processText={processText}
                         translation={translate}
-                        setTransHistory={setTransHistory}
+                        removeFromHistory={removeFromHistory}
                     />
                    
                 </Col>

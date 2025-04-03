@@ -15,7 +15,7 @@ interface InputProps {
     setInputText: (text: string) => void;
     processText: () => void;
     translation: Translation | null;
-    setTransHistory: (history: Translation[]) => void;
+    removeFromHistory: () => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -27,7 +27,7 @@ const Input: React.FC<InputProps> = ({
     setInputText,
     processText,
     translation,
-    setTransHistory
+    removeFromHistory
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
     const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
