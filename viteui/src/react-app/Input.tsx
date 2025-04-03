@@ -1,3 +1,11 @@
+/**
+ * Input Component - Handles text input, processing, and display of translation results
+ * Features:
+ * - Text input area for user to enter text
+ * - Processing button to trigger translation
+ * - Display areas for model thinking process and translation results
+ * - History management with delete functionality
+ */
 import React, { useRef } from 'react';
 import { Button, Form, Stack } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
@@ -7,16 +15,17 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
 
+// Props interface for the Input component
 interface InputProps {
-    inputText: string;
-    outputText: string;
-    thinkingText: string;
-    isProcessing: boolean;
-    status: string;
-    setInputText: (text: string) => void;
-    processText: () => void;
-    translation: Translation;
-    removeFromHistory: () => void;
+    inputText: string; // Current input text
+    outputText: string; // Default output text
+    thinkingText: string; // Default thinking text
+    isProcessing: boolean; // Processing state flag
+    status: string; // Current status message
+    setInputText: (text: string) => void; // Callback to update input text
+    processText: () => void; // Callback to trigger text processing
+    translation: Translation; // Translation object containing results
+    removeFromHistory: () => void; // Callback to remove from history
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,23 +39,25 @@ const Input: React.FC<InputProps> = ({
     translation,
     removeFromHistory
 }) => {
-    const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
-    
-    // Auto-scroll thinking text area
+    // Ref for auto-scrolling the thinking text area
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Auto-scroll thinking text area when content changes
     React.useEffect(() => {
         if (textAreaRef.current) {
             textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
         }
     }, [thinkingText]);
 
-    // will use previous translation output if available
+    // Use previous translation output if available, fallback to default
     const outTxt = translation?.output ?? outputText;
 
-    // will use previous translation thinking if available
+    // Use previous translation thinking if available, fallback to default
     const thinkTxt = translation?.thinking ?? thinkingText;
 
     return (
         <Stack gap={3} className="h-90 overflow-auto">
+            {/* Input text area */}
             <Form.Group className="flex-grow-1">
                 <Form.Label className="fw-bold">输入文本：</Form.Label>
                 <Form.Control
@@ -58,6 +69,7 @@ const Input: React.FC<InputProps> = ({
                 />
             </Form.Group>
 
+            {/* Processing button */}
             <div className="d-flex gap-2 w-100">
                 <Button
                     onClick={processText}
@@ -70,6 +82,7 @@ const Input: React.FC<InputProps> = ({
                 </Button>
             </div>
 
+            {/* Thinking process display */}
             {thinkTxt && (
                 <Form.Group className="flex-grow-1">
                     <Form.Label className="fw-bold">模型思考过程：</Form.Label>
@@ -84,8 +97,10 @@ const Input: React.FC<InputProps> = ({
                 </Form.Group>
             )}
 
-            {outTxt && ( // Only show if there is output text
+            {/* Translation results display */}
+            {outTxt && (
                     <Form.Group className="flex-grow-1">
+                        {/* Delete button for history items */}
                         {translation && (
                             <Button variant="link" className="p-0 ms-2" onClick={removeFromHistory}>
                                 <FontAwesomeIcon icon={faTrash} />
@@ -93,7 +108,7 @@ const Input: React.FC<InputProps> = ({
                         )}  
                         <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
 
-                        <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
+                        <div className="h-90 overflow-auto border p-2 rounded">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outTxt}
                             </ReactMarkdown>
