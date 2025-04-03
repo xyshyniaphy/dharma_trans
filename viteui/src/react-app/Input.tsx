@@ -108,7 +108,7 @@ const Input: React.FC<InputProps> = ({
                         )}  
                         <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
 
-                        <div className="h-90 overflow-auto border p-2 rounded">
+                        <div className="h-90 overflow-auto border p-2 rounded markdown-body">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outTxt}
                             </ReactMarkdown>
