@@ -30,7 +30,14 @@ const App: React.FC = () => {
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
-        if (outputText) {
+        await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
+    };
+
+    useEffect(() => {
+        if (isProcessing || status !== '翻译完成') {
+            return;
+        }
+        if (outputText && inputText) {
             const newHistory = [...transHistory, {
                 input: inputText,
                 output: outputText,
@@ -38,9 +45,9 @@ const App: React.FC = () => {
                 timestamp: Date.now()
             }];
             setTransHistory(newHistory);
+            setStatus('');
         }
-        await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setTransHistory);
-    };
+    }, [isProcessing,outputText,status]);
 
     const handleHideConfigModal = () => {
         setShowConfigModal(false);

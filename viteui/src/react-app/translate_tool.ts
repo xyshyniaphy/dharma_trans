@@ -13,7 +13,7 @@ const fetchPrompt = async (text: string): Promise<string> => {
     return data.prompt;
 };
 
-const m_processText = async (apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setTransHistory: (history: any[]) => void) => {
+const m_processText = async (apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any) => {
     if (!apiKey) {
         setShowConfigModal(true);
         return;
