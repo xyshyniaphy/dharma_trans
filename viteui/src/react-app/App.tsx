@@ -31,7 +31,7 @@ const App: React.FC = () => {
     const [status, setStatus] = useState<string>('');
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
-
+    const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
 
     const processText = async () => {
         if (!apiKey) {
@@ -121,6 +121,9 @@ const App: React.FC = () => {
             }
         } finally {
             setIsProcessing(false);
+            if (outputText) {
+                setTransHistory([...transHistory, { input: inputText, output: outputText, thinking: thinkingText }]);
+            }
         }
     };
 
