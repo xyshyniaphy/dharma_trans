@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Form, Spinner, Container, Stack, Row, Col, Navbar, Nav } from 'react-bootstrap';
+import { Button, Form, Container, Stack, Row, Col, Navbar, Nav } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import ReactMarkdown from 'react-markdown';
