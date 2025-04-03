@@ -5,12 +5,12 @@ import { Button, Form, Spinner, Container, Stack } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 
-const apiUrl = import.meta.env.OPENAI_URL;
-const promptApiUrl = import.meta.env.DHARMA_PROMPT_API_URL;
+const apiUrl = import.meta.env.VITE_OPENAI_URL;
+const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
 
 const fetchPrompt = async (text: string): Promise<string> => {
-    const response = await fetch(promptApiUrl, {
+    const response = await fetch(promptApiUrl + '/get_prompt', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
