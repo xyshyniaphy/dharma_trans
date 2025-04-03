@@ -14,7 +14,8 @@ interface InputProps {
     status: string;
     setInputText: (text: string) => void;
     processText: () => void;
-    translation?: Translation;
+    translation: Translation | null;
+    setTransHistory: (history: Translation[]) => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -25,12 +26,11 @@ const Input: React.FC<InputProps> = ({
     status,
     setInputText,
     processText,
-    translation
+    translation,
+    setTransHistory
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
     const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
-     
-    
 
     // Auto-scroll thinking text area
     React.useEffect(() => {

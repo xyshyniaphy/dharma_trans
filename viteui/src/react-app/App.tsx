@@ -21,11 +21,11 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
-    const [translate, setTranslate] = useState<Translation>();
+    const [translate, setTranslate] = React.useState<Translation | null>(null);
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
-        setTranslate(undefined);
+        setTranslate(null);
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
 
@@ -90,6 +90,7 @@ const App: React.FC = () => {
                         setInputText={setInputText}
                         processText={processText}
                         translation={translate}
+                        setTransHistory={setTransHistory}
                     />
                    
                 </Col>
