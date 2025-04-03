@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Spinner, Container, Stack } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
+import ReactMarkdown from 'react-markdown';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
@@ -181,24 +182,22 @@ const App: React.FC = () => {
 
                 <Form.Group>
                     <Form.Label className="fw-bold">处理结果：</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={8}
-                        readOnly
-                        placeholder="优化后的文本将显示在这里..."
-                        value={outputText}
-                    />
+                    <ReactMarkdown>
+                        {outputText}
+                    </ReactMarkdown>
                 </Form.Group>
-                <Form.Group>
-                    <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={4}
-                        readOnly
-                        placeholder="模型的思考过程将显示在这里..."
-                        value={thinkingText}
-                    />
-                </Form.Group>
+                {thinkingText && (
+                    <Form.Group>
+                        <Form.Label className="fw-bold">模型思考过程：</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={4}
+                            readOnly
+                            placeholder="模型的思考过程将显示在这里..."
+                            value={thinkingText}
+                        />
+                    </Form.Group>
+                )}
             </Stack>
         </Container>
     );
