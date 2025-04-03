@@ -4,15 +4,9 @@ import OpenAI from 'openai';
 // Global cache for the dictionary Map
 let dictionaryMap = null;
 
-// Global variable to track the last modified timestamp of dic.csv
-let lastDicModifiedTimestamp = null;
-
-// Global variable to track the last modified timestamp of base_prompt.txt
-let lastPromptModifiedTimestamp = null;
-
 // Function to load and parse the dictionary from R2
-async function loadDictionary(env) {
-	if (dictionaryMap) {
+async function loadDictionary(env,reload = false) {
+	if (dictionaryMap && !reload) {
 		return dictionaryMap;
 	}
 
@@ -23,14 +17,6 @@ async function loadDictionary(env) {
 			console.error('Dictionary file "dic.csv" not found in R2 bucket.');
 			throw new Error('Dictionary file not found.');
 		}
-
-		// Check if the dictionary file has been updated
-		const currentTimestamp = r2Object.uploaded;
-		if (lastDicModifiedTimestamp && currentTimestamp <= lastDicModifiedTimestamp) {
-			console.log('Dictionary is already up-to-date.');
-			return dictionaryMap;
-		}
-		lastDicModifiedTimestamp = currentTimestamp;
 
 		const csvText = await r2Object.text();
 		const parseResult = Papa.parse(csvText, {
@@ -115,30 +101,25 @@ function getFilteredDictionary(text, dictionary) {
 	return { results: results.join('\n'), executionTimeMicroseconds };
 }
 
+
+let basePrompt = null;
 // Function to generate translation prompt
-async function getBasePrompt(env, lastModifiedTimestamp) {
+async function getBasePrompt(env, reload = false) {
+	if (basePrompt && !reload) {
+		return ;
+	}
+	basePrompt = null;
   const key = 'base_prompt.txt';
   const r2Object = await env.MY_R2_BUCKET.get(key);
   if (!r2Object) {
     console.log('Base prompt not found');
-    return null;
+    return ;
   }
-  const currentTimestamp = r2Object.uploaded;
-  if (lastModifiedTimestamp && currentTimestamp <= lastModifiedTimestamp) {
-    console.log('Base prompt is already up-to-date.');
-    return null;
-  }
-  return {
-    content: await r2Object.text(),
-    timestamp: currentTimestamp
-  };
+  basePrompt = await r2Object.text();
 }
 
-function get_prompt(text, filteredDictionary, basePrompt) {
-  const basePromptContent = basePrompt ? basePrompt.content + '\n\n' : '';
-  return `
-${basePromptContent}${filteredDictionary}
-Chinese Text to Translate: ${text}`;
+function get_prompt(text, filteredDictionary) {
+  return `${basePrompt}\n\n${filteredDictionary}\n\nChinese Text to Translate: ${text}`;
 }
 
 export default {
@@ -218,12 +199,8 @@ export default {
 
 				const { results: filteredDictionary } = getFilteredDictionary(text, dictionaryMap);
 
-				const basePrompt = await getBasePrompt(env, lastDicModifiedTimestamp);
-				if (basePrompt) {
-					lastDicModifiedTimestamp = basePrompt.timestamp;
-				}
-
-				const prompt = get_prompt(text, filteredDictionary, basePrompt);
+				await getBasePrompt(env);
+				const prompt = get_prompt(text, filteredDictionary);
 
 				return new Response(JSON.stringify({
 					prompt: prompt,
@@ -263,12 +240,8 @@ export default {
 
 				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text, dictionaryMap);
 
-				const basePrompt = await getBasePrompt(env, lastDicModifiedTimestamp);
-				if (basePrompt) {
-					lastDicModifiedTimestamp = basePrompt.timestamp;
-				}
-
-				const prompt = get_prompt(text, filteredDictionary, basePrompt);
+				await getBasePrompt(env);
+				const prompt = get_prompt(text, filteredDictionary);
 
 				// Initialize OpenAI client
 				const openai = new OpenAI({
@@ -301,14 +274,11 @@ export default {
 			}
 		}
 
-		if (path.endsWith("/reset_dict")) {
-			if (request.method !== 'GET') {
-				return new Response('Method Not Allowed. Please use GET.', { status: 405 });
-			}
+		if (path.endsWith("/reset")) {
 
-			dictionaryMap = null; // Reset the global dictionary map
-			await loadDictionary(env);
-			return new Response('Successfully reseted dictionary map', { status: 200 });
+			await loadDictionary(env,true);
+			await getBasePrompt(env,true);
+			return new Response('Successfully reseted dictionary map and base prompt', { status: 200 });
 		}
 
 		

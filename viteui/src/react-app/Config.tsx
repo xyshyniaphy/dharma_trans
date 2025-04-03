@@ -16,7 +16,8 @@ const fetchAndFilterModels = async () => {
         const data = await response.json();
         const filteredModels = data.data.filter((model: OpenRouterModel) =>
             model.name.toLowerCase().includes('free') &&
-            !model.name.toLowerCase().includes('distill') &&
+           !model.name.toLowerCase().includes('distill') &&
+            !model.name.toLowerCase().includes('preview') &&
             !model.name.toLowerCase().includes('learnlm')
         ).filter((model: OpenRouterModel) =>
             (model.name.toLowerCase().includes('pro') &&model.name.toLowerCase().includes('gemini pro') )||
@@ -121,7 +122,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="apiKeyInput">请输入您的 OpenRouter API 密钥：</Form.Label>
                         <Form.Control type="text" id="apiKeyInput" value={tempApiKey} onChange={handleTempApiKeyChange} />
-                        <Button variant="link" href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</Button>
+                        <Button variant="link" href="https://zhuanlan.zhihu.com/p/28203837581" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</Button>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label htmlFor="modelSelect">选择模型:</Form.Label>
