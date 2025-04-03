@@ -21,11 +21,10 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
-    const [translate, setTranslate] = React.useState<Translation | null>(null);
+    const [translate, setTranslate] = useState<Translation>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
-        setTranslate(null);
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
 
@@ -34,15 +33,15 @@ const App: React.FC = () => {
             return;
         }
         if (outputText && inputText) {
-            const newTranslate =  {
+            const newTrans ={
                 input: inputText,
                 output: outputText,
                 thinking: thinkingText,
                 timestamp: Date.now(),
                 modelName: selectedModel
             };
-            setTranslate(newTranslate);
-            const newHistory = [...transHistory, newTranslate];
+            const newHistory = [...transHistory, newTrans];
+            setTranslate(newTrans);
             setTransHistory(newHistory);
             setStatus('');
         }

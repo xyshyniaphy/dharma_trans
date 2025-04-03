@@ -1,10 +1,8 @@
 import React from 'react';
-import { ListGroup } from 'react-bootstrap';
-
-import { Translation } from './translation_interface';
+import {   ListGroup } from 'react-bootstrap';
 
 type ViewHistoryProps = {
-  transHistory: Array<Translation>;
+  transHistory: Array<{input: string, output: string, thinking: string}>;
   setInputText: (text: string) => void;
   setOutputText: (text: string) => void;
   setThinkingText: (text: string) => void;
@@ -16,7 +14,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
   setOutputText,
   setThinkingText,
 }) => {
-  const handleSelect = (item: Translation) => {
+  const handleSelect = (item: {input: string, output: string, thinking: string}) => {
     setInputText(item.input);
     setOutputText(item.output);
     setThinkingText(item.thinking);
@@ -24,9 +22,9 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
 
   return (
     <ListGroup>
-    {transHistory.map((item, _) => (
+    {transHistory.map((item, index) => (
       <ListGroup.Item
-        key={item.timestamp}
+        key={index}
         action
         onClick={() => handleSelect(item)}
       >

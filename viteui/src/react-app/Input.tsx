@@ -2,9 +2,10 @@ import React, { useRef } from 'react';
 import { Button, Form, Stack } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
-import { useLocalStorage } from './hooks/useLocalStorage';
 
 interface InputProps {
     inputText: string;
@@ -14,7 +15,7 @@ interface InputProps {
     status: string;
     setInputText: (text: string) => void;
     processText: () => void;
-    translation: Translation | null;
+    translation: Translation;
     removeFromHistory: () => void;
 }
 
@@ -30,7 +31,7 @@ const Input: React.FC<InputProps> = ({
     removeFromHistory
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
-    const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
+    
 
     // Auto-scroll thinking text area
     React.useEffect(() => {
@@ -81,7 +82,13 @@ const Input: React.FC<InputProps> = ({
 
             {outputText && ( // Only show if there is output text
                     <Form.Group className="flex-grow-1">
-                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName??selectedModel}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
+                        {translation && (
+                            <Button variant="link" className="p-0 ms-2" onClick={removeFromHistory}>
+                                <FontAwesomeIcon icon={faTrash} />
+                            </Button>
+                        )}  
+                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
+
                         <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outputText}
