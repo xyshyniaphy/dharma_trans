@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { Translation } from './translation_interface';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 interface InputProps {
     inputText: string;
@@ -27,6 +28,8 @@ const Input: React.FC<InputProps> = ({
     translation
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
+    const [selectedModel, _] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
+     
     
 
     // Auto-scroll thinking text area
@@ -78,7 +81,7 @@ const Input: React.FC<InputProps> = ({
 
             {outputText && ( // Only show if there is output text
                     <Form.Group className="flex-grow-1">
-                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
+                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName??selectedModel}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
                         <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outputText}

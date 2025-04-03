@@ -25,6 +25,7 @@ const App: React.FC = () => {
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
+        setTranslate(undefined);
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
 
@@ -33,13 +34,15 @@ const App: React.FC = () => {
             return;
         }
         if (outputText && inputText) {
-            const newHistory = [...transHistory, {
+            const newTranslate =  {
                 input: inputText,
                 output: outputText,
                 thinking: thinkingText,
                 timestamp: Date.now(),
                 modelName: selectedModel
-            }];
+            };
+            setTranslate(newTranslate);
+            const newHistory = [...transHistory, newTranslate];
             setTransHistory(newHistory);
             setStatus('');
         }
