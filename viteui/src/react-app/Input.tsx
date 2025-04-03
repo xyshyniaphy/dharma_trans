@@ -39,7 +39,10 @@ const Input: React.FC<InputProps> = ({
         }
     }, [thinkingText]);
 
+    // will use previous translation output if available
     const outTxt = translation?.output ?? outputText;
+
+    // will use previous translation thinking if available
     const thinkTxt = translation?.thinking ?? thinkingText;
 
     return (

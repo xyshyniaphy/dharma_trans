@@ -61,13 +61,24 @@ const App: React.FC = () => {
         }
     }, [apiKey]);
 
+    //user input changed , so clear previous translation
     useEffect(() => {
         if (!translate) return;
         if(translate.input !== inputText) {
           setTranslate(undefined);
+          if(outputText) {
+            setOutputText('');
+          }
+          if(thinkingText) {
+            setThinkingText('');
+          }
+          if(status) {
+            setStatus('');
+          }
         }
     }, [inputText]);
 
+    //click delete button on input
     const removeFromHistory = () => {
         if(!translate) return;
         const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
