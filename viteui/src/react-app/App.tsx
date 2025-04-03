@@ -7,10 +7,6 @@ import Config from './Config';
 const apiUrl = import.meta.env.OPENAI_URL;
 const promptApiUrl = import.meta.env.DHARMA_PROMPT_API_URL;
 
-type OpenRouterModel = {
-  id: string;
-  name: string;
-};
 
 const fetchPrompt = async (text: string): Promise<string> => {
     const response = await fetch(promptApiUrl, {
