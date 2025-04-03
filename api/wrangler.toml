@@ -2,12 +2,18 @@ name = "dharma-trans-api"
 main = "src/index.js"
 compatibility_date = "2024-04-16"
 
+
+
+routes = [{ pattern = "t.hdcx.site/rapi/*", zone_name = "hdcx.site" }]
+
+
 [[r2_buckets]]
   binding = "MY_R2_BUCKET"
   bucket_name = "aitrans"
 
 # If you need environment variables (like API keys for external services later)
-[vars]
+
+
 # OPENROUTER_API_KEY will be set dynamically via environment variables during deployment.
 
 # If you need secrets (like CLOUDFLARE_AUTH_TOKEN if you use the AI API later)
