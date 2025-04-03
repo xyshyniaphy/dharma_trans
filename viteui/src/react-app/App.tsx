@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Form, Spinner, Container, Stack } from 'react-bootstrap';
+import { Button, Form, Spinner, Container, Stack, Row, Col, Navbar, Nav } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import ReactMarkdown from 'react-markdown';
@@ -144,7 +144,84 @@ const App: React.FC = () => {
     }, [thinkingText]);
 
     return (
-        <Container fluid className="d-flex flex-column justify-content-center align-items-center vh-90">
+        <Container fluid className="vh-90">
+            <Navbar bg="light" expand="lg">
+                <Container>
+                    <Navbar.Brand>中翻英</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+
+            <Row className="h-90">
+                <Col md={3} className="bg-light p-3">
+                    {/* Left Panel */}
+                    <Nav defaultActiveKey="/home" className="flex-column">
+                        <Nav.Link href="/home">Active</Nav.Link>
+                        <Nav.Link eventKey="link-1">Link</Nav.Link>
+                        <Nav.Link eventKey="link-2">Link</Nav.Link>
+                        <Nav.Link eventKey="disabled" disabled>
+                            Disabled
+                        </Nav.Link>
+                    </Nav>
+                </Col>
+                <Col md={9} className="p-3">
+                    {/* Main Panel */}
+                    <Stack gap={3} className="h-90 overflow-auto">
+                        <Form.Group className="flex-grow-1">
+                            <Form.Label className="fw-bold">输入文本：</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                readOnly={isProcessing}
+                                className="h-90"
+                                placeholder="请在此输入需要翻译的中文文本..."
+                                value={inputText}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <div className="d-flex gap-2 w-100">
+                            <Button
+                                onClick={processText}
+                                id="processBtn"
+                                variant="primary"
+                                disabled={isProcessing || !inputText}
+                                className="flex-grow-1"
+                            >
+                                {isProcessing ? status : ' 翻译'}
+                            </Button>
+                        </div>
+
+                        {thinkingText && (
+                            <Form.Group className="flex-grow-1">
+                                <Form.Label className="fw-bold">模型思考过程：</Form.Label>
+                                <Form.Control
+                                    ref={textAreaRef}
+                                    as="textarea"
+                                    className="h-90"
+                                    readOnly
+                                    placeholder="模型的思考过程将显示在这里..."
+                                    value={thinkingText}
+                                />
+                            </Form.Group>
+                        )}
+
+                        {isProcessing ? null : (
+                            <Form.Group className="flex-grow-1">
+                                <Form.Label className="fw-bold">翻译结果：</Form.Label>
+                                <div className="h-90 overflow-auto">
+                                    <ReactMarkdown>
+                                        {outputText}
+                                    </ReactMarkdown>
+                                </div>
+                            </Form.Group>
+                        )}
+
+                    </Stack>
+                </Col>
+            </Row>
 
             {/* Config Modal */}
             <Config
@@ -155,64 +232,7 @@ const App: React.FC = () => {
                 selectedModel={selectedModel}
                 setSelectedModel={setSelectedModel}
             />
-        
-            <Stack gap={3} className="w-100 h-90 overflow-auto p-3">
-                <Form.Group className="flex-grow-1">
-                    <Form.Label className="text-center fw-bold fs-1">中翻英</Form.Label>
-                    <Form.Label className="fw-bold">输入文本：</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        readOnly={isProcessing}
-                        className="h-90"
-                        placeholder="请在此输入需要翻译的中文文本..."
-                        value={inputText}
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                    />
-                </Form.Group>
-
-                <div className="d-flex gap-2 w-100">
-                    <Button
-                        onClick={processText}
-                        id="processBtn"
-                        variant="primary"
-                        disabled={isProcessing || !inputText}
-                        className="flex-grow-1"
-                    >
-                        {isProcessing ? status : ' 翻译'}
-                    </Button>
-                    <Button onClick={() => setShowConfigModal(true)} variant="outline-secondary" style={{ width: '100px' }}>
-                        设置
-                    </Button>
-                </div>
-
-                {thinkingText && (
-                    <Form.Group className="flex-grow-1">
-                        <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                        <Form.Control
-                            ref={textAreaRef}
-                            as="textarea"
-                            className="h-90"
-                            readOnly
-                            placeholder="模型的思考过程将显示在这里..."
-                            value={thinkingText}
-                        />
-                    </Form.Group>
-                )}
-
-                {isProcessing ? null : (
-                    <Form.Group className="flex-grow-1">
-                        <Form.Label className="fw-bold">翻译结果：</Form.Label>
-                        <div className="h-90 overflow-auto">
-                            <ReactMarkdown>
-                                {outputText}
-                            </ReactMarkdown>
-                        </div>
-                    </Form.Group>
-                )}
-                
-            </Stack>
         </Container>
     );
 };
-
 export default App;
