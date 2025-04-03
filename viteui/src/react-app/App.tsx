@@ -1,10 +1,11 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Button } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
+import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
@@ -20,6 +21,7 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
+    const [showHistory, setShowHistory] = useState(false);
 
     const processText = async () => {
         if (outputText) {
@@ -39,15 +41,13 @@ const App: React.FC = () => {
     }, [apiKey]);
 
     return (
-        <Container fluid className="vh-90">
+        <Container fluid className="vh-95">
             <Navbar bg="light" expand="lg">
-            <Container>
-                    <Navbar.Brand>中翻英</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
-                    <Navbar.Collapse id="basic-navbar-nav">
-                    </Navbar.Collapse>
-                </Container>
+                <Navbar.Brand>中翻英</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
+                <Navbar.Collapse id="basic-navbar-nav">
+                </Navbar.Collapse>
             </Navbar>
 
             <Row className="h-90">
@@ -72,6 +72,17 @@ const App: React.FC = () => {
                         status={status}
                         setInputText={setInputText}
                         processText={processText}
+                    />
+                    <Button variant="secondary" onClick={() => setShowHistory(true)}>
+                        View History
+                    </Button>
+                    <ViewHistory
+                        transHistory={transHistory}
+                        setInputText={setInputText}
+                        setOutputText={setOutputText}
+                        setThinkingText={setThinkingText}
+                        show={showHistory}
+                        onHide={() => setShowHistory(false)}
                     />
                 </Col>
             </Row>
