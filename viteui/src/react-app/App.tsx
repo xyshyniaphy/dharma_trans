@@ -1,10 +1,10 @@
 // src/react-app/App.tsx
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Button, Form, Container, Stack, Row, Col, Navbar, Nav } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Navbar, Nav } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
-import ReactMarkdown from 'react-markdown';
+import Input from './Input';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
@@ -30,7 +30,7 @@ const App: React.FC = () => {
     const [thinkingText, setThinkingText] = useState<string>('');
     const [status, setStatus] = useState<string>('');
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [showConfigModal, setShowConfigModal] = useState<boolean>(false); // New state for Config modal
+    const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
 
     const processText = async () => {
@@ -125,31 +125,22 @@ const App: React.FC = () => {
                 setTransHistory([...transHistory, { input: inputText, output: outputText, thinking: thinkingText }]);
             }
         }
-    };
+    };;
 
     const handleHideConfigModal = () => {
-        console.log('Hiding config modal');
         setShowConfigModal(false);
     };
 
     useEffect(() => {
         if (!apiKey) {
-            setShowConfigModal(true); // Open Config modal if no API key on initial load
+            setShowConfigModal(true); 
         }
     }, [apiKey]);
-
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-    useEffect(() => {
-      if (textAreaRef.current) {
-        textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
-      }
-    }, [thinkingText]);
 
     return (
         <Container fluid className="vh-90">
             <Navbar bg="light" expand="lg">
-                <Container>
+            <Container>
                     <Navbar.Brand>中翻英</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
@@ -171,58 +162,16 @@ const App: React.FC = () => {
                     </Nav>
                 </Col>
                 <Col md={9} className="p-3">
-                    {/* Main Panel */}
-                    <Stack gap={3} className="h-90 overflow-auto">
-                        <Form.Group className="flex-grow-1">
-                            <Form.Label className="fw-bold">输入文本：</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                readOnly={isProcessing}
-                                className="h-90"
-                                placeholder="请在此输入需要翻译的中文文本..."
-                                value={inputText}
-                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                            />
-                        </Form.Group>
-
-                        <div className="d-flex gap-2 w-100">
-                            <Button
-                                onClick={processText}
-                                id="processBtn"
-                                variant="primary"
-                                disabled={isProcessing || !inputText}
-                                className="flex-grow-1"
-                            >
-                                {isProcessing ? status : ' 翻译'}
-                            </Button>
-                        </div>
-
-                        {thinkingText && (
-                            <Form.Group className="flex-grow-1">
-                                <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                                <Form.Control
-                                    ref={textAreaRef}
-                                    as="textarea"
-                                    className="h-90"
-                                    readOnly
-                                    placeholder="模型的思考过程将显示在这里..."
-                                    value={thinkingText}
-                                />
-                            </Form.Group>
-                        )}
-
-                        {isProcessing ? null : (
-                            <Form.Group className="flex-grow-1">
-                                <Form.Label className="fw-bold">翻译结果：</Form.Label>
-                                <div className="h-90 overflow-auto">
-                                    <ReactMarkdown>
-                                        {outputText}
-                                    </ReactMarkdown>
-                                </div>
-                            </Form.Group>
-                        )}
-
-                    </Stack>
+                    {/* Main Panel - Replaced with Input component */}
+                    <Input
+                        inputText={inputText}
+                        outputText={outputText}
+                        thinkingText={thinkingText}
+                        isProcessing={isProcessing}
+                        status={status}
+                        setInputText={setInputText}
+                        processText={processText}
+                    />
                 </Col>
             </Row>
 
