@@ -61,6 +61,13 @@ const App: React.FC = () => {
         }
     }, [apiKey]);
 
+    useEffect(() => {
+        if (!translate) return;
+        if(translate.input !== inputText) {
+          setTranslate(undefined);
+        }
+    }, [inputText]);
+
     const removeFromHistory = () => {
         if(!translate) return;
         const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
