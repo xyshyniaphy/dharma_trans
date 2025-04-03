@@ -180,12 +180,6 @@ const App: React.FC = () => {
                
                 <div id="status" className="text-center text-muted small ">{status || ' '}</div>
 
-                <Form.Group>
-                    <Form.Label className="fw-bold">处理结果：</Form.Label>
-                    <ReactMarkdown>
-                        {outputText}
-                    </ReactMarkdown>
-                </Form.Group>
                 {thinkingText && (
                     <Form.Group>
                         <Form.Label className="fw-bold">模型思考过程：</Form.Label>
@@ -198,6 +192,13 @@ const App: React.FC = () => {
                         />
                     </Form.Group>
                 )}
+                <Form.Group>
+                    <Form.Label className="fw-bold">处理结果：</Form.Label>
+                    <ReactMarkdown>
+                        {outputText}
+                    </ReactMarkdown>
+                </Form.Group>
+                
             </Stack>
         </Container>
     );
