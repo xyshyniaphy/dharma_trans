@@ -3,6 +3,8 @@ import { Button, Form, Stack } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import { Translation } from './translation_interface';
+
 interface InputProps {
     inputText: string;
     outputText: string;
@@ -11,6 +13,7 @@ interface InputProps {
     status: string;
     setInputText: (text: string) => void;
     processText: () => void;
+    translation?: Translation;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,7 +23,8 @@ const Input: React.FC<InputProps> = ({
     isProcessing,
     status,
     setInputText,
-    processText
+    processText,
+    translation
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null); // Moved ref here
     
@@ -74,7 +78,7 @@ const Input: React.FC<InputProps> = ({
 
             {outputText && ( // Only show if there is output text
                     <Form.Group className="flex-grow-1">
-                        <Form.Label className="fw-bold">翻译结果：</Form.Label>
+                        <Form.Label className="fw-bold">{`翻译结果 (${translation?.modelName}) - ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
                         <div className="h-90 overflow-auto border p-2 rounded"> {/* Added border for clarity */}
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outputText}

@@ -21,6 +21,7 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
+    const [translate, setTranslate] = useState<Translation>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
@@ -85,6 +86,7 @@ const App: React.FC = () => {
                         status={status}
                         setInputText={setInputText}
                         processText={processText}
+                        translation={translate}
                     />
                    
                 </Col>
