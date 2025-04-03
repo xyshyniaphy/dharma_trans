@@ -10,6 +10,13 @@ import m_processText from './translate_tool';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
+interface Translation {
+    input: string;
+    output: string;
+    thinking: string;
+    timestamp: number;
+}
+
 const App: React.FC = () => {
     const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
     const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
@@ -19,12 +26,18 @@ const App: React.FC = () => {
     const [status, setStatus] = useState<string>('');
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
-    const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
+    const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
         if (outputText) {
-            setTransHistory([...transHistory, { input: inputText, output: outputText, thinking: thinkingText }]);
+            const newHistory = [...transHistory, {
+                input: inputText,
+                output: outputText,
+                thinking: thinkingText,
+                timestamp: Date.now()
+            }];
+            setTransHistory(newHistory);
         }
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setTransHistory);
     };
@@ -83,6 +96,8 @@ const App: React.FC = () => {
                 setApiKeyState={setApiKeyState}
                 selectedModel={selectedModel}
                 setSelectedModel={setSelectedModel}
+                transHistory={transHistory}
+                setTransHistory={setTransHistory}
             />
 
             {/* Full-screen overlay with progress circle */}

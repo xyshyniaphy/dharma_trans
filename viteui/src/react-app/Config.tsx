@@ -8,6 +8,13 @@ interface OpenRouterModel {
     name: string;
 }
 
+interface Translation {
+    input: string;
+    output: string;
+    thinking: string;
+    timestamp: number;
+}
+
 const fetchAndFilterModels = async () => {
     try {
         const response = await fetch('https://openrouter.ai/api/v1/models');
@@ -35,15 +42,47 @@ interface ConfigProps {
     setApiKeyState: (value: string) => void;
     selectedModel: string;
     setSelectedModel: (value: string) => void;
+    transHistory: Translation[];
+    setTransHistory: (value: Translation[]) => void;
 }
 
-
-
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel }) => {
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory }) => {
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
     const [models, setModels] = useState<OpenRouterModel[]>([]);
+
+    const handleClearHistory = () => {
+        setTransHistory([]);
+    };
+
+    const handleExportHistory = () => {
+        const json = JSON.stringify(transHistory, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'translation_history.json';
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImportHistory = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedHistory = JSON.parse(e.target?.result as string) as Translation[];
+                    const newHistory = [...transHistory, ...importedHistory];
+                    setTransHistory(newHistory);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+    };
 
     //assume user will paste api key
     useEffect(() => {
@@ -101,8 +140,15 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                         </Form.Text>
                     </Form.Group>
                 </Form>
+              
             </Modal.Body>
             <Modal.Footer>
+                <Button variant="secondary" onClick={handleClearHistory} className="me-2">清除历史</Button>
+                <Button variant="secondary" onClick={handleExportHistory} className="me-2">导出历史</Button>
+                <Button variant="secondary" as="label" htmlFor="import-history" className="me-2">
+                    导入历史
+                    <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
+                </Button>
                 <Button variant="primary" onClick={onClose}>取消</Button>
                 <Button variant="primary" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
             </Modal.Footer>
