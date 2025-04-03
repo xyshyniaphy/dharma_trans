@@ -94,10 +94,7 @@ const App: React.FC = () => {
             <Navbar expand="lg">
                 <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
                 <Navbar.Brand>中翻英</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Button onClick={() => setShowConfigModal(true)}>设置</Button>
-                <Navbar.Collapse id="basic-navbar-nav">
-                </Navbar.Collapse>
             </Navbar>
 
             <Row className="h-90">

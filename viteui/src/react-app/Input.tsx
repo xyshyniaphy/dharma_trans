@@ -102,7 +102,7 @@ const Input: React.FC<InputProps> = ({
                     <Form.Group className="flex-grow-1">
                         {/* Delete button for history items */}
                         {translation && (
-                            <Button variant="link" className="p-0 ms-2" onClick={removeFromHistory}>
+                            <Button variant="link" className="p-2 ms-2  rounded" onClick={removeFromHistory}>
                                 <FontAwesomeIcon icon={faTrash} />
                             </Button>
                         )}  
