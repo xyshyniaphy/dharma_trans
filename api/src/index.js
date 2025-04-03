@@ -170,17 +170,17 @@ export default {
 				return new Response(error.message, { status: 400 });
 			}
 
-			try {
-				const wordsToLookup = findWordsToLookup(inputText, dictionaryMap);
-				const results = formatLookupResults(wordsToLookup, dictionaryMap);
+			// try {
+			// 	const wordsToLookup = findWordsToLookup(inputText, dictionaryMap);
+			// 	const results = formatLookupResults(wordsToLookup, dictionaryMap);
 
-				return new Response(results, {
-					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-				});
-			} catch (error) {
-				console.error('Error processing request:', error);
-				return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
-			}
+			// 	return new Response(results, {
+			// 		headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+			// 	});
+			// } catch (error) {
+			// 	console.error('Error processing request:', error);
+			// 	return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+			// }
 		}
 
 		// Handle /get_prompt path
@@ -286,27 +286,16 @@ export default {
 			return new Response('Successfully reseted dictionary map', { status: 200 });
 		}
 
+		
 		if (request.method !== 'POST') {
-			return new Response('Method Not Allowed. Please use POST.', { status: 405 });
+			return new Response('you url is ' + request.url + 'path is ' + path, { status: 200 });
 		}
 
-		let inputText;
 		try {
-			inputText = await parseJsonRequest(request);
+			const inputText = await parseJsonRequest(request);
+			return new Response(inputText, { status: 200 });
 		} catch (error) {
 			return new Response(error.message, { status: 400 });
-		}
-
-		try {
-			const wordsToLookup = findWordsToLookup(inputText, dictionaryMap);
-			const results = formatLookupResults(wordsToLookup, dictionaryMap);
-
-			return new Response(results, {
-				headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-			});
-		} catch (error) {
-			console.error('Error processing request:', error);
-			return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
 		}
 	},
 };
