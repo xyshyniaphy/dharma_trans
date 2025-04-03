@@ -28,7 +28,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
         action
         onClick={() => handleSelect(item)}
       >
-        {`Input: ${item.input}\nOutput: ${item.output}\nThinking: ${item.thinking}`}
+        {item.input.length > 10 ? `${item.input.slice(0, 10)}...` : item.input}
       </ListGroup.Item>
     ))}
   </ListGroup>
