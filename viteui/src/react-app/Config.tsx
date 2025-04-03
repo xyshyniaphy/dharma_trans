@@ -23,37 +23,48 @@ const fetchAndFilterModels = async () => {
 };
 
 interface ConfigProps {
-    setApiKey: (apiKey: string) => void;
-    setSelectedModel: (model: string) => void;
+    onClose: () => void;
     showModal: boolean;
     setShowModal: (show: boolean) => void;
+    apiKey: string;
+    setApiKeyState: (value: string) => void;
+    selectedModel: string;
+    setSelectedModel: (value: string) => void;
 }
 
-const Config: React.FC<ConfigProps> = ({ setApiKey, setSelectedModel, showModal, setShowModal }) => {
+
+
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, setShowModal, apiKey, setApiKeyState, selectedModel, setSelectedModel }) => {
+
+    const [tempApiKey, setTempApiKey] = useState(apiKey);
+    const [tempModel, setTempModel] = useState(selectedModel);
     const [models, setModels] = useState<OpenRouterModel[]>([]);
-    const [apiKey, setApiKeyState] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
-    const [selectedModelState, setSelectedModelState] = useState<string>(localStorage.getItem('SELECTED_MODEL') || '');
-    
-    const handleApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setApiKeyState(event.target.value);
-        setApiKey(event.target.value);
-    };
 
-    const handleModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedModelState(event.target.value);
-        setSelectedModel(event.target.value);
-    };
-
-    const saveApiKey = () => {
-        if (apiKey) {
-            localStorage.setItem('OPENROUTER_API_KEY', apiKey);
-            localStorage.setItem('SELECTED_MODEL', selectedModelState);
-            setShowModal(false);
+    //assume user will paste api key
+    useEffect(() => {
+        if (tempApiKey && tempApiKey.length >= 10) {
             fetchAndFilterModels().then(setModels);
-        } else {
-            alert('请输入有效的API密钥');
+        }
+    }, [tempApiKey]);
+
+    
+    const handleTempApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTempApiKey(event.target.value);
+    };
+
+    const handleTempModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        if (models.length > 0 && event.target.value !== '') {
+            setTempModel(event.target.value);
         }
     };
+
+    function saveAndClose(): void {
+        if  (models.length > 0 && tempApiKey.length >= 10 && tempModel !== '') {
+            setApiKeyState(tempApiKey);
+            setSelectedModel(tempModel);
+            setShowModal(false);
+        }
+    }
 
     return (
         <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
@@ -63,14 +74,14 @@ const Config: React.FC<ConfigProps> = ({ setApiKey, setSelectedModel, showModal,
             <Modal.Body>
                 <div className="mb-3">
                     <label htmlFor="apiKeyInput" className="form-label">请输入您的 OpenRouter API 密钥：</label>
-                    <input type="text" className="form-control" id="apiKeyInput" value={apiKey} onChange={handleApiKeyChange} />
+                    <input type="text" className="form-control" id="apiKeyInput" value={tempApiKey} onChange={handleTempApiKeyChange} />
                     <div className="mt-2">
                         <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</a>
                     </div>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="modelSelect" className="form-label">选择模型:</label>
-                    <select className="form-select" id="modelSelect" value={selectedModelState} onChange={handleModelChange} disabled={models.length === 0}>
+                    <select className="form-select" id="modelSelect" value={tempModel} onChange={handleTempModelChange} disabled={models.length === 0}>
                         {models.length === 0 && <option>请先输入有效API Key</option>}
                         {models.map((model: OpenRouterModel) => (
                             <option key={model.id} value={model.id}>{model.name}</option>
@@ -82,8 +93,8 @@ const Config: React.FC<ConfigProps> = ({ setApiKey, setSelectedModel, showModal,
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={() => setShowModal(false)}>取消</Button>
-                <Button variant="primary" onClick={saveApiKey} disabled={!apiKey}>保存</Button>
+                <Button variant="primary" onClick={onClose}>取消</Button>
+                <Button variant="primary" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
             </Modal.Footer>
         </Modal>
     );

@@ -7,6 +7,11 @@ import Config from './Config';
 const apiUrl = import.meta.env.OPENAI_URL;
 const promptApiUrl = import.meta.env.DHARMA_PROMPT_API_URL;
 
+type OpenRouterModel = {
+  id: string;
+  name: string;
+};
+
 const fetchPrompt = async (text: string): Promise<string> => {
     const response = await fetch(promptApiUrl, {
         method: 'POST',
@@ -20,7 +25,7 @@ const fetchPrompt = async (text: string): Promise<string> => {
 };
 
 const App: React.FC = () => {
-    const [apiKey, setApiKey] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
+    const [apiKey, setApiKeyState] = useState<string>(localStorage.getItem('OPENROUTER_API_KEY') || '');
     const [selectedModel, setSelectedModel] = useState<string>(localStorage.getItem('SELECTED_MODEL') || 'google/gemini-2.5-pro-exp-03-25:free');
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
@@ -131,10 +136,13 @@ const App: React.FC = () => {
             {/* Config Modal */}
             <Modal show={showConfigModal} onHide={() => setShowConfigModal(false)} backdrop="static" keyboard={false}>
                 <Config
-                    setApiKey={setApiKey}
-                    setSelectedModel={setSelectedModel}
+                    onClose={() => setShowConfigModal(false)}
                     showModal={showConfigModal}
                     setShowModal={setShowConfigModal}
+                    apiKey={apiKey}
+                    setApiKeyState={setApiKeyState}
+                    selectedModel={selectedModel}
+                    setSelectedModel={setSelectedModel}
                 />
             </Modal>
 
