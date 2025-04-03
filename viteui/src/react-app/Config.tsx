@@ -143,14 +143,14 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
               
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClearHistory} className="me-2">清除历史</Button>
-                <Button variant="secondary" onClick={handleExportHistory} className="me-2">导出历史</Button>
-                <Button variant="secondary" as="label" htmlFor="import-history" className="me-2">
+                <Button variant="outline-primary" onClick={handleClearHistory} className="me-2">清除历史</Button>
+                <Button variant="outline-primary" onClick={handleExportHistory} className="me-2">导出历史</Button>
+                <Button variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
                     导入历史
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button>
-                <Button variant="primary" onClick={onClose}>取消</Button>
-                <Button variant="primary" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
+                <Button variant="outline-warning" onClick={onClose}>取消</Button>
+                <Button variant="outline-success"  onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
             </Modal.Footer>
         </Modal>
     );

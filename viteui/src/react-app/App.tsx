@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Spinner, Button } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -61,17 +61,17 @@ const App: React.FC = () => {
 
     return (
         <Container fluid className="vh-95">
-            <Navbar bg="light" expand="lg">
-                <Nav.Link onClick={() => setShowLeftPanel(!showLeftPanel)}>记录</Nav.Link>
+            <Navbar expand="lg">
+                <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
                 <Navbar.Brand>中翻英</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
+                <Button onClick={() => setShowConfigModal(true)}>设置</Button>
                 <Navbar.Collapse id="basic-navbar-nav">
                 </Navbar.Collapse>
             </Navbar>
 
             <Row className="h-90">
-                <Col md={3} className={`bg-light p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
+                <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
                     <ViewHistory
                         transHistory={transHistory}
@@ -115,7 +115,7 @@ const App: React.FC = () => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                backgroundColor: 'rgba(1, 1, 1, 0.2)',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
