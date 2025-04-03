@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav, Collapse } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Spinner } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -84,6 +84,26 @@ const App: React.FC = () => {
                 selectedModel={selectedModel}
                 setSelectedModel={setSelectedModel}
             />
+
+            {/* Full-screen overlay with progress circle */}
+            {isProcessing && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000
+              }}>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            )}
         </Container>
     );
 };

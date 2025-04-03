@@ -117,9 +117,12 @@ function get_prompt(text, filteredDictionary) {
   return `You are an expert translator fluent in Chinese and English, specializing in buddism text.
 Translate the following Chinese text into formal buddism English.
 Mandatory Instructions:
+You will output in markdown format, with proper emphasis and formatting.
+You will output thinking in Chinese and output result in English.
 You MUST use the specified English translations for the corresponding Chinese terms provided below.
 Integrate these terms naturally into the final English translation. Adhere strictly to this list for the specified terms.
 Do not explain, But give a list of used chinese terms and coressponding english terms after the end of the translation.
+Also give another list of chinese terms and coressponding english terms that you will use if I do not give you the dictionary.
 When one chinese term has multiple english terms, put the second english term into translated text too in a parentheses
 Specified Terms to Use:
 ${filteredDictionary}
