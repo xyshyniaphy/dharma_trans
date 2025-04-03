@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Nav, Button } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, Button, Collapse } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -9,7 +9,6 @@ import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
-
 
 const App: React.FC = () => {
     const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
@@ -22,6 +21,7 @@ const App: React.FC = () => {
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<{input: string, output: string, thinking: string}>>('trans_history', []);
     const [showHistory, setShowHistory] = useState(false);
+    const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
         if (outputText) {
@@ -43,6 +43,7 @@ const App: React.FC = () => {
     return (
         <Container fluid className="vh-95">
             <Navbar bg="light" expand="lg">
+                <Nav.Link onClick={() => setShowLeftPanel(!showLeftPanel)}>记录</Nav.Link>
                 <Navbar.Brand>中翻英</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Nav.Link onClick={() => setShowConfigModal(true)}>设置</Nav.Link>
@@ -51,16 +52,17 @@ const App: React.FC = () => {
             </Navbar>
 
             <Row className="h-90">
-                <Col md={3} className="bg-light p-3">
+                <Col md={3} className={`bg-light p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
-                    <Nav defaultActiveKey="/home" className="flex-column">
-                        <Nav.Link href="/home">Active</Nav.Link>
-                        <Nav.Link eventKey="link-1">Link</Nav.Link>
-                        <Nav.Link eventKey="link-2">Link</Nav.Link>
-                        <Nav.Link eventKey="disabled" disabled>
-                            Disabled
-                        </Nav.Link>
-                    </Nav>
+                   
+                    <ViewHistory
+                        transHistory={transHistory}
+                        setInputText={setInputText}
+                        setOutputText={setOutputText}
+                        setThinkingText={setThinkingText}
+                        show={showHistory}
+                        onHide={() => setShowHistory(false)}
+                    />
                 </Col>
                 <Col md={9} className="p-3">
                     {/* Main Panel - Replaced with Input component */}
@@ -73,17 +75,7 @@ const App: React.FC = () => {
                         setInputText={setInputText}
                         processText={processText}
                     />
-                    <Button variant="secondary" onClick={() => setShowHistory(true)}>
-                        View History
-                    </Button>
-                    <ViewHistory
-                        transHistory={transHistory}
-                        setInputText={setInputText}
-                        setOutputText={setOutputText}
-                        setThinkingText={setThinkingText}
-                        show={showHistory}
-                        onHide={() => setShowHistory(false)}
-                    />
+                   
                 </Col>
             </Row>
 
