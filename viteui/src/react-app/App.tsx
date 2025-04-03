@@ -53,7 +53,6 @@ const App: React.FC = () => {
             <Row className="h-90">
                 <Col md={3} className={`bg-light p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
-                   
                     <ViewHistory
                         transHistory={transHistory}
                         setInputText={setInputText}
@@ -61,7 +60,7 @@ const App: React.FC = () => {
                         setThinkingText={setThinkingText}
                     />
                 </Col>
-                <Col md={9} className="p-3">
+                <Col md={showLeftPanel ? 9 : 12} className="p-3">
                     {/* Main Panel - Replaced with Input component */}
                     <Input
                         inputText={inputText}
