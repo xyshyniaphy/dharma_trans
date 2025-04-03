@@ -1,6 +1,6 @@
 // src/react-app/App.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Form, Spinner, Container, Stack } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
@@ -86,7 +86,9 @@ const App: React.FC = () => {
                             const delta = parsed.choices?.[0]?.delta;
                             if (delta) {
                                 if (delta.reasoning) {
-                                    setThinkingText((prev: string) => prev + String(delta.reasoning).replace(/\\n/g, '\n'));
+                                    if (delta.reasoning !== '\n'){
+                                        setThinkingText((prev: string) => (prev + String(delta.reasoning)).replace(/\\n$/, '\n'));
+                                    }
                                 } else if (delta.content) {
                                     setOutputText((prev: string) => prev + delta.content);
                                 }
@@ -132,6 +134,14 @@ const App: React.FC = () => {
             setShowConfigModal(true); // Open Config modal if no API key on initial load
         }
     }, [apiKey]);
+
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
+      }
+    }, [thinkingText]);
 
     return (
         <Container fluid className="d-flex justify-content-center align-items-center">
@@ -184,6 +194,7 @@ const App: React.FC = () => {
                     <Form.Group>
                         <Form.Label className="fw-bold">模型思考过程：</Form.Label>
                         <Form.Control
+                            ref={textAreaRef}
                             as="textarea"
                             rows={4}
                             readOnly
