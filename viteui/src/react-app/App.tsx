@@ -79,9 +79,7 @@ const App: React.FC = () => {
                     {/* Left Panel */}
                     <ViewHistory
                         transHistory={transHistory}
-                        setInputText={setInputText}
-                        setOutputText={setOutputText}
-                        setThinkingText={setThinkingText}
+                        setTrans={setTranslate}
                     />
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
