@@ -135,16 +135,15 @@ const App: React.FC = () => {
         <Container fluid className="d-flex justify-content-center align-items-center">
 
             {/* Config Modal */}
-            <Modal show={showConfigModal} onHide={handleHideConfigModal} backdrop="static" keyboard={false}>
-                <Config
-                    onClose={handleHideConfigModal}
-                    showModal={showConfigModal}
-                    apiKey={apiKey}
-                    setApiKeyState={setApiKeyState}
-                    selectedModel={selectedModel}
-                    setSelectedModel={setSelectedModel}
-                />
-            </Modal>
+            <Config
+                onClose={handleHideConfigModal}
+                showModal={showConfigModal}
+                apiKey={apiKey}
+                setApiKeyState={setApiKeyState}
+                selectedModel={selectedModel}
+                setSelectedModel={setSelectedModel}
+            />
+        
 
             <Stack gap={3} className="w-100">
                 <Form.Group>
