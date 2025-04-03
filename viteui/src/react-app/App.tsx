@@ -93,10 +93,10 @@ const App: React.FC = () => {
         <Container fluid className="vh-95">
             <Navbar expand="lg">
                 <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
-                <Navbar.Brand>中翻英</Navbar.Brand>
+                <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>中翻英</Navbar.Brand>
                 <Button onClick={() => setShowConfigModal(true)}>设置</Button>
             </Navbar>
-
+            <hr />
             <Row className="h-90">
                 <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
