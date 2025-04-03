@@ -21,15 +21,15 @@ const App: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
-    const [translate, setTranslate] = useState<Translation>();
+    const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
     const processText = async () => {
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
     };
-    const setTransAndTxt = (trans: Translation) => {
+    const setTransAndTxt = (trans: Translation | undefined) => {
         setTranslate(trans);
-        setInputText(trans.input);
+        setInputText(trans?.input ?? '');
     };
 
     useEffect(() => {

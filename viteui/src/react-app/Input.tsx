@@ -24,7 +24,7 @@ interface InputProps {
     status: string; // Current status message
     setInputText: (text: string) => void; // Callback to update input text
     processText: () => void; // Callback to trigger text processing
-    translation: Translation; // Translation object containing results
+    translation?: Translation; // Translation object containing results
     removeFromHistory: () => void; // Callback to remove from history
 }
 
