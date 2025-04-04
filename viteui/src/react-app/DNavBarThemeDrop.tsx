@@ -59,24 +59,19 @@ const ThemeSwitcher: React.FC = () => {
 
   return (
     // Removed outer className="color-modes" if it was custom styling
-    <Dropdown autoClose="outside">
+    <Dropdown navbar className="g-3">
       {/* Removed variant and className props for default styling */}
       <Dropdown.Toggle
         id="bd-theme" // Keep id for accessibility/linking
-        aria-label={`Toggle theme (${theme})`}
+        aria-label={`切换主题 (${theme})`}
       >
-         {/* Placeholder/Static icon needed here */}
-        <svg className="bi my-1 me-2 theme-icon-active" width="1em" height="1em">
-          <use href="#placeholder-toggle-icon"></use> {/* Placeholder */}
-        </svg>
-        <span className="ms-2" id="bd-theme-text">
-           {/* Capitalize first letter for display */}
-          {(theme.charAt(0).toUpperCase() + theme.slice(1))} Theme
+        <span className="ms-2" id="bd-theme-text">  
+        主题
         </span>
       </Dropdown.Toggle>
 
        {/* Removed inline style prop */}
-      <Dropdown.Menu align="end">
+      <Dropdown.Menu align="end" className="g-3">
         {(['light', 'dark', 'auto'] as Theme[]).map((itemTheme) => (
           <Dropdown.Item
             key={itemTheme}
@@ -88,18 +83,7 @@ const ThemeSwitcher: React.FC = () => {
             className="d-flex align-items-center" // Keep flex for icon alignment if needed
             active={theme === itemTheme}
           >
-             {/* Placeholder/Static icon needed here */}
-            <svg className="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
-               <use href="#placeholder-item-icon"></use> {/* Placeholder */}
-            </svg>
-            {/* Capitalize first letter */}
-            {itemTheme.charAt(0).toUpperCase() + itemTheme.slice(1)}
-            {/* Conditionally render checkmark */}
-            {theme === itemTheme && (
-              <svg className="bi ms-auto" width="1em" height="1em">
-                <use href="#check2"></use> {/* Assuming checkmark is still desired */}
-              </svg>
-            )}
+            {itemTheme === 'light' ? '浅色' : itemTheme === 'dark' ? '深色' : '自动'}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
