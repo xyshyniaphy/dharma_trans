@@ -34,7 +34,7 @@ export default {
 				const { results: filteredDictionary } = getFilteredDictionary(text);
 
 				const basePrompt = await getBasePrompt(env);
-				console.log	("baseprompt is " + basePrompt);
+				//console.log	("baseprompt is " + basePrompt);
 				const prompt = get_prompt(text, filteredDictionary);
 
 				return new Response(JSON.stringify({

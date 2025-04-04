@@ -5,6 +5,7 @@ import { Container, Row, Col, Navbar, Spinner, Button } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
+import { DNavBar } from './DNavBar';
 import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
 import { Translation } from './translation_interface';
@@ -92,11 +93,11 @@ const App: React.FC = () => {
 
     return (
         <Container fluid className="vh-95">
-            <Navbar expand="lg">
-                <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
-                <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>中文智能翻译 - Darma Translate</Navbar.Brand>
-                <Button onClick={() => setShowConfigModal(true)}>设置</Button>
-            </Navbar>
+            <DNavBar 
+              showLeftPanel={showLeftPanel}
+              setShowLeftPanel={setShowLeftPanel}
+              setShowConfigModal={setShowConfigModal}
+            />
             <hr />
             <Row className="h-90">
                 <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>

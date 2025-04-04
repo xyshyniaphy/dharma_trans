@@ -40,12 +40,12 @@ function getFilteredDictionary(text) {
 
 function loadDictionaryFromCsv(){
 
-    console.log("before parse csv" + dictCSV);
+    //console.log("before parse csv" + dictCSV);
     const parseResult = Papa.parse(dictCSV, {
         skipEmptyLines: true,
     });
     
-    console.log("after parse csv");
+    //console.log("after parse csv");
     if (parseResult.errors.length > 0) {
         console.error('CSV parsing errors:', parseResult.errors);
         throw new Error('Failed to parse dictionary CSV.');
