@@ -4,6 +4,9 @@ import OpenAI from 'openai';
 // Global cache for the dictionary Map
 let dictionaryMap = null;
 
+// Global cache for the base prompt
+let basePrompt = null;
+
 // Function to load and parse the dictionary from R2
 async function loadDictionary(env,reload = false) {
 	if (dictionaryMap && !reload) {
@@ -101,8 +104,6 @@ function getFilteredDictionary(text, dictionary) {
 	return { results: results.join('\n'), executionTimeMicroseconds };
 }
 
-
-let basePrompt = null;
 // Function to generate translation prompt
 async function getBasePrompt(env, reload = false) {
 	if (basePrompt && !reload) {
@@ -270,7 +271,8 @@ export default {
 		}
 
 		if (path.endsWith("/reset")) {
-
+			dictionaryMap=null;
+			basePrompt=null;
 			await loadDictionary(env,true);
 			await getBasePrompt(env,true);
 			return new Response('Successfully reseted dictionary map and base prompt', { status: 200 });
