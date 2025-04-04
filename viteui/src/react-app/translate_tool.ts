@@ -1,3 +1,5 @@
+import { CompletionData } from "./interface/price";
+
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
 
@@ -62,21 +64,23 @@ const m_processText = async (apiKey: string, inputText: string, selectedModel: s
                     const data = line.slice(6);
                     if (data.trim() === '[DONE]') continue;
                     try {
-                        const parsed = JSON.parse(data);
-                        const delta = parsed.choices?.[0]?.delta;
-                        if (delta) {
-                            if (delta.reasoning) {
-                                if (delta.reasoning !== '\n'){
-                                    const reasoning = String(delta.reasoning);
+                        const parsed = JSON.parse(data) as CompletionData;
+                        if(parsed.usage){
+                            const promptTokens = parsed.usage.prompt_tokens;
+                            const completionTokens = parsed.usage.completion_tokens;    
+//const totalPrice = calculateTotalPrice(parsed, selectedModel);
+                        }
+                            const delta = parsed.choices?.[0]?.delta;
+                            if (delta) {
+                                if (delta.reasoning) {
+                                    if (delta.reasoning !== '\n'){
+                                        const reasoning = String(delta.reasoning);
                                     setThinkingText((prev: string) => (prev + String(reasoning)));
                                 }
                             } else if (delta.content) {
                                 const content = (delta.content);
                                 setOutputText((prev: string) => prev + content);
                             }
-                        } else if (parsed.error) {
-                            console.error("API Error in stream:", parsed.error);
-                            throw new Error(`API Error: ${parsed.error.message || 'Unknown error'}`);
                         }
                     } catch (error) {
                         console.error('Error parsing JSON data:', data, error);

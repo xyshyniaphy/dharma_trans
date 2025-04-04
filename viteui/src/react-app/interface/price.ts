@@ -1,3 +1,7 @@
+import { OpenRouterModel } from "../hooks/filterModels";
+
+
+
 
 interface Usage {
     prompt_tokens: number;
@@ -8,13 +12,14 @@ interface Usage {
 interface ChoiceDelta {
     role: string;
     content: string;
+    reasoning: string;
 }
 
 interface Choice {
     index: number;
     delta: ChoiceDelta;
-    finish_reason: null | string;
-    native_finish_reason: null | string;
+    finish_reason: string | null;
+    native_finish_reason: string | null;
     logprobs: null | any;
 }
 
@@ -27,6 +32,9 @@ interface CompletionData {
     choices: Choice[];
     usage: Usage;
 }
+
+
+
 
 
 
@@ -60,3 +68,7 @@ function calculateTotalPrice(completionData: CompletionData, modelInfo: OpenRout
     const totalPrice: number = promptCost + completionCost;
     return totalPrice;
 }
+
+
+export { calculateTotalPrice }
+export type { Usage, ChoiceDelta, Choice, CompletionData }
