@@ -1,5 +1,7 @@
 import Papa from 'papaparse';
 import OpenAI from 'openai';
+import { parseJsonRequest } from './parseJson';
+import { getFilteredDictionary } from './filterDictionary';
 
 // Global cache for the dictionary Map
 let dictionaryMap = null;
@@ -54,55 +56,9 @@ async function loadDictionary(env,reload = false) {
 	}
 }
 
-// Basic segmentation (split by common punctuation and whitespace)
-// More sophisticated NLP techniques could be used here if needed.
-function segmentText(text) {
-	// Replace common punctuation with spaces and split
-	const segments = text.replace(/[。,、？！；：“”‘’（）《》【】]/g, ' ').split(/\s+/);
-	return segments.filter(segment => segment.length > 0); // Remove empty strings
-}
 
-// Common function to validate and parse JSON input
-async function parseJsonRequest(request) {
-	try {
-		const body = await request.json();
-		const inputText = body.text;
-		if (typeof inputText !== 'string' || inputText.length === 0) {
-			throw new Error('Invalid input: "text" field must be a non-empty string.');
-		}
-		return inputText;
-	} catch (error) {
-		throw new Error('Invalid JSON input.');
-	}
-}
 
-// Combined function to find words in the text and format the dictionary results
-function getFilteredDictionary(text, dictionary) {
-	const startTime = performance.now(); // Start time in milliseconds
 
-	const wordsToLookup = new Set();
-	const maxChineseWordLength = 10; // Maximum length of Chinese word to check in the dictionary
-	for (let i = 0; i < text.length; i++) {
-		for (let len = 1; len <= maxChineseWordLength && i + len <= text.length; len++) {
-			const potentialWord = text.substring(i, i + len);
-			if (dictionary.has(potentialWord)) {
-				wordsToLookup.add(potentialWord);
-			}
-		}
-	}
-
-	const results = [];
-	for (const word of wordsToLookup) {
-		if (dictionary.has(word)) {
-			const englishTranslation = dictionary.get(word);
-			results.push(`ch:${word} en:${englishTranslation}`);
-		}
-	}
-
-	const endTime = performance.now(); // End time in milliseconds
-	const executionTimeMicroseconds = (endTime - startTime) * 1000; // Convert to microseconds
-	return { results: results.join('\n'), executionTimeMicroseconds };
-}
 
 // Function to generate translation prompt
 async function getBasePrompt(env, reload = false) {
