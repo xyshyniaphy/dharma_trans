@@ -43,8 +43,8 @@ const fetchAndFilterModels = async () => {
         const response = await fetch(apiUrl + '/models');
         const data = await response.json();
         const modelNames = modelListData.map(name => name.trim().toLowerCase());
-        console.log(modelNames);
-        console.log(data.data);
+        //console.log(modelNames);
+        //console.log(data.data);
         const filteredModels = data.data.filter((model: OpenRouterModel) => {
           return modelNames.some(name => model.id.toLowerCase() === name);
         });

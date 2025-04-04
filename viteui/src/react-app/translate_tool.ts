@@ -3,8 +3,14 @@ import { calculateTotalPrice, CompletionData } from "./interface/price";
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
+const fetchText = async (filename: string): Promise<string> => {
+    const response = await fetch(promptApiUrl + '/access/' + filename, {
+        method: 'GET',
+    });
+    return await response.text();
+};
 
-const fetchPrompt = async (text: string): Promise<string> => {
+const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
     const response = await fetch(promptApiUrl + '/get_prompt', {
         method: 'POST',
         headers: {
@@ -13,10 +19,17 @@ const fetchPrompt = async (text: string): Promise<string> => {
         body: JSON.stringify({ text })
     });
     const data = await response.json();
-    return data.prompt;
+    const prompt = data.prompt;
+    if(explain){
+        const simple_prompt = await fetchText('detail_prompt.txt');
+        return simple_prompt + '\n' + prompt;
+    }else{
+        const detail_prompt = await fetchText('simple_prompt.txt');
+        return detail_prompt + '\n' + prompt;
+    }
 };
 
-const m_processText = async (apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setPrice: (price: number) => void, currentModel: OpenRouterModel | null) => {
+const m_processText = async (explain:boolean,apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setPrice: (price: number) => void, currentModel: OpenRouterModel | null) => {
     if (!apiKey) {
         setShowConfigModal(true);
         return;
@@ -30,7 +43,9 @@ const m_processText = async (apiKey: string, inputText: string, selectedModel: s
     setOutputText('');
     setThinkingText('');
     try {
-        const prompt = await fetchPrompt(inputText);
+        const prompt = await fetchPrompt(inputText,explain);
+        console.log("prompt is " + prompt);
+
         const response = await fetch(`${apiUrl}/chat/completions`, {
             method: 'POST',
             headers: {

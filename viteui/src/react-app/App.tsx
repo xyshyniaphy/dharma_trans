@@ -14,6 +14,7 @@ import { OpenRouterModel } from './hooks/filterModels';
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
 const App: React.FC = () => {
+    const [explain, setExplain] = useLocalStorage<boolean>('EXPLAIN', false);
     const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
     const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
     const [inputText, setInputText] = useState<string>('');
@@ -30,7 +31,7 @@ const App: React.FC = () => {
 
     const processText = async () => {
         setTranslate(undefined);
-        await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setPrice, currentModel);
+        await m_processText(explain,apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setPrice, currentModel);
     };
     const setTransAndTxt = (trans: Translation | undefined) => {
         setTranslate(trans);
