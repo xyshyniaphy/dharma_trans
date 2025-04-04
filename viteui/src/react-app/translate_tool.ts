@@ -20,6 +20,7 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
     });
     const data = await response.json();
     const prompt = data.prompt;
+    console.log("dict prompt is " + prompt);
     if(explain){
         const simple_prompt = await fetchText('detail_prompt.txt');
         return simple_prompt + '\n' + prompt;

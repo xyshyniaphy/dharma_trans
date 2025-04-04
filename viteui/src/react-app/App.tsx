@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Spinner, Button } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -142,6 +142,8 @@ const App: React.FC = () => {
                 setTransHistory={setTransHistory}
                 currentModel={currentModel}
                 setCurrentModel={setCurrentModel}
+                explain={explain}
+                setExplain={setExplain}
             />
 
             {/* Full-screen overlay with progress circle */}

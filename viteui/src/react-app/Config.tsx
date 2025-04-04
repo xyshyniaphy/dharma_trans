@@ -17,9 +17,11 @@ interface ConfigProps {
     setTransHistory: (value: Translation[]) => void;
     currentModel: OpenRouterModel | null;
     setCurrentModel: (value: OpenRouterModel | null) => void;
+    explain: boolean;
+    setExplain: (value: boolean) => void;
 }
 
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory, currentModel, setCurrentModel }) => {
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory, currentModel, setCurrentModel, explain, setExplain }) => {
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
@@ -137,9 +139,20 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                         </Form.Text>
                     </Form.Group>
                 </Form>
+                <br/>
+                <Form.Check 
+                    type="checkbox"
+                    label="对翻译进行解释"
+                    checked={explain}
+                    onChange={(e) => {
+                        setExplain(e.target.checked);
+                    }}
+                    className="ms-3"
+                />
               
             </Modal.Body>
             <Modal.Footer>
+                
                 <Button variant="outline-primary" onClick={handleClearHistory} className="me-2">清除历史</Button>
                 <Button variant="outline-primary" onClick={handleExportHistory} className="me-2">导出历史</Button>
                 <Button variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
@@ -148,6 +161,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                 </Button>
                 <Button variant="outline-warning" onClick={onClose}>取消</Button>
                 <Button variant="outline-success"  onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
+                
             </Modal.Footer>
         </Modal>
     );
