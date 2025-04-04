@@ -57,6 +57,8 @@ const Input: React.FC<InputProps> = ({
     // Use previous translation thinking if available, fallback to default
     const thinkTxt = translation?.thinking ?? thinkingText;
 
+    const price = translation?.price ?? 0;
+
     return (
         <Stack gap={3} className="h-90 overflow-auto">
             {/* Input text area */}
@@ -108,8 +110,7 @@ const Input: React.FC<InputProps> = ({
                                 <FontAwesomeIcon icon={faTrash} />
                             </Button>
                         )}  
-                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName}) ${new Date(translation?.timestamp || Date.now()).toLocaleString()}`}</Form.Label>
-
+                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName}) ${new Date(translation?.timestamp || Date.now()).toLocaleString()} 价格 - $${price}`}</Form.Label>
                         <div className="h-90 overflow-auto border p-2 rounded markdown-body">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outTxt}

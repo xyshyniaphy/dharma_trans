@@ -1,4 +1,5 @@
-import { CompletionData } from "./interface/price";
+import { OpenRouterModel } from "./hooks/filterModels";
+import { calculateTotalPrice, CompletionData } from "./interface/price";
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
@@ -15,7 +16,7 @@ const fetchPrompt = async (text: string): Promise<string> => {
     return data.prompt;
 };
 
-const m_processText = async (apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any) => {
+const m_processText = async (apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setPrice: (price: number) => void, currentModel: OpenRouterModel | null) => {
     if (!apiKey) {
         setShowConfigModal(true);
         return;
@@ -65,23 +66,23 @@ const m_processText = async (apiKey: string, inputText: string, selectedModel: s
                     if (data.trim() === '[DONE]') continue;
                     try {
                         const parsed = JSON.parse(data) as CompletionData;
-                        if(parsed.usage){
-                            const promptTokens = parsed.usage.prompt_tokens;
-                            const completionTokens = parsed.usage.completion_tokens;    
-//const totalPrice = calculateTotalPrice(parsed, selectedModel);
+                        if(parsed.usage && currentModel !== null){  
+                            const totalPrice = calculateTotalPrice(parsed, currentModel);
+                            console.log("totalPrice is " + totalPrice);
+                            setPrice(totalPrice);
                         }
-                            const delta = parsed.choices?.[0]?.delta;
-                            if (delta) {
-                                if (delta.reasoning) {
-                                    if (delta.reasoning !== '\n'){
-                                        const reasoning = String(delta.reasoning);
-                                    setThinkingText((prev: string) => (prev + String(reasoning)));
-                                }
-                            } else if (delta.content) {
-                                const content = (delta.content);
-                                setOutputText((prev: string) => prev + content);
+                        const delta = parsed.choices?.[0]?.delta;
+                        if (delta) {
+                            if (delta.reasoning) {
+                                if (delta.reasoning !== '\n'){
+                                    const reasoning = String(delta.reasoning);
+                                setThinkingText((prev: string) => (prev + String(reasoning)));
                             }
+                        } else if (delta.content) {
+                            const content = (delta.content);
+                            setOutputText((prev: string) => prev + content);
                         }
+                    }
                     } catch (error) {
                         console.error('Error parsing JSON data:', data, error);
                         setOutputText((prev: string) => prev + '\n[Error parsing response chunk]\n');

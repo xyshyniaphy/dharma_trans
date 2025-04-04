@@ -26,11 +26,11 @@ const App: React.FC = () => {
     const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
     const [currentModel, setCurrentModel] = useState<OpenRouterModel | null>(null);
-
     const [price, setPrice] = useState(0);
+
     const processText = async () => {
         setTranslate(undefined);
-        await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
+        await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setPrice, currentModel);
     };
     const setTransAndTxt = (trans: Translation | undefined) => {
         setTranslate(trans);
