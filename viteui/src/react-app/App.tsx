@@ -9,6 +9,7 @@ import { DNavBar } from './DNavBar';
 import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
 import { Translation } from './translation_interface';
+import { OpenRouterModel } from './hooks/filterModels';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -24,6 +25,7 @@ const App: React.FC = () => {
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
+    const [currentModel, setCurrentModel] = useState<OpenRouterModel | null>(null);
 
     const [price, setPrice] = useState(0);
     const processText = async () => {
@@ -137,6 +139,8 @@ const App: React.FC = () => {
                 setSelectedModel={setSelectedModel}
                 transHistory={transHistory}
                 setTransHistory={setTransHistory}
+                currentModel={currentModel}
+                setCurrentModel={setCurrentModel}
             />
 
             {/* Full-screen overlay with progress circle */}

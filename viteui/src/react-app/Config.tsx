@@ -15,14 +15,15 @@ interface ConfigProps {
     setSelectedModel: (value: string) => void;
     transHistory: Translation[];
     setTransHistory: (value: Translation[]) => void;
+    currentModel: OpenRouterModel | null;
+    setCurrentModel: (value: OpenRouterModel | null) => void;
 }
 
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory }) => {
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory, currentModel, setCurrentModel }) => {
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
     const [models, setModels] = useState<OpenRouterModel[]>([]);
-    const [currentModel, setCurrentModel] = useState<OpenRouterModel | null>(null);
 
     const handleClearHistory = () => {
         setTransHistory([]);
