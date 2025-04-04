@@ -124,32 +124,27 @@ function get_prompt(text, filteredDictionary) {
 
 export default {
 	async fetch(request, env, ctx) {
-		// Ensure dictionary is loaded, potentially loading it on the first request
-		try {
-			await loadDictionary(env);
-		} catch (error) {
-			return new Response(`Failed to load dictionary: ${error.message}`, { status: 500 });
-		}
-
-		if (!dictionaryMap) {
-			return new Response('Dictionary not available.', { status: 500 });
-		}
-
 		const url = new URL(request.url);
 		const path = url.pathname;
 
 		if (path.includes("/access/")) {
-			const key = path.slice("/access/".length);
-			if (!key) {
-				return new Response("No file key provided", { status: 400 });
-			}
+			try {
+				const parts = path.split("/");
+				const key = parts[parts.length - 1];
+				if (!key) {
+					return new Response("No file key provided", { status: 400 });
+				}
+				const object = await env.MY_R2_BUCKET.get(key);
+				if (object) {
+					const content = await object.text();
+					return new Response(content);
+				} else {
+					return new Response("File not found :" + key, { status: 404 });
+				}
 
-			const object = await env.MY_R2_BUCKET.get(key);
-			if (object) {
-				const content = await object.text();
-				return new Response(content);
-			} else {
-				return new Response("File not found", { status: 404 });
+			}
+			catch (error) {
+				return new Response(`Failed to access file: ${error.message} ${path}`, { status: 500 });
 			}
 		}
 
