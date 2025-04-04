@@ -25,6 +25,7 @@ const App: React.FC = () => {
     const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
 
+    const [price, setPrice] = useState(0);
     const processText = async () => {
         setTranslate(undefined);
         await m_processText(apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText);
@@ -44,7 +45,8 @@ const App: React.FC = () => {
                 output: outputText,
                 thinking: thinkingText,
                 timestamp: Date.now(),
-                modelName: selectedModel
+                modelName: selectedModel,
+                price: price
             };
             const newHistory = [...transHistory, newTrans];
             setTranslate(newTrans);

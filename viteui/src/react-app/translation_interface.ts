@@ -4,4 +4,5 @@ export interface Translation {
     thinking: string;
     timestamp: number;
     modelName: string;
+    price: number;
 }
