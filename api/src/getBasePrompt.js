@@ -19,7 +19,7 @@ async function getBasePrompt(env, reload = false) {
 }
 
 function get_prompt(text, filteredDictionary) {
-  return `${basePrompt}\n\n${filteredDictionary}\n\nChinese Text to Translate: ${text}`;
+  return `${basePrompt}\n\n${filteredDictionary}\n\nTranslate the following Chinese text about buddism into formal English about buddism. : \n${text}`;
 }
 
 export { getBasePrompt, get_prompt };
