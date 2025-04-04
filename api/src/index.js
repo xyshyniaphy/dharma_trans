@@ -1,81 +1,10 @@
-import Papa from 'papaparse';
 import OpenAI from 'openai';
 import { parseJsonRequest } from './parseJson';
 import { getFilteredDictionary } from './filterDictionary';
 import { getFileFromR2 } from './getFileFromR2';
+import { loadDictionary } from './loadDic';
+import { getBasePrompt, get_prompt  } from './getBasePrompt';
 
-// Global cache for the dictionary Map
-let dictionaryMap = null;
-// Global cache for the base prompt
-let basePrompt = null;
-
-// Function to load and parse the dictionary from R2
-async function loadDictionary(env,reload = false) {
-	if (dictionaryMap && !reload) {
-		return dictionaryMap;
-	}
-
-	console.log('Loading dictionary from R2...');
-	try {
-		const r2Object = await env.MY_R2_BUCKET.get('dic.csv');
-		if (r2Object === null) {
-			console.error('Dictionary file "dic.csv" not found in R2 bucket.');
-			throw new Error('Dictionary file not found.');
-		}
-
-		const csvText = await r2Object.text();
-		const parseResult = Papa.parse(csvText, {
-			skipEmptyLines: true,
-		});
-
-		if (parseResult.errors.length > 0) {
-			console.error('CSV parsing errors:', parseResult.errors);
-			throw new Error('Failed to parse dictionary CSV.');
-		}
-
-		// Create a Map for fast lookups: Key = Chinese (Original), Value = English
-		const tempMap = new Map();
-		for (const row of parseResult.data) {
-			if (row.length >= 2 && row[0] && row[1]) {
-				// Assuming column 1 is Chinese, column 2 is English
-				// Use the original Chinese word as the key
-				const originalKey = row[0].trim();
-				tempMap.set(originalKey, row[1].trim());
-			} else {
-				console.warn('Skipping invalid row in CSV:', row);
-			}
-		}
-		dictionaryMap = tempMap;
-		console.log(`Dictionary loaded successfully with ${dictionaryMap.size} entries.`);
-		return dictionaryMap;
-
-	} catch (error) {
-		console.error('Error loading dictionary:', error);
-		dictionaryMap = null; // Reset cache on error
-		throw error; // Re-throw error to be caught by the handler
-	}
-}
-
-
-
-// Function to generate translation prompt
-async function getBasePrompt(env, reload = false) {
-	if (basePrompt && !reload) {
-		return ;
-	}
-	basePrompt = null;
-  const key = 'base_prompt.txt';
-  const response = await getFileFromR2(env, key);
-  if (!response.ok) {
-    console.log('Base prompt not found');
-    return ;
-  }
-  basePrompt = await response.text();
-}
-
-function get_prompt(text, filteredDictionary) {
-  return `${basePrompt}\n\n${filteredDictionary}\n\nChinese Text to Translate: ${text}`;
-}
 
 export default {
 	async fetch(request, env, ctx) {
@@ -84,20 +13,6 @@ export default {
 
 		if (path.includes("/access/")) {
 			return await getFileFromR2(env, path);
-		}
-
-		// Handle /map_dict path
-		if (path.endsWith("/map_dict")) {
-			if (request.method !== 'POST') {
-				return new Response('Method Not Allowed. Please use POST.', { status: 405 });
-			}
-
-			let inputText;
-			try {
-				inputText = await parseJsonRequest(request);
-			} catch (error) {
-				return new Response(error.message, { status: 400 });
-			}
 		}
 
 		// Handle /get_prompt path
@@ -120,7 +35,8 @@ export default {
 
 				const { results: filteredDictionary } = getFilteredDictionary(text, dictionaryMap);
 
-				await getBasePrompt(env);
+				const basePrompt = await getBasePrompt(env);
+				console.log	("baseprompt is " + basePrompt);
 				const prompt = get_prompt(text, filteredDictionary);
 
 				return new Response(JSON.stringify({
@@ -196,8 +112,6 @@ export default {
 		}
 
 		if (path.endsWith("/reset")) {
-			dictionaryMap=null;
-			basePrompt=null;
 			await loadDictionary(env,true);
 			await getBasePrompt(env,true);
 			return new Response('Successfully reseted dictionary map and base prompt', { status: 200 });
