@@ -1,16 +1,17 @@
 import OpenAI from 'openai';
 import { parseJsonRequest } from './parseJson';
-import { getFilteredDictionary } from './filterDictionary';
 import { getFileFromR2 } from './getFileFromR2';
-import { loadDictionary } from './loadDic';
+import { loadDictionary , getFilteredDictionary} from './loadDic';
 import { getBasePrompt, get_prompt  } from './getBasePrompt';
 
 
 export default {
 	async fetch(request, env, ctx) {
+		// Ensure dictionary is up-to-date
+		await loadDictionary(env);
+
 		const url = new URL(request.url);
 		const path = url.pathname;
-
 		if (path.includes("/access/")) {
 			return await getFileFromR2(env, path);
 		}
@@ -30,10 +31,7 @@ export default {
 					throw new Error('Invalid input: "text" field must be a non-empty string.');
 				}
 
-				// Ensure dictionary is up-to-date
-				await loadDictionary(env);
-
-				const { results: filteredDictionary } = getFilteredDictionary(text, dictionaryMap);
+				const { results: filteredDictionary } = getFilteredDictionary(text);
 
 				const basePrompt = await getBasePrompt(env);
 				console.log	("baseprompt is " + basePrompt);
@@ -72,10 +70,7 @@ export default {
 					throw new Error('Invalid input: "api_key" field must be a non-empty string.');
 				}
 
-				// Ensure dictionary is up-to-date
-				await loadDictionary(env);
-
-				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text, dictionaryMap);
+				const { results: filteredDictionary, executionTimeMicroseconds } = getFilteredDictionary(text);
 
 				await getBasePrompt(env);
 				const prompt = get_prompt(text, filteredDictionary);

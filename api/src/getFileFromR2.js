@@ -12,18 +12,21 @@ async function getFileFromR2(env, path) {
     }
   }
 
+async function getTextFromR2ByKey(env, key) {
+
+    const object = await env.MY_R2_BUCKET.get(key);
+    if (object) {
+        const content = await object.text();
+        return content;
+    }
+    return null;
+}
 async function getFileFromR2ByKey(env, key) {
     try {
-        const object = await env.MY_R2_BUCKET.get(key);
-        if (object) {
-          const content = await object.text();
-        return new Response(content);
-        } else {
-        return new Response("File not found :" + key, { status: 404 });
-        }
+        return new Response(await getTextFromR2ByKey(env,key));
     } catch (error) {
         return new Response(`Failed to access file: ${error.message} ${key}`, { status: 500 });
     }
 }
 
-  export { getFileFromR2, getFileFromR2ByKey };
+export { getFileFromR2, getFileFromR2ByKey , getTextFromR2ByKey};
