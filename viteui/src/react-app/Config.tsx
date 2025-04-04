@@ -31,10 +31,14 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
         const json = JSON.stringify(transHistory, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'translation_history.json';
-        link.click();
+        
+        if (window.confirm('Do you want to save the translation history as JSON?')) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'translation_history.json';
+            link.click();
+        }
+        
         URL.revokeObjectURL(url);
     };
 
@@ -57,6 +61,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
 
     //assume user will paste api key
     useEffect(() => {
+        if(models.length > 0) return;
         if (tempApiKey && tempApiKey.length >= 10) {
             fetchAndFilterModels().then(setModels);
         }
@@ -65,6 +70,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
     
     const handleTempApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTempApiKey(event.target.value);
+        if(models.length > 0)setModels([]);
         console.log('Temp API Key:', event.target.value);
     };
 
