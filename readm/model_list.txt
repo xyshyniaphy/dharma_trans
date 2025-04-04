@@ -5,3 +5,4 @@ qwen/qwq-32b
 anthropic/claude-3.7-sonnet
 openai/chatgpt-4o-latest
 x-ai/grok-beta
+google/gemma-3-1b-it:free

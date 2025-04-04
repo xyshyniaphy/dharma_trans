@@ -22,6 +22,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
     const [models, setModels] = useState<OpenRouterModel[]>([]);
+    const [currentModel, setCurrentModel] = useState<OpenRouterModel | null>(null);
 
     const handleClearHistory = () => {
         setTransHistory([]);
@@ -67,6 +68,14 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
         }
     }, [tempApiKey]);
 
+    useEffect(() => {
+        if (tempModel && models.length > 0) {
+            const foundModel = models.find(model => model.id === tempModel);
+            if (foundModel) {
+                setCurrentModel(foundModel);
+            }
+        }
+    }, [tempModel, models]);
     
     const handleTempApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTempApiKey(event.target.value);
@@ -112,8 +121,18 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                                 <option key={model.name} value={model.id}>{model.name}</option>
                             ))}
                         </Form.Select>
+                        <br/>
+                        {currentModel? <Form.Text>
+                            {"价格 : "+ currentModel?.pricing.prompt || ""}
+                        </Form.Text>:null}
+                        <br/>
+                        {currentModel? <Form.Text>
+                            {"模型介绍 : "+ currentModel?.description || ""}
+                        </Form.Text>:null}
+                       
+                        <br/>
                         <Form.Text>
-                            推荐: Google Gemini Pro (free), Mistral 7B Instruct (free), Qwen Chat (free). 模型影响速度和质量。
+                            推荐: DeepSeek V3 , Qwen:QWQ. 模型影响速度和质量。
                         </Form.Text>
                     </Form.Group>
                 </Form>

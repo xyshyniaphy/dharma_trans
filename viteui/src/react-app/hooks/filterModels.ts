@@ -6,6 +6,31 @@ interface OpenRouterModel {
     id: string;
     name: string;
     description: string;
+    created: number;
+    context_length: number;
+    architecture: {
+        modality: string;
+        input_modalities: string[];
+        output_modalities: string[];
+        tokenizer: string;
+        instruct_type: null;
+    };
+    pricing: {
+        prompt: string;
+        completion: string;
+        request: string;
+        image: string;
+        web_search: string;
+        internal_reasoning: string;
+        input_cache_read: string;
+        input_cache_write: string;
+    };
+    top_provider: {
+        context_length: number;
+        max_completion_tokens: number;
+        is_moderated: boolean;
+    };
+    per_request_limits: null;
 }
 
 const fetchAndFilterModels = async () => {
