@@ -1,4 +1,8 @@
 
+
+const apiUrl = import.meta.env.VITE_OPENAI_URL;
+
+const dharmaPromptUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 interface OpenRouterModel {
     id: string;
     name: string;
@@ -7,7 +11,12 @@ interface OpenRouterModel {
 
 const fetchAndFilterModels = async () => {
     try {
-        const response = await fetch('https://openrouter.ai/api/v1/models');
+        
+        const modelList = await fetch(dharmaPromptUrl + '/access/model_list.txt');
+        const modelListData = await modelList.text();
+        console.log(modelListData);
+
+        const response = await fetch(apiUrl + '/models');
         const data = await response.json();
         const filteredModels = data.data.filter((model: OpenRouterModel) =>
             model.name.toLowerCase().includes('free') &&
