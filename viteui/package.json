@@ -22,10 +22,11 @@
     "@types/react-bootstrap": "^0.32.37",
     "bootstrap": "^5.3.3",
     "hono": "4.7.1",
-    "react": "19.0.0",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.10.9",
-    "react-dom": "19.0.0",
+    "react-dom": "^18.2.0",
     "react-markdown": "^10.1.0",
+    "recoil": "^0.7.7",
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {

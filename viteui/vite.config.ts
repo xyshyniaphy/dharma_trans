@@ -4,4 +4,10 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig({
   plugins: [react(), cloudflare()],
+  resolve: {
+    alias: {
+      react: 'react',
+      'react-dom': 'react-dom',
+    },
+  },
 });

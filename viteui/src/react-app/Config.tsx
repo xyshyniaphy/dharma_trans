@@ -5,6 +5,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 import { Translation } from './translation_interface';
 import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels';
+import { useModelsState } from './hooks/modelsHook';
 
 interface ConfigProps {
     onClose: () => void;
@@ -25,7 +26,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
-    const [models, setModels] = useState<OpenRouterModel[]>([]);
+    const [models, setModels] = useModelsState();
 
     const handleClearHistory = () => {
         setTransHistory([]);
