@@ -54,6 +54,8 @@ export const useDTConfig = () => {
 
   useEffect(() => {
     // already loaded
+    
+    console.log('Config :', config);
     if(config && config.loaded)return;
     const storedConfig = window.localStorage.getItem('DT_CONFIG') || '';
     if (storedConfig) {

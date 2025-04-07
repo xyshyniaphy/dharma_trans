@@ -17,7 +17,7 @@ const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
 const App: React.FC = () => {
     const { config } = useDTConfig();
-    const { explain, apiKey, selectedModel } = config;
+    const { explain, apiKey, selectedModel,loaded } = config;
     const [currentModel] = useCurrentModel();
 
     const [inputText, setInputText] = useState<string>('');
@@ -66,10 +66,11 @@ const App: React.FC = () => {
     };
 
     useEffect(() => {
+        if(!loaded) return;
         if (!apiKey) {
             setShowConfigModal(true); 
         }
-    }, [apiKey]);
+    }, [apiKey,loaded]);
 
     //user input changed , so clear previous translation
     useEffect(() => {
@@ -98,6 +99,9 @@ const App: React.FC = () => {
         setThinkingText('');
         setTranslate(undefined);
     };
+
+    
+    if(!loaded) return null;
 
     return (
         <Container fluid className="vh-95">
