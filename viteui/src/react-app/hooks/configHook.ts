@@ -29,6 +29,7 @@ export const useDTConfig = () => {
     const selectedModel = localStorage.getItem('SELECTED_MODEL');
 
     if (apiKey) {
+      console.log("MIGRAGE OLD CONFIG");
       const newConfig: DT_CONFIG = {
         explain: explain ? JSON.parse(explain) : false,
         apiKey: apiKey,
@@ -46,6 +47,7 @@ export const useDTConfig = () => {
 
   useEffect(() => {
     // already loaded
+    console.log('Config loaded:', config);
     if(config && config.apiKey)return;
     const storedConfig = window.localStorage.getItem('DT_CONFIG') || '';
     if (storedConfig) {

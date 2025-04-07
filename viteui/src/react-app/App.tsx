@@ -11,14 +11,14 @@ import m_processText from './translate_tool';
 import { Translation } from './translation_interface';
 import { OpenRouterModel } from './hooks/filterModels';
 import { useCurrentModel } from './hooks/currentModelHook';
-
+import { useDTConfig } from './hooks/configHook';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
 const App: React.FC = () => {
-    const [explain, setExplain] = useLocalStorage<boolean>('EXPLAIN', false);
-    const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
-    const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'deepseek/deepseek-chat-v3-0324:free');
+    const { config, updateConfig } = useDTConfig();
+    const { explain, apiKey, selectedModel } = config;
+
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
@@ -138,15 +138,15 @@ const App: React.FC = () => {
                 onClose={handleHideConfigModal}
                 showModal={showConfigModal}
                 apiKey={apiKey}
-                setApiKeyState={setApiKeyState}
+                setApiKeyState={(value) => updateConfig({ apiKey: value })}
                 selectedModel={selectedModel}
-                setSelectedModel={setSelectedModel}
+                setSelectedModel={(value) => updateConfig({ selectedModel: value })}
                 transHistory={transHistory}
                 setTransHistory={setTransHistory}
                 currentModel={currentModel}
                 setCurrentModel={setCurrentModel}
                 explain={explain}
-                setExplain={setExplain}
+                setExplain={(value) => updateConfig({ explain: value })}
             />
 
             {/* Full-screen overlay with progress circle */}
