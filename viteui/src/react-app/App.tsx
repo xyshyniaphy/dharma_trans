@@ -16,7 +16,7 @@ const apiUrl = import.meta.env.VITE_OPENAI_URL;
 const App: React.FC = () => {
     const [explain, setExplain] = useLocalStorage<boolean>('EXPLAIN', false);
     const [apiKey, setApiKeyState] = useLocalStorage<string>('OPENROUTER_API_KEY', '');
-    const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'google/gemini-2.5-pro-exp-03-25:free');
+    const [selectedModel, setSelectedModel] = useLocalStorage<string>('SELECTED_MODEL', 'deepseek/deepseek-chat-v3-0324:free');
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
