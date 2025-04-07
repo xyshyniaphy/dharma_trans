@@ -10,6 +10,8 @@ import ViewHistory from './ViewHistory';
 import m_processText from './translate_tool';
 import { Translation } from './translation_interface';
 import { OpenRouterModel } from './hooks/filterModels';
+import { useCurrentModelState } from './hooks/currentModelHook';
+
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -26,7 +28,8 @@ const App: React.FC = () => {
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
-    const [currentModel, setCurrentModel] = useState<OpenRouterModel | null>(null);
+    const [currentModel, setCurrentModel] = useCurrentModelState();
+
     const [price, setPrice] = useState(0);
 
     const processText = async () => {

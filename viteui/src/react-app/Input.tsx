@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
+import { useCurrentModelState } from './hooks/currentModelHook';
 
 // Props interface for the Input component
 interface InputProps {
@@ -44,6 +45,8 @@ const Input: React.FC<InputProps> = ({
     // Ref for auto-scrolling the thinking text area
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+    const [currentModel, setCurrentModel] = useCurrentModelState();
+
     // Auto-scroll thinking text area when content changes
     React.useEffect(() => {
         if (textAreaRef.current) {
@@ -67,7 +70,7 @@ const Input: React.FC<InputProps> = ({
                 <Form.Control
                     as="textarea"
                     className="h-90"
-                    placeholder="请在此输入需要翻译的中文文本..."
+                    placeholder="请在此输入需要翻译的文本..."
                     value={inputText}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
                 />
@@ -82,7 +85,7 @@ const Input: React.FC<InputProps> = ({
                     disabled={isProcessing || !inputText}
                     className="flex-grow-1"
                 >
-                    {isProcessing ? status : ' 翻译 (' + selectedModel + ')'}
+                    {isProcessing ? status : ' 翻译 (' + currentModel?.name + ')'}
                 </Button>
             </div>
 
