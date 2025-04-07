@@ -1,11 +1,11 @@
 import { atom, useRecoilState } from 'recoil';
 import { OpenRouterModel } from './filterModels';
 
-const modelsState = atom<OpenRouterModel[]>({
+const modelsStateAtom = atom<OpenRouterModel[]>({
   key: 'modelsState',
   default: [],
 });
 
 export const useModelsState = () => {
-  return useRecoilState(modelsState);
+  return useRecoilState(modelsStateAtom);
 };

@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Translation } from './translation_interface';
-import { useCurrentModelState } from './hooks/currentModelHook';
+import { useCurrentModel } from './hooks/currentModelHook';
 
 // Props interface for the Input component
 interface InputProps {
@@ -45,7 +45,7 @@ const Input: React.FC<InputProps> = ({
     // Ref for auto-scrolling the thinking text area
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-    const [currentModel, setCurrentModel] = useCurrentModelState();
+    const [currentModel, setCurrentModel] = useCurrentModel();
 
     // Auto-scroll thinking text area when content changes
     React.useEffect(() => {
