@@ -6,23 +6,21 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { Translation } from './translation_interface';
 import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
+import { useDTConfig } from './hooks/configHook';
+import { useCurrentModel } from './hooks/currentModelHook';
 
 interface ConfigProps {
     onClose: () => void;
     showModal: boolean;
-    apiKey: string;
-    setApiKeyState: (value: string) => void;
-    selectedModel: string;
-    setSelectedModel: (value: string) => void;
     transHistory: Translation[];
     setTransHistory: (value: Translation[]) => void;
-    currentModel: OpenRouterModel | null;
-    setCurrentModel: (value: OpenRouterModel | null) => void;
-    explain: boolean;
-    setExplain: (value: boolean) => void;
 }
 
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeyState, selectedModel, setSelectedModel, transHistory, setTransHistory, currentModel, setCurrentModel, explain, setExplain }) => {
+const Config: React.FC<ConfigProps> = ({ onClose, showModal, transHistory, setTransHistory }) => {
+
+    const { config, updateConfig } = useDTConfig();
+    const { explain, apiKey, selectedModel } = config;
+    const [currentModel, setCurrentModel] = useCurrentModel();
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
@@ -98,8 +96,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
         if  (models.length > 0 && tempApiKey.length >= 10 && tempModel !== '') {
             console.log('Saving API Key:', tempApiKey);
             console.log('Saving model:', tempModel);
-            setApiKeyState(tempApiKey);
-            setSelectedModel(tempModel);
+            updateConfig({ apiKey: tempApiKey, selectedModel: tempModel });
             onClose();
         }
     }
@@ -146,7 +143,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, apiKey, setApiKeySt
                     label="对翻译进行解释"
                     checked={explain}
                     onChange={(e) => {
-                        setExplain(e.target.checked);
+                        updateConfig({ explain: e.target.checked });
                     }}
                     className="ms-3"
                 />

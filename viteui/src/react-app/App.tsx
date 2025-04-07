@@ -16,8 +16,9 @@ import { useDTConfig } from './hooks/configHook';
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
 const App: React.FC = () => {
-    const { config, updateConfig } = useDTConfig();
+    const { config } = useDTConfig();
     const { explain, apiKey, selectedModel } = config;
+    const [currentModel] = useCurrentModel();
 
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
@@ -28,7 +29,6 @@ const App: React.FC = () => {
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [translate, setTranslate] = useState<Translation | undefined>();
     const [showLeftPanel, setShowLeftPanel] = useState(true);
-    const [currentModel, setCurrentModel] = useCurrentModel();
 
     const [price, setPrice] = useState(0);
 
@@ -137,16 +137,8 @@ const App: React.FC = () => {
             <Config
                 onClose={handleHideConfigModal}
                 showModal={showConfigModal}
-                apiKey={apiKey}
-                setApiKeyState={(value) => updateConfig({ apiKey: value })}
-                selectedModel={selectedModel}
-                setSelectedModel={(value) => updateConfig({ selectedModel: value })}
                 transHistory={transHistory}
                 setTransHistory={setTransHistory}
-                currentModel={currentModel}
-                setCurrentModel={setCurrentModel}
-                explain={explain}
-                setExplain={(value) => updateConfig({ explain: value })}
             />
 
             {/* Full-screen overlay with progress circle */}
