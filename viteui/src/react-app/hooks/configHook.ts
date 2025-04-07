@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
-import { useLocalStorage } from './useLocalStorage';
 
 export interface DT_CONFIG {
   explain: boolean;
@@ -21,7 +20,7 @@ const configAtom = atom<DT_CONFIG>({
 export const useDTConfig = () => {
   const [config, setConfig] = useRecoilState(configAtom);
 
-  const [storedConfig, setStoredConfig] = useLocalStorage<string>('DT_CONFIG', '');
+  const setStoredConfig = (value: string) => window.localStorage.setItem('DT_CONFIG', value);
 
   // Migrate from old localStorage keys to new config object
   const migrateConfig = () => {
@@ -29,10 +28,10 @@ export const useDTConfig = () => {
     const apiKey = localStorage.getItem('OPENROUTER_API_KEY');
     const selectedModel = localStorage.getItem('SELECTED_MODEL');
 
-    if (explain || apiKey || selectedModel) {
+    if (apiKey) {
       const newConfig: DT_CONFIG = {
         explain: explain ? JSON.parse(explain) : false,
-        apiKey: apiKey || '',
+        apiKey: apiKey,
         selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free'
       };
       
@@ -46,14 +45,15 @@ export const useDTConfig = () => {
   };
 
   useEffect(() => {
-    // already set
-    if(config)return;
+    // already loaded
+    if(config && config.apiKey)return;
+    const storedConfig = window.localStorage.getItem('DT_CONFIG') || '';
     if (storedConfig) {
       setConfig(JSON.parse(storedConfig) as DT_CONFIG);
     } else {
       migrateConfig();
     }
-  }, [storedConfig]);
+  }, [config]);
 
   const updateConfig = (newConfig: Partial<DT_CONFIG>) => {
     const updated = { ...config, ...newConfig };

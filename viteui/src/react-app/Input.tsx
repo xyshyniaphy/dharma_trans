@@ -113,7 +113,7 @@ const Input: React.FC<InputProps> = ({
                                 <FontAwesomeIcon icon={faTrash} />
                             </Button>
                         )}  
-                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName}) ${new Date(translation?.timestamp || Date.now()).toLocaleString()} 价格 - $${price}`}</Form.Label>
+                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName})`}</Form.Label>
                         <div className="h-90 overflow-auto border p-2 rounded markdown-body">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {outTxt}
