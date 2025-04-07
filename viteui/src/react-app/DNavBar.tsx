@@ -12,7 +12,7 @@ export function DNavBar({ showLeftPanel, setShowLeftPanel, setShowConfigModal }:
   return (
     <Navbar expand="lg">
       <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
-      <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>中文智能翻译 - Darma Translate</Navbar.Brand>
+      <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>智能翻译 - Darma Translate</Navbar.Brand>
       <DNavBarThemeDrop />
       <Button onClick={() => setShowConfigModal(true)}>设置</Button>
     </Navbar>
