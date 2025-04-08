@@ -12,6 +12,7 @@ import { Translation } from './translation_interface';
 import { OpenRouterModel } from './hooks/filterModels';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
+import { useCurrentTranslate } from './hooks/currentTranslateHook';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -23,22 +24,22 @@ const App: React.FC = () => {
     const [inputText, setInputText] = useState<string>('');
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
+
     const [status, setStatus] = useState<string>('');
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    
     const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
-    const [translate, setTranslate] = useState<Translation | undefined>();
-    const [showLeftPanel, setShowLeftPanel] = useState(true);
+    const [translate, setTranslate] = useCurrentTranslate();
+    const [showLeftPanel, setShowLeftPanel] = useState<boolean>(true);
 
+    
     const [price, setPrice] = useState(0);
+
 
     const processText = async () => {
         setTranslate(undefined);
         await m_processText(explain,apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setPrice, currentModel);
-    };
-    const setTransAndTxt = (trans: Translation | undefined) => {
-        setTranslate(trans);
-        setInputText(trans?.input ?? '');
     };
 
     useEffect(() => {
@@ -52,7 +53,10 @@ const App: React.FC = () => {
                 thinking: thinkingText,
                 timestamp: Date.now(),
                 modelName: selectedModel,
-                price: price
+                price: price,
+                topicId: '',
+                translateId: '',
+                modelId: currentModel?.id || ''
             };
             const newHistory = [...transHistory, newTrans];
             setTranslate(newTrans);
@@ -72,22 +76,6 @@ const App: React.FC = () => {
         }
     }, [apiKey,loaded]);
 
-    //user input changed , so clear previous translation
-    useEffect(() => {
-        if (!translate) return;
-        if(translate.input !== inputText) {
-          setTranslate(undefined);
-          if(outputText) {
-            setOutputText('');
-          }
-          if(thinkingText) {
-            setThinkingText('');
-          }
-          if(status) {
-            setStatus('');
-          }
-        }
-    }, [inputText]);
 
     //click delete button on input
     const removeFromHistory = () => {
@@ -116,7 +104,6 @@ const App: React.FC = () => {
                     {/* Left Panel */}
                     <ViewHistory
                         transHistory={transHistory}
-                        setTrans={setTransAndTxt}
                     />
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">

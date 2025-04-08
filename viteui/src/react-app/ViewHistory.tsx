@@ -2,27 +2,23 @@ import React from 'react';
 import { ListGroup } from 'react-bootstrap';
 
 import { Translation } from './translation_interface';
+import { useCurrentTranslate } from './hooks/currentTranslateHook';
 
 type ViewHistoryProps = {
   transHistory: Array<Translation>;
-  setTrans: (t: Translation) => void;
 };
 
 const ViewHistory: React.FC<ViewHistoryProps> = ({
-  transHistory,
-  setTrans,
+  transHistory
 }) => {
-  const handleSelect = (item: Translation) => {
-    setTrans(item);
-  };
-
+  const [_, setTranslate] = useCurrentTranslate();
   return (
     <ListGroup>
     {transHistory.map((item, index) => (
       <ListGroup.Item
         key={index}
         action
-        onClick={() => handleSelect(item)}
+        onClick={() => setTranslate(item)}
       >
         {item.input.length > 10 ? `${item.input.slice(0, 10)}...` : item.input}
       </ListGroup.Item>
