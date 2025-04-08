@@ -23,16 +23,20 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
 }) => {
-
+    
+    const [{isProcessing}, updateStatus] = useTranslatorStatus();
     const [currentModel, _] = useCurrentModel();
-    const [{ status, isProcessing }, updateStatus] = useTranslatorStatus();
 
     const [inputText, setInputText] = useState<string>('');
 
-    const [_trans, setTranslate] = useCurrentTranslate();
-
     //todo : convert to use recoil
     const [transHistory, _setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
+    const [_trans, setTranslate] = useCurrentTranslate();
+
+    function removeFromHistory(id: string): void {
+        
+    }
+
 
     function processText(_event: any): void {
         updateStatus({ isProcessing: true, status: '开始翻译' })
@@ -43,14 +47,10 @@ const Input: React.FC<InputProps> = ({
             timestamp: Date.now(),
             modelName: currentModel?.name || '',
             price: 0,
-            topicId: '',    
-            translateId: '',
+            topicId: '',
+            translateId: Date.now().toString(),
             modelId: currentModel?.id || ''
         });
-    }
-
-    function removeFromHistory(id: string): void {
-        
     }
 
     return (
@@ -76,7 +76,7 @@ const Input: React.FC<InputProps> = ({
                     disabled={isProcessing || !inputText}
                     className="flex-grow-1"
                 >
-                    {isProcessing ? status : ' 翻译 (' + currentModel?.name + ')'}
+                    {isProcessing ? '翻译中' : ' 翻译 (' + currentModel?.name + ')'}
                 </Button>
             </div>
             <TranslateItems

@@ -23,7 +23,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   const [currentModel] = useCurrentModel();
 
-  const [{ status, isProcessing }, updateStatus] = useTranslatorStatus();
+  const [{ status }, updateStatus] = useTranslatorStatus();
 
   //used for realtime translation stream
   const [outputText, setOutputText] = useState<string>('');
@@ -69,43 +69,36 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   }, [status]);
 
   if (!translations || translations.length === 0) return null;
-  const currentTranslation = translate ? 
-    (<div className="d-flex flex-column gap-3">
-      {translations.map((translation) => (
-        <TranslateItem
-          key={translation.translateId}
-          translation={translation}
-          removeFromHistory={() => removeFromHistory(translation.translateId)}
-          outputText={outputText}
-          thinkingText={thinkingText}
-        />
-      ))}
-    </div>)
-    : null;
+  
+  if(translate)return  (<div className="d-flex flex-column gap-3">
+    <TranslateItem
+      translation={translate}
+      key={translate.timestamp}
+      removeFromHistory={() => removeFromHistory(translate.translateId)}
+      outputText={outputText}
+      thinkingText={thinkingText}
+    />
+  </div>);
 
   return (
-    <>
-      {currentTranslation}
-      <Table bordered responsive className="table-striped">
-        <thead>
-          <tr>
-            <th style={{ width: '33.33%' }}>原文</th>
-            <th style={{ width: '33.33%' }}>翻译结果</th>
-            <th style={{ width: '33.33%' }}>思考</th>
-          </tr>
-        </thead>
-        <tbody>
-          {translations.map((translation) => (
-            <TranslateItem
-              key={translation.translateId}
-              translation={translation}
-              removeFromHistory={() => removeFromHistory(translation.translateId)}
-              outputText={translate?.translateId === translation.translateId ? outputText : undefined}
-              thinkingText={translate?.translateId === translation.translateId ? thinkingText : undefined}
-            />
-          ))}
-        </tbody>
-      </Table>
-    </>
+    <Table bordered responsive className="table-striped">
+      <thead>
+        <tr>
+          <th style={{ width: '33.33%' }}>原文</th>
+          <th style={{ width: '33.33%' }}>翻译结果</th>
+          <th style={{ width: '33.33%' }}>思考</th>
+        </tr>
+      </thead>
+      <tbody>
+        {translations.map((translation) => (
+          <TranslateItem
+            key={translation.timestamp}
+            translation={translation}
+            removeFromHistory={() => removeFromHistory(translation.translateId)}
+          />
+        ))}
+      </tbody>
+    </Table>
+    
   );
 };

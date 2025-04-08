@@ -31,22 +31,16 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
   // Auto-scroll thinking text area when content changes
   React.useEffect(() => {
-    if (textAreaRef.current) {
-      textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
-    }
+    // if (textAreaRef.current) {
+    //   textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
+    // }
   }, [thinkingText]);
 
   return (
     <tr>
       {/* Input Column */}
       <td className="align-top p-2">
-        <Form.Control
-          as="textarea"
-          className="w-100"
-          style={{ minHeight: '100px' }} // Ensure consistent height
-          readOnly
-          value={translation?.input || ''}
-        />
+      {translation?.input || ''}
       </td>
 
       {/* Translation Result Column */}
@@ -58,27 +52,15 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
             </Button>
           )}
           <Form.Label className="fw-bold">{translation?.modelName || ''}</Form.Label>
-          <div
-            className="overflow-auto border p-2 rounded markdown-body w-100"
-            style={{ minHeight: '100px' }} // Ensure consistent height
-          >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {out}
-            </ReactMarkdown>
-          </div>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {out}
+          </ReactMarkdown>
         </Form.Group>
       </td>
 
       {/* Thinking Column */}
       <td className="align-top p-2">
-      <Form.Control
-            as="textarea"
-            className="w-100"
-            style={{ minHeight: '100px' }} // Ensure consistent height
-            ref={textAreaRef}
-            readOnly
-            value={think}
-          />
+      {think}
       </td>
     </tr>
   );
