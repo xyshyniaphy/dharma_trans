@@ -13,6 +13,7 @@ import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import { useTransHistory } from './hooks/transHistoryHook';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -29,7 +30,7 @@ const App: React.FC = () => {
 
     
     //todo : use recoil 
-    const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
+    const [transHistory, setTransHistory] = useTransHistory();
     const [translate, setTranslate] = useCurrentTranslate();
     
     
