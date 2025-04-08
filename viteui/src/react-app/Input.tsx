@@ -13,7 +13,7 @@ import { useCurrentModel } from './hooks/currentModelHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { TranslateItems } from './TranslateItems';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useTransHistory } from './hooks/transHistoryHook';
 import { Translation } from './translation_interface';
 
 // Props interface for the Input component
@@ -30,7 +30,7 @@ const Input: React.FC<InputProps> = ({
     const [inputText, setInputText] = useState<string>('');
 
     //todo : convert to use recoil
-    const [transHistory, _setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
+    const [transHistory, _setTransHistory] = useTransHistory();
     const [_trans, setTranslate] = useCurrentTranslate();
 
 

@@ -6,7 +6,7 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useDTConfig } from './hooks/configHook';
 import m_processText from './translate_tool';
 import { useCurrentModel } from './hooks/currentModelHook';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useTransHistory } from './hooks/transHistoryHook';
 import { Table } from 'react-bootstrap'; // Add Table import
 
 type TranslateItemsProps = {
@@ -30,7 +30,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   const [price, setPrice] = useState(0);
 
   //todo : use recoil 
-  const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
+  const [transHistory, setTransHistory] = useTransHistory();
   const [translate, setTranslate] = useCurrentTranslate();
 
   const processText = async () => {
