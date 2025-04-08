@@ -29,7 +29,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
   // this is used to show  translation result
   const out = outputText || translation?.output || '';
-  const think = thinkingText || translation?.thinking || '';
+  const think = translation?.thinking || thinkingText;
 
       // Auto-scroll thinking text area when content changes
       React.useEffect(() => {
@@ -42,44 +42,41 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   return (
 
     
-    <Stack direction="vertical" gap={3} className=" overflow-auto">
-      {/* Input column */}
-      <Form.Group className="flex-grow-1">
-        <Form.Label className="fw-bold">原文：</Form.Label>
-        <Form.Control
-          as="textarea"
-          className=""
-          readOnly
-          value={translation?.input || ''}
-        />
-      </Form.Group>
+    <Stack direction="horizontal" gap={3} className="overflow-auto w-100">
+  <Form.Group className="w-33">
+    <Form.Label className="fw-bold">原文：</Form.Label>
+    <Form.Control
+      as="textarea"
+      className="h-100"
+      readOnly
+      value={translation?.input || ''}
+    />
+  </Form.Group>
 
- 
+  <Form.Group className="w-33">
+    {translation && (
+      <Button variant="link" className="p-2 ms-2 rounded" onClick={removeFromHistory}>
+        <FontAwesomeIcon icon={faTrash} />
+      </Button>
+    )}
+    <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName})`}</Form.Label>
+    <div className="overflow-auto border p-2 rounded markdown-body h-100">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {out}
+      </ReactMarkdown>
+    </div>
+  </Form.Group>
 
-      <Form.Group className="flex-grow-1">
-          {translation && (
-            <Button variant="link" className="p-2 ms-2 rounded" onClick={removeFromHistory}>
-              <FontAwesomeIcon icon={faTrash} />
-            </Button>
-          )}
-          <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName})`}</Form.Label>
-          <div className=" overflow-auto border p-2 rounded markdown-body">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {out}
-            </ReactMarkdown>
-          </div>
-        </Form.Group>
-
-        <Form.Group className="flex-grow-1">
-          <Form.Label className="fw-bold">思考：</Form.Label>
-          <Form.Control
-            as="textarea"
-            className=""
-            ref={textAreaRef}
-            readOnly
-            value={think}
-          />
-        </Form.Group>
-    </Stack>
+  <Form.Group className="w-33">
+    <Form.Label className="fw-bold">思考：</Form.Label>
+    <Form.Control
+      as="textarea"
+      className="h-100"
+      ref={textAreaRef}
+      readOnly
+      value={think}
+    />
+  </Form.Group>
+</Stack>
   );
 };

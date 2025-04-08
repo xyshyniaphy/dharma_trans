@@ -75,7 +75,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       
   if(!translations || translations.length === 0) return null;
   const currentTranslation = translate ? 
-  (<div className="d-flex flex-row flex-wrap gap-3">
+  (<div className="d-flex flex-column gap-3">
     {translations.map((translation) => (
       <TranslateItem
         key={translation.translateId}
@@ -91,7 +91,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   return (
     <>
     {currentTranslation}
-    <div className="d-flex flex-row flex-wrap gap-3">
+    <div className="d-flex flex-column gap-3">
       {translations.map((translation) => (
         <TranslateItem
           key={translation.translateId}
