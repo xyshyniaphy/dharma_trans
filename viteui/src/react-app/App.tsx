@@ -13,6 +13,7 @@ import { OpenRouterModel } from './hooks/filterModels';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -25,21 +26,28 @@ const App: React.FC = () => {
     const [outputText, setOutputText] = useState<string>('');
     const [thinkingText, setThinkingText] = useState<string>('');
 
-    const [status, setStatus] = useState<string>('');
-    const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    
-    const [showConfigModal, setShowConfigModal] = useState<boolean>(false); 
+    const [{ status, isProcessing, showConfigModal, showLeftPanel }, updateStatus] = useTranslatorStatus();
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [translate, setTranslate] = useCurrentTranslate();
-    const [showLeftPanel, setShowLeftPanel] = useState<boolean>(true);
-
     
     const [price, setPrice] = useState(0);
 
-
     const processText = async () => {
         setTranslate(undefined);
-        await m_processText(explain,apiKey, inputText, selectedModel, apiUrl, setShowConfigModal, setIsProcessing, setStatus, setOutputText, setThinkingText, setPrice, currentModel);
+        await m_processText(
+            explain,
+            apiKey, 
+            inputText, 
+            selectedModel, 
+            apiUrl, 
+            (value) => updateStatus({ showConfigModal: value }),
+            (value) => updateStatus({ isProcessing: value }),
+            (value) => updateStatus({ status: value }),
+            setOutputText, 
+            setThinkingText, 
+            setPrice, 
+            currentModel
+        );
     };
 
     useEffect(() => {
@@ -61,42 +69,40 @@ const App: React.FC = () => {
             const newHistory = [...transHistory, newTrans];
             setTranslate(newTrans);
             setTransHistory(newHistory);
-            setStatus('');
+            updateStatus({ status: '' });
         }
     }, [isProcessing,outputText,status]);
 
     const handleHideConfigModal = () => {
-        setShowConfigModal(false);
+        updateStatus({ showConfigModal: false });
     };
 
     useEffect(() => {
         if(!loaded) return;
         if (!apiKey) {
-            setShowConfigModal(true); 
+            updateStatus({ showConfigModal: true }); 
         }
     }, [apiKey,loaded]);
-
 
     //click delete button on input
     const removeFromHistory = () => {
         if(!translate) return;
         const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
         setTransHistory(updatedHistory);
-        setStatus('');
+        updateStatus({ status: '' });
         setOutputText('');
         setThinkingText('');
         setTranslate(undefined);
     };
 
-    
     if(!loaded) return null;
 
     return (
         <Container fluid className="vh-95">
             <DNavBar 
               showLeftPanel={showLeftPanel}
-              setShowLeftPanel={setShowLeftPanel}
-              setShowConfigModal={setShowConfigModal}
+              setShowLeftPanel={(value) => updateStatus({ showLeftPanel: value })}
+              setShowConfigModal={(value) => updateStatus({ showConfigModal: value })}
             />
             <hr />
             <Row className="h-90">
