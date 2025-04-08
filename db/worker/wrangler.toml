@@ -1,0 +1,18 @@
+compatibility_date = "2025-03-03"
+main = "index.ts"
+name = "northwind-worker"
+compatibility_flags = ["nodejs_compat"]
+
+routes = [{ pattern = "northwind.294911.xyz", custom_domain = true }]
+
+[placement]
+mode = "off"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[d1_databases]]
+binding = "DB"
+database_name = "northwind"
+database_id = "85c62391-70d4-41be-9ab2-95e20be5125c"

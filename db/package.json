@@ -1,0 +1,17 @@
+{
+  "name": "d1-northwind",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "db:new": "wrangler d1 create northwind",
+    "db:init": "wrangler d1 execute northwind --file=./db/schema.sql",
+    "db:load": "wrangler d1 execute northwind --file=./db/data-big.sql"
+  },
+  "workspaces": [
+    "worker",
+    "frontend"
+  ],
+  "devDependencies": {
+    "wrangler": "^3.19.0"
+  }
+}
