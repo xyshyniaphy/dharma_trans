@@ -11,12 +11,10 @@ import { Table } from 'react-bootstrap'; // Add Table import
 
 type TranslateItemsProps = {
   translations: Translation[];
-  removeFromHistory: (id: string) => void;
 };
 
 export const TranslateItems: React.FC<TranslateItemsProps> = ({
-  translations,
-  removeFromHistory,
+  translations
 }) => {
   const { config } = useDTConfig();
   const { explain, apiKey, selectedModel } = config;
@@ -74,7 +72,6 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
     <TranslateItem
       translation={translate}
       key={translate.timestamp}
-      removeFromHistory={() => removeFromHistory(translate.translateId)}
       outputText={outputText}
       thinkingText={thinkingText}
     />
@@ -94,7 +91,6 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
           <TranslateItem
             key={translation.timestamp}
             translation={translation}
-            removeFromHistory={() => removeFromHistory(translation.translateId)}
           />
         ))}
       </tbody>

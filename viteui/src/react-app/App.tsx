@@ -46,16 +46,7 @@ const App: React.FC = () => {
         }
     }, [apiKey,loaded]);
 
-    //click delete button on input
-    const removeFromHistory = () => {
-        if(!translate) return;
-        const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
-        setTransHistory(updatedHistory);
-        updateStatus({ status: '' });
-        setOutputText('');
-        setThinkingText('');
-        setTranslate(undefined);
-    };
+
 
     if(!loaded) return null;
 

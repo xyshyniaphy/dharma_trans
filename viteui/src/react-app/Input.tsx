@@ -33,9 +33,6 @@ const Input: React.FC<InputProps> = ({
     const [transHistory, _setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [_trans, setTranslate] = useCurrentTranslate();
 
-    function removeFromHistory(id: string): void {
-        
-    }
 
 
     function processText(_event: any): void {
@@ -79,10 +76,7 @@ const Input: React.FC<InputProps> = ({
                     {isProcessing ? '翻译中' : ' 翻译 (' + currentModel?.name + ')'}
                 </Button>
             </div>
-            <TranslateItems
-                translations={transHistory}
-                removeFromHistory={removeFromHistory}
-            />
+            <TranslateItems translations={transHistory} />
         </Stack>
     );
 };

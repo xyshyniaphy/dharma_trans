@@ -9,8 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 type TranslateItemProps = {
   //translation result
   translation?: Translation;
-  removeFromHistory?: () => void;
-
   //realtime stream when translating, use this first
   outputText?: string;
   thinkingText?: string;
@@ -18,7 +16,6 @@ type TranslateItemProps = {
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
   translation,
-  removeFromHistory,
   outputText,
   thinkingText
 }) => {
@@ -31,10 +28,18 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
   // Auto-scroll thinking text area when content changes
   React.useEffect(() => {
-    // if (textAreaRef.current) {
-    //   textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
-    // }
+    if (textAreaRef.current) {
+      textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
+    }
   }, [thinkingText]);
+
+      //click delete button on input
+      const removeFromHistory = () => {
+        if(!translation) return;
+        // const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
+        // setTransHistory(updatedHistory);
+      
+    };
 
   return (
     <tr>
