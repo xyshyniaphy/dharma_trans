@@ -3,6 +3,8 @@ import { calculateTotalPrice, CompletionData } from "./interface/price";
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
+const apiUrl = import.meta.env.VITE_OPENAI_URL;
+
 const fetchText = async (filename: string): Promise<string> => {
     const response = await fetch(promptApiUrl + '/access/' + filename, {
         method: 'GET',
@@ -30,7 +32,7 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
     }
 };
 
-const m_processText = async (explain:boolean,apiKey: string, inputText: string, selectedModel: string, apiUrl: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setPrice: (price: number) => void, currentModel: OpenRouterModel | null) => {
+const m_processText = async (explain:boolean,apiKey: string, inputText: string, selectedModel: string, setShowConfigModal: (show: boolean) => void, setIsProcessing: (processing: boolean) => void, setStatus: (status: string) => void, setOutputText: any, setThinkingText: any, setPrice: (price: number) => void, currentModel: OpenRouterModel | null) => {
     if (!apiKey) {
         setShowConfigModal(true);
         return;

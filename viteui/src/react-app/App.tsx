@@ -7,7 +7,6 @@ import Config from './Config';
 import Input from './Input';
 import { DNavBar } from './DNavBar';
 import ViewHistory from './ViewHistory';
-import m_processText from './translate_tool';
 import { Translation } from './translation_interface';
 import { OpenRouterModel } from './hooks/filterModels';
 import { useCurrentModel } from './hooks/currentModelHook';
@@ -19,7 +18,7 @@ const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
 const App: React.FC = () => {
     const { config } = useDTConfig();
-    const { explain, apiKey, selectedModel,loaded } = config;
+    const { apiKey, selectedModel,loaded } = config;
     const [currentModel] = useCurrentModel();
 
     const [inputText, setInputText] = useState<string>('');
@@ -27,51 +26,14 @@ const App: React.FC = () => {
     const [thinkingText, setThinkingText] = useState<string>('');
 
     const [{ status, isProcessing, showConfigModal, showLeftPanel }, updateStatus] = useTranslatorStatus();
+
+    
+    //todo : use recoil 
     const [transHistory, setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
     const [translate, setTranslate] = useCurrentTranslate();
     
-    const [price, setPrice] = useState(0);
+    
 
-    const processText = async () => {
-        setTranslate(undefined);
-        await m_processText(
-            explain,
-            apiKey, 
-            inputText, 
-            selectedModel, 
-            apiUrl, 
-            (value) => updateStatus({ showConfigModal: value }),
-            (value) => updateStatus({ isProcessing: value }),
-            (value) => updateStatus({ status: value }),
-            setOutputText, 
-            setThinkingText, 
-            setPrice, 
-            currentModel
-        );
-    };
-
-    useEffect(() => {
-        if (isProcessing || status !== '翻译完成') {
-            return;
-        }
-        if (outputText && inputText) {
-            const newTrans ={
-                input: inputText,
-                output: outputText,
-                thinking: thinkingText,
-                timestamp: Date.now(),
-                modelName: selectedModel,
-                price: price,
-                topicId: '',
-                translateId: '',
-                modelId: currentModel?.id || ''
-            };
-            const newHistory = [...transHistory, newTrans];
-            setTranslate(newTrans);
-            setTransHistory(newHistory);
-            updateStatus({ status: '' });
-        }
-    }, [isProcessing,outputText,status]);
 
     const handleHideConfigModal = () => {
         updateStatus({ showConfigModal: false });
@@ -114,19 +76,7 @@ const App: React.FC = () => {
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
                     {/* Main Panel - Replaced with Input component */}
-                    <Input
-                        inputText={inputText}
-                        outputText={outputText}
-                        thinkingText={thinkingText}
-                        isProcessing={isProcessing}
-                        status={status}
-                        setInputText={setInputText}
-                        processText={processText}
-                        translation={translate}
-                        removeFromHistory={removeFromHistory}
-                        selectedModel={selectedModel}
-                    />
-                   
+                    <Input/>
                 </Col>
             </Row>
 

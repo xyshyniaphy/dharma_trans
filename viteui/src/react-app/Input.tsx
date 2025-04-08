@@ -6,61 +6,52 @@
  * - Display areas for model thinking process and translation results
  * - History management with delete functionality
  */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Form, Stack } from 'react-bootstrap';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import { Translation } from './translation_interface';
 import { useCurrentModel } from './hooks/currentModelHook';
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import { useCurrentTranslate } from './hooks/currentTranslateHook';
+import { TranslateItems } from './TranslateItems';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { Translation } from './translation_interface';
 
 // Props interface for the Input component
 interface InputProps {
-    inputText: string; // Current input text
-    outputText: string; // Default output text
-    thinkingText: string; // Default thinking text
-    isProcessing: boolean; // Processing state flag
-    status: string; // Current status message
-    setInputText: (text: string) => void; // Callback to update input text
-    processText: () => void; // Callback to trigger text processing
-    translation?: Translation; // Translation object containing results
-    removeFromHistory: () => void; // Callback to remove from history
-    selectedModel: string; // Selected model for translation
+   
 }
 
 const Input: React.FC<InputProps> = ({
-    inputText,
-    outputText,
-    thinkingText,
-    isProcessing,
-    status,
-    setInputText,
-    processText,
-    translation,
-    removeFromHistory,
-    selectedModel
 }) => {
-    // Ref for auto-scrolling the thinking text area
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-    const [currentModel, setCurrentModel] = useCurrentModel();
+    const [currentModel, _] = useCurrentModel();
+    const [{ status, isProcessing }, updateStatus] = useTranslatorStatus();
 
-    // Auto-scroll thinking text area when content changes
-    React.useEffect(() => {
-        if (textAreaRef.current) {
-            textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
-        }
-    }, [thinkingText]);
+    const [inputText, setInputText] = useState<string>('');
 
-    // Use previous translation output if available, fallback to default
-    const outTxt = translation?.output ?? outputText;
+    const [_trans, setTranslate] = useCurrentTranslate();
 
-    // Use previous translation thinking if available, fallback to default
-    const thinkTxt = translation?.thinking ?? thinkingText;
+    //todo : convert to use recoil
+    const [transHistory, _setTransHistory] = useLocalStorage<Array<Translation>>('trans_history', []);
 
-    const price = translation?.price ?? 0;
+    function processText(_event: any): void {
+        updateStatus({ isProcessing: true, status: '开始翻译' })
+        setTranslate({
+            input: inputText,
+            output: '',
+            thinking: '',
+            timestamp: Date.now(),
+            modelName: currentModel?.name || '',
+            price: 0,
+            topicId: '',    
+            translateId: '',
+            modelId: currentModel?.id || ''
+        });
+    }
+
+    function removeFromHistory(id: string): void {
+        
+    }
 
     return (
         <Stack gap={3} className="h-90 overflow-auto">
@@ -88,40 +79,10 @@ const Input: React.FC<InputProps> = ({
                     {isProcessing ? status : ' 翻译 (' + currentModel?.name + ')'}
                 </Button>
             </div>
-
-            {/* Thinking process display */}
-            {thinkTxt && (
-                <Form.Group className="flex-grow-1">
-                    <Form.Label className="fw-bold">模型思考过程：</Form.Label>
-                    <Form.Control
-                        ref={textAreaRef}
-                        as="textarea"
-                        className="h-90"
-                        readOnly
-                        placeholder="模型的思考过程将显示在这里..."
-                        value={thinkTxt}
-                    />
-                </Form.Group>
-            )}
-
-            {/* Translation results display */}
-            {outTxt && (
-                    <Form.Group className="flex-grow-1">
-                        {/* Delete button for history items */}
-                        {translation && (
-                            <Button variant="link" className="p-2 ms-2  rounded" onClick={removeFromHistory}>
-                                <FontAwesomeIcon icon={faTrash} />
-                            </Button>
-                        )}  
-                        <Form.Label className="fw-bold">{`翻译结果 - (${translation?.modelName})`}</Form.Label>
-                        <div className="h-90 overflow-auto border p-2 rounded markdown-body">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {outTxt}
-                            </ReactMarkdown>
-                        </div>
-                    </Form.Group>
-                 )
-            }
+            <TranslateItems
+                translations={transHistory}
+                removeFromHistory={removeFromHistory}
+            />
         </Stack>
     );
 };
