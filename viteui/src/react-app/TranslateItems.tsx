@@ -29,7 +29,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   const [price, setPrice] = useState(0);
 
-  const [_, insertTransHistory, _deleteTransHistory] = useTransHistory();
+  const { insertTransHistory } = useTransHistory();
   const [translate, setTranslate] = useCurrentTranslate();
 
   const processText = async () => {

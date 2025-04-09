@@ -9,7 +9,7 @@ type ViewHistoryProps = {
 
 const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
-  const [transHistory, _insertTransHistory, _deleteTransHistory] = useTransHistory();
+  const { transHistory } = useTransHistory();
   const [_, setTranslate] = useCurrentTranslate();
   return (
     <ListGroup>

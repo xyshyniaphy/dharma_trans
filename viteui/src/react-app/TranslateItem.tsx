@@ -23,7 +23,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   // Ref for auto-scrolling the thinking text area
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [_, _insertTransHistory, deleteTransHistory] = useTransHistory();
+  const { deleteTransHistory } = useTransHistory();
 
   // this is used to show  translation result
   const out = outputText || translation?.output || '';

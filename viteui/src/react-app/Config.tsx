@@ -38,7 +38,7 @@ const Config: React.FC<ConfigProps> = () => {
         updateStatus({ showConfigModal: false });
     };
 
-    const [transHistory, _insertTransHistory, _deleteTransHistory] = useTransHistory();
+    const { transHistory } = useTransHistory();
 
     const handleClearHistory = () => {
         //setTransHistory([]);

@@ -6,15 +6,28 @@ import { openDB } from '../utils/db_util';
 
 const TRANSLATION_STORE = 'translations';
 
-const getTranslations = async (): Promise<Translation[]> => {
+const __getTranslations = async (translationIds: string[]): Promise<Translation[]> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(TRANSLATION_STORE, 'readonly');
     const store = transaction.objectStore(TRANSLATION_STORE);
-    const request = store.getAll();
     
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    const results: Translation[] = [];
+    let count = 0;
+    
+    translationIds.forEach(id => {
+      const request = store.get(id);
+      request.onsuccess = () => {
+        if (request.result) {
+          results.push(request.result);
+        }
+        count++;
+        if (count === translationIds.length) {
+          resolve(results);
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
   });
 };
 
@@ -51,48 +64,36 @@ const transHistoryAtom = atom<Array<Translation>>({
 
 export const useTransHistory = () => {
   const [transHistory, setTransHistory] = useRecoilState(transHistoryAtom);
-  const [isDBReady, setIsDBReady] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const storedHistory = await getTranslations();
-        if (storedHistory.length > 0) {
-          setTransHistory(storedHistory);
-        }
-      } catch (error) {
-        console.error('Error loading translations:', error);
-      } finally {
-        setIsDBReady(true);
-      }
-    })();
-  }, []);
+  const getTranslations = async (translationIds: string[]) => {
+    try {
+      const translations = await __getTranslations(translationIds);
+      setTransHistory(translations);
+    } catch (error) {
+      console.error('Error getting translations:', error);
+    }
+  };
 
   const insertTransHistory = async (translation: Translation) => {
-    const newHistory = [...transHistory, translation];
-    setTransHistory(newHistory);
-    if (isDBReady) {
-      try {
-        await insertTranslation(translation);
-      } catch (error) {
-        console.error('Error inserting translation:', error);
-      }
+    try {
+      await insertTranslation(translation);
+    } catch (error) {
+      console.error('Error inserting translation:', error);
     }
-    return newHistory;
   };
 
   const deleteTransHistory = async (translateId: string) => {
-    const newHistory = transHistory.filter(t => t.translateId !== translateId);
-    setTransHistory(newHistory);
-    if (isDBReady) {
-      try {
-        await deleteTranslation(translateId);
-      } catch (error) {
-        console.error('Error deleting translation:', error);
-      }
+    try {
+      await deleteTranslation(translateId);
+    } catch (error) {
+      console.error('Error deleting translation:', error);
     }
-    return newHistory;
   };
 
-  return [transHistory, insertTransHistory, deleteTransHistory] as const;
+  return {
+    transHistory,
+    getTranslations,
+    insertTransHistory,
+    deleteTransHistory
+  };
 };
