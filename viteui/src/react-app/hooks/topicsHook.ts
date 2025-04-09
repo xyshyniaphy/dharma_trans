@@ -72,11 +72,39 @@ export function useTopics() {
       request.onerror = () => console.error(request.error);
     });
   };
-  
+
+  const updateTopic = (topicId: string, updatedFields: Partial<Topic>): void => {
+    openDB().then(db => {
+      const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+      const store = transaction.objectStore(TOPIC_STORE);
+      
+      const getRequest = store.get(topicId);
+      
+      getRequest.onsuccess = () => {
+        const existingTopic = getRequest.result;
+        if (existingTopic) {
+          const updatedTopic = { ...existingTopic, ...updatedFields };
+          const updateRequest = store.put(updatedTopic);
+          
+          updateRequest.onsuccess = () => {
+            getAllTopicsFromDB().then(topics => setTopics(topics));
+          };
+          updateRequest.onerror = () => console.error(updateRequest.error);
+        }
+      };
+      getRequest.onerror = () => console.error(getRequest.error);
+    });
+  };
+
+  const clearTopics = (): void => {
+    setTopics([]);
+  };
+
   return {
     topics,
-    setTopics,
     createTopic,
     deleteTopic,
+    updateTopic,
+    clearTopics,
   };
 }
