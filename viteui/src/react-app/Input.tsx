@@ -32,7 +32,7 @@ const Input: React.FC<InputProps> = ({
     const [inputText, setInputText] = useState<string>('');
 
     //todo : convert to use recoil
-    const [transHistory, _setTransHistory] = useTransHistory();
+    const [transHistory, insertTransHistory, deleteTransHistory] = useTransHistory();
     const [_trans, setTranslate] = useCurrentTranslate();
 
     

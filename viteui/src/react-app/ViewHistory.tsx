@@ -1,16 +1,15 @@
 import React from 'react';
 import { ListGroup } from 'react-bootstrap';
 
-import { Translation } from './interface/translation_interface';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
+import { useTransHistory } from './hooks/transHistoryHook';
 
 type ViewHistoryProps = {
-  transHistory: Array<Translation>;
 };
 
 const ViewHistory: React.FC<ViewHistoryProps> = ({
-  transHistory
 }) => {
+  const [transHistory, _insertTransHistory, _deleteTransHistory] = useTransHistory();
   const [_, setTranslate] = useCurrentTranslate();
   return (
     <ListGroup>

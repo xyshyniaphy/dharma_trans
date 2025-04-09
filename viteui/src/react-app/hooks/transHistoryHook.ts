@@ -34,33 +34,12 @@ const getTranslations = async (): Promise<Translation[]> => {
   });
 };
 
-const saveTranslations = async (translations: Translation[]): Promise<void> => {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    
-    // Clear existing data
-    store.clear();
-    
-    // Add all translations using translateId as key
-    (async () => {
-      for (const translation of translations) {
-        await insertTranslation(translation);
-      }
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    })();
-  });
-};
-
 const insertTranslation = async (translation: Translation): Promise<void> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     
-    // Use existing translateId as key
     store.put({ ...translation, id: translation.translateId });
     
     transaction.oncomplete = () => resolve();
@@ -105,17 +84,6 @@ export const useTransHistory = () => {
     })();
   }, []);
 
-  const updateTransHistory = async (newHistory: Array<Translation>) => {
-    setTransHistory(newHistory);
-    if (isDBReady) {
-      try {
-        await saveTranslations(newHistory);
-      } catch (error) {
-        console.error('Error saving translations:', error);
-      }
-    }
-  };
-
   const insertTransHistory = async (translation: Translation) => {
     const newHistory = [...transHistory, translation];
     setTransHistory(newHistory);
@@ -142,5 +110,5 @@ export const useTransHistory = () => {
     return newHistory;
   };
 
-  return [transHistory, updateTransHistory, insertTransHistory, deleteTransHistory] as const;
+  return [transHistory, insertTransHistory, deleteTransHistory] as const;
 };

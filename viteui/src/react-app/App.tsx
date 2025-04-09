@@ -6,44 +6,15 @@ import Config from './Config';
 import Input from './Input';
 import { DNavBar } from './DNavBar';
 import ViewHistory from './ViewHistory';
-import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
-import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
-import { useTransHistory } from './hooks/transHistoryHook';
 import { ProgressOverlay } from './ProgressOverlay';
 
 const App: React.FC = () => {
+    const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
+
     const { config } = useDTConfig();
-    const { apiKey, loaded } = config;
-    const [currentModel] = useCurrentModel();
-
-    const [inputText, setInputText] = useState<string>('');
-    const [outputText, setOutputText] = useState<string>('');
-    const [thinkingText, setThinkingText] = useState<string>('');
-
-    const [{ status, isProcessing, showConfigModal, showLeftPanel }, updateStatus] = useTranslatorStatus();
-
-    
-    //todo : use recoil 
-    const [transHistory, setTransHistory] = useTransHistory();
-    const [translate, setTranslate] = useCurrentTranslate();
-    
-    
-
-
-    const handleHideConfigModal = () => {
-        updateStatus({ showConfigModal: false });
-    };
-
-    useEffect(() => {
-        if(!loaded) return;
-        if (!apiKey) {
-            updateStatus({ showConfigModal: true }); 
-        }
-    }, [apiKey,loaded]);
-
-
+    const { loaded } = config;
 
     if(!loaded) return null;
 
@@ -58,9 +29,7 @@ const App: React.FC = () => {
             <Row className="h-90">
                 <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
-                    <ViewHistory
-                        transHistory={transHistory}
-                    />
+                    <ViewHistory/>
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
                     {/* Main Panel - Replaced with Input component */}
@@ -69,12 +38,7 @@ const App: React.FC = () => {
             </Row>
 
             {/* Config Modal */}
-            <Config
-                onClose={handleHideConfigModal}
-                showModal={showConfigModal}
-                transHistory={transHistory}
-                setTransHistory={setTransHistory}
-            />
+            <Config/>
 
             {/* Progress Overlay */}
             <ProgressOverlay isProcessing={isProcessing} />

@@ -29,7 +29,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   const [price, setPrice] = useState(0);
 
-  const [transHistory, setTransHistory] = useTransHistory();
+  const [_, insertTransHistory, _deleteTransHistory] = useTransHistory();
   const [translate, setTranslate] = useCurrentTranslate();
 
   const processText = async () => {
@@ -58,9 +58,8 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
         thinking: thinkingText,
         price: price,
       };
-      const newHistory = [newTrans, ...transHistory];
       setTranslate(undefined);
-      setTransHistory(newHistory);
+      insertTransHistory(newTrans);
       updateStatus({ status: '翻译完成' });
     }
   }, [status]);

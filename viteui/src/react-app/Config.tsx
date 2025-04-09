@@ -8,26 +8,40 @@ import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
 import { useCurrentModel } from './hooks/currentModelHook';
+import { useTransHistory } from './hooks/transHistoryHook';
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 
 interface ConfigProps {
-    onClose: () => void;
-    showModal: boolean;
-    transHistory: Translation[];
-    setTransHistory: (value: Translation[]) => void;
 }
 
-const Config: React.FC<ConfigProps> = ({ onClose, showModal, transHistory, setTransHistory }) => {
+const Config: React.FC<ConfigProps> = () => {
 
     const { config, updateConfig } = useDTConfig();
-    const { explain, apiKey, selectedModel } = config;
+    const { explain, apiKey, selectedModel, loaded } = config;
     const [currentModel, setCurrentModel] = useCurrentModel();
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(selectedModel);
     const [models, setModels] = useModelsState();
 
+    const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
+
+    useEffect(() => {
+        if(!loaded) return;
+        if (!apiKey) {
+            updateStatus({ showConfigModal: true }); 
+        }
+    }, [apiKey,loaded]);
+    
+    
+    const handleHideConfigModal = () => {
+        updateStatus({ showConfigModal: false });
+    };
+
+    const [transHistory, _insertTransHistory, _deleteTransHistory] = useTransHistory();
+
     const handleClearHistory = () => {
-        setTransHistory([]);
+        //setTransHistory([]);
     };
 
     const handleExportHistory = () => {
@@ -53,7 +67,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, transHistory, setTr
                 try {
                     const importedHistory = JSON.parse(e.target?.result as string) as Translation[];
                     const newHistory = [...transHistory, ...importedHistory];
-                    setTransHistory(newHistory);
+                    //insertTransHistory(newHistory);
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
                 }
@@ -97,13 +111,13 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, transHistory, setTr
             console.log('Saving API Key:', tempApiKey);
             console.log('Saving model:', tempModel);
             updateConfig({ apiKey: tempApiKey, selectedModel: tempModel });
-            onClose();
+            handleHideConfigModal();
         }
     }
-    if(!showModal) return null;
+    if(!showConfigModal) return null;
 
     return (
-        <Modal show={showModal} onHide={onClose} >
+        <Modal show={showConfigModal} onHide={handleHideConfigModal} >
             <Modal.Header closeButton>
                 <Modal.Title>设置密钥和模型</Modal.Title>
             </Modal.Header>
@@ -157,7 +171,7 @@ const Config: React.FC<ConfigProps> = ({ onClose, showModal, transHistory, setTr
                     导入历史
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button>
-                <Button variant="outline-warning" onClick={onClose}>取消</Button>
+                <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
                 <Button variant="outline-success"  onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
                 
             </Modal.Footer>

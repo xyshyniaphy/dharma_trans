@@ -23,7 +23,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   // Ref for auto-scrolling the thinking text area
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [transHistory, setTransHistory] = useTransHistory();
+  const [_, _insertTransHistory, deleteTransHistory] = useTransHistory();
 
   // this is used to show  translation result
   const out = outputText || translation?.output || '';
@@ -36,12 +36,11 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
     }
   }, [thinkingText]);
 
-      //click delete button on input
-      const removeFromHistory = () => {
-        if(!translation) return;
-        const updatedHistory = transHistory.filter(t => t.timestamp !== translation.timestamp);
-        setTransHistory(updatedHistory);
-      };
+  //click delete button on input
+  const removeFromHistory = () => {
+    if(!translation) return;
+    deleteTransHistory(translation.translateId);
+  };
 
   return (
     <tr>
