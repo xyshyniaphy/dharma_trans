@@ -58,7 +58,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
         thinking: thinkingText,
         price: price,
       };
-      const newHistory = [...transHistory, newTrans];
+      const newHistory = [newTrans, ...transHistory];
       setTranslate(undefined);
       setTransHistory(newHistory);
       updateStatus({ status: '翻译完成' });
