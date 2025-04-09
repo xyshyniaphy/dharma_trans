@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Translation } from './translation_interface';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTransHistory } from './hooks/transHistoryHook';
 
 type TranslateItemProps = {
   //translation result
@@ -22,6 +23,8 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   // Ref for auto-scrolling the thinking text area
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  const [transHistory, setTransHistory] = useTransHistory();
+
   // this is used to show  translation result
   const out = outputText || translation?.output || '';
   const think = thinkingText || translation?.thinking || '';
@@ -36,10 +39,9 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
       //click delete button on input
       const removeFromHistory = () => {
         if(!translation) return;
-        // const updatedHistory = transHistory.filter(t => t.timestamp !== translate.timestamp);
-        // setTransHistory(updatedHistory);
-      
-    };
+        const updatedHistory = transHistory.filter(t => t.timestamp !== translation.timestamp);
+        setTransHistory(updatedHistory);
+      };
 
   return (
     <tr>

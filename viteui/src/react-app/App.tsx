@@ -2,13 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
 import { DNavBar } from './DNavBar';
 import ViewHistory from './ViewHistory';
-import { Translation } from './translation_interface';
-import { OpenRouterModel } from './hooks/filterModels';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
@@ -16,11 +13,9 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useTransHistory } from './hooks/transHistoryHook';
 import { ProgressOverlay } from './ProgressOverlay';
 
-const apiUrl = import.meta.env.VITE_OPENAI_URL;
-
 const App: React.FC = () => {
     const { config } = useDTConfig();
-    const { apiKey, selectedModel,loaded } = config;
+    const { apiKey, loaded } = config;
     const [currentModel] = useCurrentModel();
 
     const [inputText, setInputText] = useState<string>('');

@@ -29,7 +29,6 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   const [price, setPrice] = useState(0);
 
-  //todo : use recoil 
   const [transHistory, setTransHistory] = useTransHistory();
   const [translate, setTranslate] = useCurrentTranslate();
 
