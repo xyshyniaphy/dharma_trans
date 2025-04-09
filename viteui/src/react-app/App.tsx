@@ -1,7 +1,7 @@
 // src/react-app/App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import Config from './Config';
 import Input from './Input';
@@ -14,6 +14,7 @@ import { useDTConfig } from './hooks/configHook';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useTransHistory } from './hooks/transHistoryHook';
+import { ProgressOverlay } from './ProgressOverlay';
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
@@ -80,25 +81,8 @@ const App: React.FC = () => {
                 setTransHistory={setTransHistory}
             />
 
-            {/* Full-screen overlay with progress circle */}
-            {isProcessing && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(196, 196, 196, 0.2)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1000
-              }}>
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </div>
-            )}
+            {/* Progress Overlay */}
+            <ProgressOverlay isProcessing={isProcessing} />
         </Container>
     );
 };
