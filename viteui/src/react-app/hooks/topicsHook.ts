@@ -97,7 +97,16 @@ export function useTopics() {
   };
 
   const clearTopics = (): void => {
-    setTopics([]);
+    openDB().then(db => {
+      const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+      const store = transaction.objectStore(TOPIC_STORE);
+      const request = store.clear();
+      
+      request.onsuccess = () => {
+        setTopics([]);
+      };
+      request.onerror = () => console.error(request.error);
+    });
   };
 
   return {
