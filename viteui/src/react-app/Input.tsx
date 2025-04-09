@@ -7,7 +7,7 @@
  * - History management with delete functionality
  */
 import React, { useState } from 'react';
-import { Form, Stack, Dropdown } from 'react-bootstrap';
+import { Form, Stack, Dropdown, Button } from 'react-bootstrap';
 import { OpenRouterModel } from './hooks/filterModels';
 
 import { useCurrentModel } from './hooks/currentModelHook';
@@ -69,31 +69,37 @@ const Input: React.FC<InputProps> = ({
 
             {/* Processing button */}
             <div className="d-flex gap-2 w-100">
-                <Dropdown>
-                    <Dropdown.Toggle 
+                <div className="btn-group flex-grow-1">
+                    <Button 
                         variant="primary" 
-                        id="processBtn" 
                         disabled={isProcessing || !inputText}
-                        className="flex-grow-1"
                         onClick={processText}
+                        className="flex-grow-1"
                     >
-                        {isProcessing ? '翻译中' : ' 翻译 (' + currentModel?.name + ')'}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        {models.length === 0 ? (
-                            <Dropdown.Item disabled>请先输入有效API Key</Dropdown.Item>
-                        ) : (
-                            models.map((model: OpenRouterModel) => (
-                                <Dropdown.Item 
-                                    key={model.name} 
-                                    onClick={() => setCurrentModel(model)}
-                                >
-                                    {model.name}
-                                </Dropdown.Item>
-                            ))
-                        )}
-                    </Dropdown.Menu>
-                </Dropdown>
+                        {isProcessing ? '翻译中' : '翻译 (' + currentModel?.name + ')'}
+                    </Button>
+                    <Dropdown>
+                        <Dropdown.Toggle 
+                            split 
+                            variant="primary" 
+                            disabled={isProcessing || !inputText}
+                        />
+                        <Dropdown.Menu>
+                            {models.length === 0 ? (
+                                <Dropdown.Item disabled>请先输入有效API Key</Dropdown.Item>
+                            ) : (
+                                models.map((model: OpenRouterModel) => (
+                                    <Dropdown.Item 
+                                        key={model.name} 
+                                        onClick={() => setCurrentModel(model)}
+                                    >
+                                        {model.name}
+                                    </Dropdown.Item>
+                                ))
+                            )}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
             </div>
             <TranslateItems translations={transHistory} />
         </Stack>
