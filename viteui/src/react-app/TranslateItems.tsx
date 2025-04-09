@@ -4,7 +4,7 @@ import { Translation } from './interface/translation_interface';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useDTConfig } from './hooks/configHook';
-import m_processText from './translate_tool';
+import m_processText from './utils/translate_tool';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useTransHistory } from './hooks/transHistoryHook';
 import { Table } from 'react-bootstrap'; // Add Table import

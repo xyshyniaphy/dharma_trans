@@ -1,5 +1,5 @@
-import { OpenRouterModel } from "./hooks/filterModels";
-import { calculateTotalPrice, CompletionData } from "./interface/price";
+import { OpenRouterModel } from "../hooks/filterModels";
+import { calculateTotalPrice, CompletionData } from "../interface/price";
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
