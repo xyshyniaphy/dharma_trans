@@ -83,7 +83,9 @@ const Input: React.FC<InputProps> = ({
                             split 
                             variant="primary" 
                             disabled={isProcessing || !inputText}
-                        />
+                        >
+                            模型
+                        </Dropdown.Toggle>
                         <Dropdown.Menu>
                             {models.length === 0 ? (
                                 <Dropdown.Item disabled>请先输入有效API Key</Dropdown.Item>
