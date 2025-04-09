@@ -75,13 +75,14 @@ const Input: React.FC<InputProps> = ({
                         disabled={isProcessing || !inputText}
                         onClick={processText}
                         className="flex-grow-1"
+                        style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
                     >
                         {isProcessing ? '翻译中' : '翻译 (' + currentModel?.name + ')'}
                     </Button>
-                    <Dropdown>
+                    <Dropdown style={{ marginLeft: '8px' }}>
                         <Dropdown.Toggle 
                             split 
-                            variant="primary" 
+                            variant="success" 
                             disabled={isProcessing || !inputText}
                         >
                             模型
