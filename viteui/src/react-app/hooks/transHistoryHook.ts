@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
-import { Translation } from '../translation_interface';
+import { Translation } from '../interface/translation_interface';
 
 const transHistoryAtom = atom<Array<Translation>>({
   key: 'transHistoryState',

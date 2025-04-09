@@ -1,5 +1,5 @@
 import { atom, useRecoilState } from 'recoil';
-import { Translation } from '../translation_interface';
+import { Translation } from '../interface/translation_interface';
 
 export const translateState = atom<Translation | undefined>({
   key: 'translateState',

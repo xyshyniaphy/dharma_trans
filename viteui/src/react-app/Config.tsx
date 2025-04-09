@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { Translation } from './translation_interface';
+import { Translation } from './interface/translation_interface';
 import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';

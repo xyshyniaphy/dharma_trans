@@ -15,7 +15,7 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { TranslateItems } from './TranslateItems';
 import { useTransHistory } from './hooks/transHistoryHook';
-import { Translation } from './translation_interface';
+import { Translation } from './interface/translation_interface';
 import { useModelsState } from './hooks/modelsHook';
 
 // Props interface for the Input component

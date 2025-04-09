@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListGroup } from 'react-bootstrap';
 
-import { Translation } from './translation_interface';
+import { Translation } from './interface/translation_interface';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 
 type ViewHistoryProps = {
