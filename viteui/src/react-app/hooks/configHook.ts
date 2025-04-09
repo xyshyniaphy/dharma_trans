@@ -7,6 +7,7 @@ export interface DT_CONFIG {
   explain: boolean;
   apiKey: string;
   selectedModel: string;
+  topicId: string;
 }
 
 const configAtom = atom<DT_CONFIG>({
@@ -15,7 +16,8 @@ const configAtom = atom<DT_CONFIG>({
     loaded: false,
     explain: false,
     apiKey: '',
-    selectedModel: 'deepseek/deepseek-chat-v3-0324:free'
+    selectedModel: 'deepseek/deepseek-chat-v3-0324:free',
+    topicId: ''
   }
 });
 
@@ -29,14 +31,15 @@ export const useDTConfig = () => {
     const explain = localStorage.getItem('EXPLAIN');
     const apiKey = localStorage.getItem('OPENROUTER_API_KEY');
     const selectedModel = localStorage.getItem('SELECTED_MODEL');
-
+    
     if (apiKey) {
       console.log("MIGRAGE OLD CONFIG");
       const newConfig: DT_CONFIG = {
         loaded: true,
         explain: explain ? JSON.parse(explain) : false,
         apiKey: apiKey,
-        selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free'
+        selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free',
+        topicId: ''
       };
       
       setStoredConfig(JSON.stringify(newConfig));

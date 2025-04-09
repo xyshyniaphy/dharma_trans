@@ -2,31 +2,17 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
 import { Translation } from '../interface/translation_interface';
+import { Topic } from '../interface/topic_interface';
+import { openDB, DB_NAME } from '../utils/db_util';
 
-const DB_NAME = 'TranslationsDB';
-const STORE_NAME = 'translations';
-
-const openDB = () => {
-  return new Promise<IDBDatabase>((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    
-    request.onupgradeneeded = (event) => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-      }
-    };
-    
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
+const TRANSLATION_STORE = 'translations';
+const TOPIC_STORE = 'topics';
 
 const getTranslations = async (): Promise<Translation[]> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readonly');
-    const store = transaction.objectStore(STORE_NAME);
+    const transaction = db.transaction(TRANSLATION_STORE, 'readonly');
+    const store = transaction.objectStore(TRANSLATION_STORE);
     const request = store.getAll();
     
     request.onsuccess = () => resolve(request.result);
@@ -37,8 +23,8 @@ const getTranslations = async (): Promise<Translation[]> => {
 const insertTranslation = async (translation: Translation): Promise<void> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
+    const transaction = db.transaction(TRANSLATION_STORE, 'readwrite');
+    const store = transaction.objectStore(TRANSLATION_STORE);
     
     store.put({ ...translation, id: translation.translateId });
     
@@ -50,13 +36,56 @@ const insertTranslation = async (translation: Translation): Promise<void> => {
 const deleteTranslation = async (translateId: string): Promise<void> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
+    const transaction = db.transaction(TRANSLATION_STORE, 'readwrite');
+    const store = transaction.objectStore(TRANSLATION_STORE);
     
     store.delete(translateId);
     
     transaction.oncomplete = () => resolve();
     transaction.onerror = () => reject(transaction.error);
+  });
+};
+
+const createTopic = async (name: string): Promise<Topic> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+    const store = transaction.objectStore(TOPIC_STORE);
+    
+    const topic: Topic = {
+      topicId: Date.now().toString() + "_" + (Math.random()*1000).toFixed(4),
+      name,
+      translationIds: []
+    };
+    
+    const request = store.add(topic);
+    
+    request.onsuccess = () => resolve(topic);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const getTopics = async (): Promise<Topic[]> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(TOPIC_STORE, 'readonly');
+    const store = transaction.objectStore(TOPIC_STORE);
+    const request = store.getAll();
+    
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const deleteTopic = async (topicId: string): Promise<void> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+    const store = transaction.objectStore(TOPIC_STORE);
+    const request = store.delete(topicId);
+    
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
   });
 };
 
@@ -112,3 +141,5 @@ export const useTransHistory = () => {
 
   return [transHistory, insertTransHistory, deleteTransHistory] as const;
 };
+
+export { createTopic, getTopics, deleteTopic };
