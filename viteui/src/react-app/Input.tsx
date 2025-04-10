@@ -13,7 +13,8 @@ import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useModelsState } from './hooks/modelsHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { TranslateItems } from './TranslateItems';
-
+import { useDTConfig } from './hooks/configHook';
+        
 // Props interface for the Input component
 interface InputProps {
    
@@ -23,6 +24,8 @@ const Input: React.FC<InputProps> = ({
 }) => {
     const [{isProcessing}, updateStatus] = useTranslatorStatus();
     const [currentModel, setCurrentModel] = useCurrentModel();
+    
+    const { updateConfig } = useDTConfig();
 
     const [inputText, setInputText] = React.useState<string>('');
 ;
@@ -87,7 +90,7 @@ const Input: React.FC<InputProps> = ({
                                 models.map((model: any) => (
                                     <Dropdown.Item 
                                         key={model.name} 
-                                        onClick={() => setCurrentModel(model)}
+                                        onClick={() => {setCurrentModel(model); updateConfig({ selectedModel: model.id })}}
                                     >
                                         {model.name}
                                     </Dropdown.Item>
