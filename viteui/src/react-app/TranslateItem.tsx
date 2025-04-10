@@ -40,7 +40,10 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
     if(!translation || !deleteTranslation) return;
     deleteTranslation(translation.translateId);
   };
-
+  //get model name from translation
+  const BaseModelName = (translation? translation.modelName : '').replace('(free)', '');
+  const modelName = (BaseModelName&& BaseModelName.length > 0 && BaseModelName.includes(':'))
+  ? BaseModelName.split(':')[1]: BaseModelName;
   return (
     <tr>
       {/* Input Column */}
@@ -52,11 +55,13 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
       <td className="align-top p-2">
         <Form.Group>
           {translation && removeFromHistory && (
-            <Button variant="link" className="p-2 rounded float-end" onClick={removeFromHistory}>
-              <FontAwesomeIcon icon={faTrash} />
-            </Button>
+            <div className="d-flex justify-content-between align-items-center">
+              <Form.Label className="fw-bold">{modelName}</Form.Label>
+              <Button variant="link" className="p-2 rounded" onClick={removeFromHistory}>
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
+            </div>
           )}
-          <Form.Label className="fw-bold">{translation?.modelName || ''}</Form.Label>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {out}
           </ReactMarkdown>
