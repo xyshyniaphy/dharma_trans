@@ -5,7 +5,6 @@ import remarkGfm from 'remark-gfm';
 import { Translation } from './interface/translation_interface';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTransHistory } from './hooks/transHistoryHook';
 
 type TranslateItemProps = {
   //translation result
@@ -13,17 +12,17 @@ type TranslateItemProps = {
   //realtime stream when translating, use this first
   outputText?: string;
   thinkingText?: string;
+  deleteTranslation?: (translateId: string) => Promise<void>;
 };
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
   translation,
   outputText,
-  thinkingText
+  thinkingText,
+  deleteTranslation
 }) => {
   // Ref for auto-scrolling the thinking text area
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const { deleteTransHistory } = useTransHistory();
 
   // this is used to show  translation result
   const out = outputText || translation?.output || '';
@@ -38,8 +37,8 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
   //click delete button on input
   const removeFromHistory = () => {
-    if(!translation) return;
-    deleteTransHistory(translation.translateId);
+    if(!translation || !deleteTranslation) return;
+    deleteTranslation(translation.translateId);
   };
 
   return (

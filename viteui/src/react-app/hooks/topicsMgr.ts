@@ -7,7 +7,8 @@ export function useTopicsManager() {
   const { 
     topics, 
     updateTopic,
-    currentTopic
+    currentTopic,
+    currentTopicId
   } = useTopics();
 
   const { insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
@@ -26,46 +27,39 @@ export function useTopicsManager() {
 
   //reload translations when current topic changed
   useEffect(() => {
-    if(currentTopic) console.log('current topic is :', currentTopic.name + ' ' + currentTopic.topicId);
+    // if(currentTopic) console.log('current topic is :', currentTopic.name + ' ' + currentTopic.topicId);
     reloadTranslations();
-  }, [currentTopic]);
+  }, [currentTopicId]);
 
   // Add translation to a topic
-  const addTranslationToTopic = ( translation: Translation): void => {
+  const addTranslationToTopic = async (translation: Translation): Promise<void> => {
     if(!currentTopic) return;
-    updateTopic(currentTopic.topicId, {
+   
+    await insertTransHistory(translation);
+    await updateTopic(currentTopic.topicId, {
       translationIds: [...(topics.find(t => t.topicId === currentTopic.topicId)?.translationIds || []), translation.translateId]
     });
-    insertTransHistory(translation);
-  };
-
-  // Remove translation from a topic
-  const removeTranslationFromTopic = (translateId: string): void => {
-    if(!currentTopic) return;
-    updateTopic(currentTopic.topicId, {
-      translationIds: topics.find(t => t.topicId === currentTopic.topicId)?.translationIds.filter(id => id !== translateId) || []
-    });
-    deleteTransHistory(translateId);
+    
+    await reloadTranslations();
   };
 
   // Delete translation from topic and history
-  const deleteTranslation = (translationId: string): void => {
+  const deleteTranslation = async (translationId: string): Promise<void> => {
     if (!currentTopic) return;
     
-    updateTopic(currentTopic.topicId, {
+    await deleteTransHistory(translationId);
+    await updateTopic(currentTopic.topicId, {
       translationIds: topics
         .find(t => t.topicId === currentTopic.topicId)
         ?.translationIds
         .filter(id => id !== translationId) || []
     });
-    
-    deleteTransHistory(translationId);
+    await reloadTranslations();
   };
 
   return {
     topics,
     addTranslationToTopic,
-    removeTranslationFromTopic,
     deleteTranslation
   };
 }

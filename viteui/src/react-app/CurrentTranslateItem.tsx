@@ -1,6 +1,5 @@
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
-import { useTopicsManager } from './hooks/topicsMgr';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useState, useEffect } from 'react';
@@ -13,7 +12,6 @@ export default function CurrentTranslateItem() {
 
   const [currentModel] = useCurrentModel();
 
-  const { addTranslationToTopic } = useTopicsManager();
 
   const [{ status }, updateStatus] = useTranslatorStatus();
 

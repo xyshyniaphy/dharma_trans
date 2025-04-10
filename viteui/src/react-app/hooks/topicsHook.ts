@@ -128,6 +128,7 @@ export function useTopics() {
     deleteTopic,
     updateTopic,
     clearTopics,
-    currentTopic
+    currentTopic,
+    currentTopicId
   };
 }

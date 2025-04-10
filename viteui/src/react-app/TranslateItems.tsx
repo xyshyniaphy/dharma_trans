@@ -4,6 +4,7 @@ import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTransHistory } from './hooks/transHistoryHook';
 import CurrentTranslateItem from './CurrentTranslateItem';
 import { Table } from 'react-bootstrap';
+import { useTopicsManager } from './hooks/topicsMgr';
 
 type TranslateItemsProps = {
 };
@@ -13,6 +14,8 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   
   const { transHistory } = useTransHistory();
   const [translate] = useCurrentTranslate();
+  
+  const { addTranslationToTopic,deleteTranslation } = useTopicsManager();
 
   const currentTransItem = translate ? <CurrentTranslateItem /> : null;
   
@@ -31,6 +34,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
           <TranslateItem
             key={translation.timestamp}
             translation={translation}
+            deleteTranslation={deleteTranslation}
           />
         ))}
       </tbody>

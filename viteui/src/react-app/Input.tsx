@@ -7,7 +7,7 @@
  * - History management with delete functionality
  */
 import React from 'react';
-import { Form, Stack, Dropdown } from 'react-bootstrap';
+import { Form, Stack, Dropdown, Button } from 'react-bootstrap';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useModelsState } from './hooks/modelsHook';
@@ -31,6 +31,7 @@ const Input: React.FC<InputProps> = ({
     const [models, _setModels] = useModelsState();
 
     function processText(_event: any): void {
+        setInputText('');
         updateStatus({ isProcessing: true, status: '开始翻译' })
         setTranslate({
             input: inputText,
@@ -63,7 +64,7 @@ const Input: React.FC<InputProps> = ({
             {/* Processing button */}
             <div className="d-flex gap-2 w-100">
                 <div className="btn-group flex-grow-1">
-                    <Dropdown.Toggle 
+                    <Button
                         variant="primary" 
                         disabled={isProcessing || !inputText}
                         onClick={processText}
@@ -71,7 +72,7 @@ const Input: React.FC<InputProps> = ({
                         style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
                     >
                         {isProcessing ? '翻译中' : '翻译 (' + currentModel?.name + ')'}
-                    </Dropdown.Toggle>
+                    </Button>
                     <Dropdown style={{ marginLeft: '8px' }}>
                         <Dropdown.Toggle 
                             split 
