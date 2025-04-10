@@ -17,6 +17,7 @@ import { TranslateItems } from './TranslateItems';
 import { useTransHistory } from './hooks/transHistoryHook';
 import { Translation } from './interface/translation_interface';
 import { useModelsState } from './hooks/modelsHook';
+import { useTopicsManager } from './hooks/topicsMgr';
 
 // Props interface for the Input component
 interface InputProps {
@@ -25,14 +26,13 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
 }) => {
-    
     const [{isProcessing}, updateStatus] = useTranslatorStatus();
     const [currentModel, setCurrentModel] = useCurrentModel();
 
     const [inputText, setInputText] = useState<string>('');
 
     //todo : convert to use recoil
-    const { transHistory, insertTransHistory, deleteTransHistory } = useTransHistory();
+    const { transHistory} = useTransHistory();
     const [_trans, setTranslate] = useCurrentTranslate();
 
     
@@ -64,6 +64,7 @@ const Input: React.FC<InputProps> = ({
                     placeholder="请在此输入需要翻译的文本..."
                     value={inputText}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                    maxLength={1024}
                 />
             </Form.Group>
 
@@ -104,7 +105,7 @@ const Input: React.FC<InputProps> = ({
                     </Dropdown>
                 </div>
             </div>
-            <TranslateItems translations={transHistory} />
+            <TranslateItems />
         </Stack>
     );
 };

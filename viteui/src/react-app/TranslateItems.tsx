@@ -6,20 +6,20 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useDTConfig } from './hooks/configHook';
 import m_processText from './utils/translate_tool';
 import { useCurrentModel } from './hooks/currentModelHook';
-import { useTransHistory } from './hooks/transHistoryHook';
 import { Table } from 'react-bootstrap'; // Add Table import
+import { useTopicsManager } from './hooks/topicsMgr';
 
 type TranslateItemsProps = {
-  translations: Translation[];
 };
 
-export const TranslateItems: React.FC<TranslateItemsProps> = ({
-  translations
+export const TranslateItems: React.FC<TranslateItemsProps> = ({ 
 }) => {
   const { config } = useDTConfig();
   const { explain, apiKey, selectedModel } = config;
 
   const [currentModel] = useCurrentModel();
+
+  const {addTranslationToTopic,transHistory} = useTopicsManager();
 
   const [{ status }, updateStatus] = useTranslatorStatus();
 
@@ -28,8 +28,6 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   const [thinkingText, setThinkingText] = useState<string>('');
 
   const [price, setPrice] = useState(0);
-
-  const { insertTransHistory } = useTransHistory();
   const [translate, setTranslate] = useCurrentTranslate();
 
   const processText = async () => {
@@ -59,12 +57,10 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
         price: price,
       };
       setTranslate(undefined);
-      insertTransHistory(newTrans);
-      updateStatus({ status: '翻译完成' });
+      addTranslationToTopic(newTrans);
     }
   }, [status]);
 
-  if (!translations || translations.length === 0) return null;
   
   if(translate)return  (<div className="d-flex flex-column gap-3">
     <TranslateItem
@@ -74,6 +70,9 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       thinkingText={thinkingText}
     />
   </div>);
+
+  
+  if (!transHistory || transHistory.length === 0) return null;
 
   return (
     <Table bordered responsive className="table-striped">
@@ -85,7 +84,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
         </tr>
       </thead>
       <tbody>
-        {translations.map((translation) => (
+        {transHistory.map((translation) => (
           <TranslateItem
             key={translation.timestamp}
             translation={translation}

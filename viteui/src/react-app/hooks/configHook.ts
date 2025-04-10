@@ -7,6 +7,7 @@ export interface DT_CONFIG {
   explain: boolean;
   apiKey: string;
   selectedModel: string;
+  selectedModels: string[];
   topicId: string;
 }
 
@@ -17,6 +18,7 @@ const configAtom = atom<DT_CONFIG>({
     explain: false,
     apiKey: '',
     selectedModel: 'deepseek/deepseek-chat-v3-0324:free',
+    selectedModels: [],
     topicId: ''
   }
 });
@@ -39,6 +41,7 @@ export const useDTConfig = () => {
         explain: explain ? JSON.parse(explain) : false,
         apiKey: apiKey,
         selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free',
+        selectedModels: [],
         topicId: ''
       };
       

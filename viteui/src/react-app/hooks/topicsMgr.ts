@@ -18,6 +18,7 @@ export function useTopicsManager() {
   const { transHistory, insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
 
   useEffect(() => {
+    if(currentTopic) console.log('current topic is :', currentTopic.name);
     if(!currentTopic || currentTopic.translationIds.length === 0) return;
     (async () => {
       try {
@@ -71,6 +72,7 @@ export function useTopicsManager() {
   return {
     topics,
     currentTopic,
+    transHistory,
     setCurrentTopic,
     createTopic,
     deleteTopic,
