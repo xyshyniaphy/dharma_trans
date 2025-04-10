@@ -1,6 +1,6 @@
 // src/react-app/App.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Config from './Config';
 import Input from './Input';
@@ -9,14 +9,23 @@ import ViewHistory from './ViewHistory';
 import { useDTConfig } from './hooks/configHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { ProgressOverlay } from './ProgressOverlay';
+import { useTopics } from './hooks/topicsHook';
 
 const App: React.FC = () => {
     const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
+    const { initTopics } = useTopics();
 
     const { config } = useDTConfig();
     const { loaded } = config;
 
+    useEffect(() => {
+        if(!loaded) return;
+        initTopics();
+    }, [loaded]);
+
+
     if(!loaded) return null;
+
 
     return (
         <Container fluid className="vh-95">

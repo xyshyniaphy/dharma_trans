@@ -17,7 +17,11 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   
   const { addTranslationToTopic,deleteTranslation } = useTopicsManager();
 
-  const currentTransItem = translate ? <CurrentTranslateItem /> : null;
+  const currentTransItem = translate ? (
+    <CurrentTranslateItem 
+      addTranslationToTopic={addTranslationToTopic}
+    />
+  ) : null;
   
   return (
     <Table bordered responsive className="table-striped">

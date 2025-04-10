@@ -19,19 +19,23 @@ export function useTopics() {
 
   const currentTopic = useMemo(() => topics.find(topic => topic.topicId === currentTopicId), [topics, currentTopicId]);
 
-  const loadTopics = async () => {
+
+  const initTopics = async () => {
     const existingTopics = await getAllTopicsFromDB();
     if (existingTopics.length === 0) {
       console.log('No existing topics found, creating default topic.');
-      createTopic('新翻译');
+      createTopic('新话题');
     } else {
       setTopics(existingTopics);
     }
   };
 
-  useEffect(() => {
-    if(!topics || topics.length === 0) loadTopics();
-  }, []);
+  const loadTopics = async () => {
+    const existingTopics = await getAllTopicsFromDB();
+    setTopics(existingTopics);
+  };
+
+
 
   useEffect(() => {
     if(!topics || topics.length === 0) return;
@@ -129,6 +133,7 @@ export function useTopics() {
     updateTopic,
     clearTopics,
     currentTopic,
-    currentTopicId
+    currentTopicId,
+    initTopics
   };
 }

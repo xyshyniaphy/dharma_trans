@@ -1,3 +1,4 @@
+import { Translation } from './interface/translation_interface';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useDTConfig } from './hooks/configHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
@@ -6,7 +7,11 @@ import { useState, useEffect } from 'react';
 import { TranslateItem } from './TranslateItem';
 import m_processText from './utils/translate_tool';
 
-export default function CurrentTranslateItem() {
+type CurrentTranslateItemProps = {
+  addTranslationToTopic?: (translation: Translation) => Promise<void>;
+};
+
+export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentTranslateItemProps) {
   const { config } = useDTConfig();
   const { explain, apiKey, selectedModel } = config;
 
@@ -49,7 +54,7 @@ export default function CurrentTranslateItem() {
         price: price,
       };
       setTranslate(undefined);
-      addTranslationToTopic(newTrans);
+      addTranslationToTopic && addTranslationToTopic(newTrans);
     }
   }, [status]);
   if(!translate) return null;

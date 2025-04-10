@@ -41,7 +41,7 @@ const Input: React.FC<InputProps> = ({
             modelName: currentModel?.name || '',
             price: 0,
             topicId: '',
-            translateId: Date.now().toString(),
+            translateId: Date.now().toString()+ "_" + (Math.random()*1000).toFixed(0),
             modelId: currentModel?.id || ''
         });
     }
