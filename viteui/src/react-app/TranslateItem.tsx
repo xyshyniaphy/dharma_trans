@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Translation } from './interface/translation_interface';
 import { faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styles from './TranslateItem.module.css';
 
 type TranslateItemProps = {
   //translation result
@@ -65,15 +66,19 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
         <Form.Group>
           {translation && removeFromHistory && (
             <div className="d-flex justify-content-between align-items-center">
-              <div>
-                <Button variant="link" className="p-2 rounded" disabled={showCopied} onClick={handleCopy}>
-                  <FontAwesomeIcon icon={faCopy}/>
-                </Button>
+             
+                <div className={`${styles['hover-buttons']} hover-buttons`} style={{ opacity: 0, transition: 'opacity 0.2s' }}>
+                  <Button variant="link" className="p-2 rounded" disabled={showCopied} onClick={handleCopy}>
+                    <FontAwesomeIcon icon={faCopy}/>
+                  </Button>
+                </div>
                 <Form.Label className="fw-bold">{modelName}</Form.Label>
-              </div>
-              <Button variant="link" className="p-2 rounded" onClick={removeFromHistory}>
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
+                <div className={`${styles['hover-buttons']} hover-buttons`} style={{ opacity: 0, transition: 'opacity 0.2s' }}>
+                  <Button variant="link" className="p-2 rounded" onClick={removeFromHistory}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </Button>
+                </div>
+             
             </div>
           )}
           <ReactMarkdown remarkPlugins={[remarkGfm]}>

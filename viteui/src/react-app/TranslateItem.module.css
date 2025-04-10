@@ -1,0 +1,8 @@
+/* Hover effect for action buttons */
+.hover-buttons:hover {
+  opacity: 1 !important;
+}
+
+td:hover .hover-buttons {
+  opacity: 1 !important;
+}

@@ -45,6 +45,7 @@ export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentT
 
   useEffect(() => {
     if (status === '开始翻译') {
+      
       processText();
     } else if (status === '翻译完成' && translate !== undefined) {
       const newTrans = {
@@ -53,6 +54,7 @@ export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentT
         thinking: thinkingText,
         price: price,
       };
+      console.log('new translation:', newTrans);
       setTranslate(undefined);
       addTranslationToTopic && addTranslationToTopic(newTrans);
     }
