@@ -6,18 +6,13 @@
  * - Display areas for model thinking process and translation results
  * - History management with delete functionality
  */
-import React, { useState } from 'react';
-import { Form, Stack, Dropdown, Button } from 'react-bootstrap';
-import { OpenRouterModel } from './hooks/filterModels';
-
+import React from 'react';
+import { Form, Stack, Dropdown } from 'react-bootstrap';
 import { useCurrentModel } from './hooks/currentModelHook';
-import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
-import { TranslateItems } from './TranslateItems';
-import { useTransHistory } from './hooks/transHistoryHook';
-import { Translation } from './interface/translation_interface';
 import { useModelsState } from './hooks/modelsHook';
-import { useTopicsManager } from './hooks/topicsMgr';
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import { TranslateItems } from './TranslateItems';
 
 // Props interface for the Input component
 interface InputProps {
@@ -29,13 +24,10 @@ const Input: React.FC<InputProps> = ({
     const [{isProcessing}, updateStatus] = useTranslatorStatus();
     const [currentModel, setCurrentModel] = useCurrentModel();
 
-    const [inputText, setInputText] = useState<string>('');
-
-    //todo : convert to use recoil
-    const { transHistory} = useTransHistory();
+    const [inputText, setInputText] = React.useState<string>('');
+;
     const [_trans, setTranslate] = useCurrentTranslate();
 
-    
     const [models, _setModels] = useModelsState();
 
     function processText(_event: any): void {
@@ -71,7 +63,7 @@ const Input: React.FC<InputProps> = ({
             {/* Processing button */}
             <div className="d-flex gap-2 w-100">
                 <div className="btn-group flex-grow-1">
-                    <Button 
+                    <Dropdown.Toggle 
                         variant="primary" 
                         disabled={isProcessing || !inputText}
                         onClick={processText}
@@ -79,7 +71,7 @@ const Input: React.FC<InputProps> = ({
                         style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
                     >
                         {isProcessing ? '翻译中' : '翻译 (' + currentModel?.name + ')'}
-                    </Button>
+                    </Dropdown.Toggle>
                     <Dropdown style={{ marginLeft: '8px' }}>
                         <Dropdown.Toggle 
                             split 
@@ -92,7 +84,7 @@ const Input: React.FC<InputProps> = ({
                             {models.length === 0 ? (
                                 <Dropdown.Item disabled>请先输入有效API Key</Dropdown.Item>
                             ) : (
-                                models.map((model: OpenRouterModel) => (
+                                models.map((model: any) => (
                                     <Dropdown.Item 
                                         key={model.name} 
                                         onClick={() => setCurrentModel(model)}

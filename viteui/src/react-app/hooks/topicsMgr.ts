@@ -2,7 +2,6 @@ import { useTopics } from './topicsHook';
 import { useTransHistory } from './transHistoryHook';
 import { Translation } from '../interface/translation_interface';
 import { useCurrentTopic } from './currentTopicHook';
-import { useCurrentTranslate } from './currentTranslateHook';
 import { useEffect } from 'react';
 
 export function useTopicsManager() {

@@ -1,6 +1,6 @@
 // src/react-app/App.tsx
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Config from './Config';
 import Input from './Input';

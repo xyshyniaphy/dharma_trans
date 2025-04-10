@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
 import { Translation } from '../interface/translation_interface';

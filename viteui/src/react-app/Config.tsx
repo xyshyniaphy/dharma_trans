@@ -66,8 +66,7 @@ const Config: React.FC<ConfigProps> = () => {
             reader.onload = (e) => {
                 try {
                     const importedHistory = JSON.parse(e.target?.result as string) as Translation[];
-                    const newHistory = [...transHistory, ...importedHistory];
-                    //insertTransHistory(newHistory);
+                    console.log('Imported history:', importedHistory.length)
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
                 }

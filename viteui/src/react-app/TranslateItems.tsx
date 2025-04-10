@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { TranslateItem } from './TranslateItem';
 import { Translation } from './interface/translation_interface';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';

@@ -4,7 +4,7 @@ export const openDB = () => {
   return new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 2);
     
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains('translations')) {
         db.createObjectStore('translations', { keyPath: 'id' });
