@@ -18,7 +18,6 @@ export function useTopicsManager() {
     if(!currentTopicId || !currentTopic) return;
     (async () => {
       try {
-        console.log('Reloading translations for topic:', currentTopic.translationIds);
         await getTranslations(currentTopic.translationIds);
       } catch (error) {
         console.error('Error loading translations:', error);
@@ -37,11 +36,11 @@ export function useTopicsManager() {
     if(!currentTopicId || !currentTopic) return;
    
     await insertTransHistory(translation);
+    const newIds=[...(currentTopic?.translationIds || []), translation.translateId];
     await updateTopic(currentTopicId, {
-      translationIds: [...(currentTopic?.translationIds || []), translation.translateId]
+      translationIds: newIds
     });
-    
-    await reloadTranslations();
+    await getTranslations(newIds);
   };
 
   // Delete translation from topic and history
@@ -49,10 +48,11 @@ export function useTopicsManager() {
     if (!currentTopicId || !currentTopic) return;
     
     await deleteTransHistory(translationId);
+    const newIds=currentTopic.translationIds.filter(id => id !== translationId);
     await updateTopic(currentTopicId, {
-      translationIds: currentTopic.translationIds.filter(id => id !== translationId)
+      translationIds: newIds
     });
-    await reloadTranslations();
+    await getTranslations(newIds);
   };
 
   return {

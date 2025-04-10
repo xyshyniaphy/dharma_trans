@@ -33,6 +33,7 @@ export function useTopics() {
   const loadTopics = async () => {
     const existingTopics = await getAllTopicsFromDB();
     setTopics(existingTopics);
+    
   };
 
 
@@ -44,8 +45,9 @@ export function useTopics() {
     setCurrentTopicId(topics[0].topicId);
   }, [currentTopicId,topics]);
 
-  const createTopic = (name: string): void => {
-    openDB().then(db => {
+  const createTopic = async (name: string): Promise<void> => {
+    try {
+      const db = await openDB();
       const transaction = db.transaction(TOPIC_STORE, 'readwrite');
       const store = transaction.objectStore(TOPIC_STORE);
       
@@ -55,13 +57,11 @@ export function useTopics() {
         translationIds: []
       };
       
-      const request = store.add(topic);
-      
-      request.onsuccess = () => {
-        loadTopics();
-      };
-      request.onerror = () => console.error(request.error);
-    });
+      await store.add(topic);
+      await loadTopics();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const getAllTopicsFromDB = (): Promise<Topic[]> => {
@@ -77,53 +77,52 @@ export function useTopics() {
     });
   };
 
-  const deleteTopic = (topicId: string): void => {
-    openDB().then(db => {
+  const deleteTopic = async (topicId: string): Promise<void> => {
+    try {
+      const db = await openDB();
       const transaction = db.transaction(TOPIC_STORE, 'readwrite');
       const store = transaction.objectStore(TOPIC_STORE);
-      const request = store.delete(topicId);
       
-      request.onsuccess = () => {
-        loadTopics();
-      };
-      request.onerror = () => console.error(request.error);
-    });
+      await store.delete(topicId);
+      await loadTopics();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const updateTopic = (topicId: string, updatedFields: Partial<Topic>): void => {
-    openDB().then(db => {
+  const updateTopic = async (topicId: string, updatedFields: Partial<Topic>): Promise<void> => {
+    try {
+      const db = await openDB();
       const transaction = db.transaction(TOPIC_STORE, 'readwrite');
       const store = transaction.objectStore(TOPIC_STORE);
       
-      const getRequest = store.get(topicId);
+      const existingTopic = await new Promise<Topic>((resolve, reject) => {
+        const getRequest = store.get(topicId);
+        getRequest.onsuccess = () => resolve(getRequest.result);
+        getRequest.onerror = () => reject(getRequest.error);
+      });
       
-      getRequest.onsuccess = () => {
-        const existingTopic = getRequest.result;
-        if (existingTopic) {
-          const updatedTopic = { ...existingTopic, ...updatedFields };
-          const updateRequest = store.put(updatedTopic);
-          
-          updateRequest.onsuccess = () => {
-            loadTopics();
-          };
-          updateRequest.onerror = () => console.error(updateRequest.error);
-        }
-      };
-      getRequest.onerror = () => console.error(getRequest.error);
-    });
+      if (existingTopic) {
+        const updatedTopic = { ...existingTopic, ...updatedFields };
+        await store.put(updatedTopic);
+        await loadTopics();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const clearTopics = (): void => {
-    openDB().then(db => {
+  const clearTopics = async (): Promise<void> => {
+    try {
+      const db = await openDB();
       const transaction = db.transaction(TOPIC_STORE, 'readwrite');
       const store = transaction.objectStore(TOPIC_STORE);
-      const request = store.clear();
       
-      request.onsuccess = () => {
-        loadTopics();
-      };
-      request.onerror = () => console.error(request.error);
-    });
+      await store.clear();
+      await loadTopics();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return {
