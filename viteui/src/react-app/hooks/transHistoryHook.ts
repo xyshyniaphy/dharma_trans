@@ -66,6 +66,12 @@ export const useTransHistory = () => {
 
   const getTranslations = async (translationIds: string[]) => {
     try {
+      console.log('Getting translations for:', translationIds);
+
+      if(!translationIds || translationIds.length === 0) {
+        setTransHistory([]);
+        return;
+      }
       const translations = await __getTranslations(translationIds);
       setTransHistory(translations);
     } catch (error) {

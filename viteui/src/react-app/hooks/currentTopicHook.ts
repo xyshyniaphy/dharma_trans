@@ -1,17 +1,16 @@
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
-import { Topic } from '../interface/topic_interface';
 
-export const currentTopicState = atom<Topic | null>({
+export const currentTopicIdState = atom<string | null>({
   key: 'currentTopicState',
   default: null,
 });
 
-export function useCurrentTopic() {
-  const [currentTopic, setCurrentTopic] = useRecoilState(currentTopicState);
+export function useCurrentTopicId() {
+  const [currentTopicId, setCurrentTopicId] = useRecoilState(currentTopicIdState);
   
   return {
-    currentTopic,
-    setCurrentTopic,
+    currentTopicId,
+    setCurrentTopicId,
   };
 }

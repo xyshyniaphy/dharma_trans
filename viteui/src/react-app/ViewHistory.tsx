@@ -1,25 +1,26 @@
 import React from 'react';
 import { ListGroup } from 'react-bootstrap';
 
-import { useCurrentTranslate } from './hooks/currentTranslateHook';
-import { useTransHistory } from './hooks/transHistoryHook';
+import { useTopicsManager } from './hooks/topicsMgr';
+import { useCurrentTopicId } from './hooks/currentTopicHook';
 
-type ViewHistoryProps = {
-};
+type ViewHistoryProps = {};
 
 const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
-  const { transHistory } = useTransHistory();
-  const [_, setTranslate] = useCurrentTranslate();
+
+  const { topics } = useTopicsManager();
+
+  const { setCurrentTopicId } = useCurrentTopicId();
   return (
     <ListGroup>
-    {transHistory.map((item, index) => (
+    {topics.map((item, index) => (
       <ListGroup.Item
         key={index}
         action
-        onClick={() => setTranslate(item)}
+        onClick={() => setCurrentTopicId(item.topicId)}
       >
-        {item.input.length > 10 ? `${item.input.slice(0, 10)}...` : item.input}
+        {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
       </ListGroup.Item>
     ))}
   </ListGroup>

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
 import { Topic } from '../interface/topic_interface';
 import { openDB } from '../utils/db_util';
+import { useCurrentTopicId } from './currentTopicHook';
 
 const TOPIC_STORE = 'topics';
 
@@ -14,18 +15,30 @@ export const topicsState = atom<Topic[]>({
 export function useTopics() {
   const [topics, setTopics] = useRecoilState(topicsState);
 
+  const { currentTopicId, setCurrentTopicId} = useCurrentTopicId();
+
+  const currentTopic = useMemo(() => topics.find(topic => topic.topicId === currentTopicId), [topics, currentTopicId]);
+
+  const loadTopics = async () => {
+    const existingTopics = await getAllTopicsFromDB();
+    if (existingTopics.length === 0) {
+      console.log('No existing topics found, creating default topic.');
+      createTopic('新翻译');
+    } else {
+      setTopics(existingTopics);
+    }
+  };
+
   useEffect(() => {
-    const initializeTopics = async () => {
-      const existingTopics = await getAllTopicsFromDB();
-      if (existingTopics.length === 0) {
-        console.log('No existing topics found, creating default topic.');
-        createTopic('新翻译');
-      } else {
-        setTopics(existingTopics);
-      }
-    };
-    initializeTopics();
+    if(!topics || topics.length === 0) loadTopics();
   }, []);
+
+  useEffect(() => {
+    if(!topics || topics.length === 0) return;
+    if(currentTopicId) return;
+    console.log('Setting first topic as current:', topics[0]);
+    setCurrentTopicId(topics[0].topicId);
+  }, [currentTopicId,topics]);
 
   const createTopic = (name: string): void => {
     openDB().then(db => {
@@ -33,7 +46,7 @@ export function useTopics() {
       const store = transaction.objectStore(TOPIC_STORE);
       
       const topic: Topic = {
-        topicId: Date.now().toString() + "_" + (Math.random()*1000).toFixed(4),
+        topicId: Date.now().toString() + "_" + (Math.random()*1000).toFixed(0),
         name,
         translationIds: []
       };
@@ -41,7 +54,7 @@ export function useTopics() {
       const request = store.add(topic);
       
       request.onsuccess = () => {
-        getAllTopicsFromDB().then(topics => setTopics(topics));
+        loadTopics();
       };
       request.onerror = () => console.error(request.error);
     });
@@ -67,7 +80,7 @@ export function useTopics() {
       const request = store.delete(topicId);
       
       request.onsuccess = () => {
-        getAllTopicsFromDB().then(topics => setTopics(topics));
+        loadTopics();
       };
       request.onerror = () => console.error(request.error);
     });
@@ -87,7 +100,7 @@ export function useTopics() {
           const updateRequest = store.put(updatedTopic);
           
           updateRequest.onsuccess = () => {
-            getAllTopicsFromDB().then(topics => setTopics(topics));
+            loadTopics();
           };
           updateRequest.onerror = () => console.error(updateRequest.error);
         }
@@ -103,7 +116,7 @@ export function useTopics() {
       const request = store.clear();
       
       request.onsuccess = () => {
-        setTopics([]);
+        loadTopics();
       };
       request.onerror = () => console.error(request.error);
     });
@@ -115,5 +128,6 @@ export function useTopics() {
     deleteTopic,
     updateTopic,
     clearTopics,
+    currentTopic
   };
 }
