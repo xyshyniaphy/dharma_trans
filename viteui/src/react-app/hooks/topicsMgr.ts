@@ -37,8 +37,11 @@ export function useTopicsManager() {
    
     await insertTransHistory(translation);
     const newIds=[...(currentTopic?.translationIds || []), translation.translateId];
+    const baseTopicName = currentTopic.name === '新话题' ? translation.input : currentTopic.name;
+    const topicName = baseTopicName.length > 10 ? `${baseTopicName.slice(0, 10)}...` : baseTopicName;
     await updateTopic(currentTopicId, {
-      translationIds: newIds
+      translationIds: newIds,
+      name: topicName
     });
     await getTranslations(newIds);
   };
