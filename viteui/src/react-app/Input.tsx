@@ -77,7 +77,6 @@ const Input: React.FC<InputProps> = ({
                         <Dropdown.Toggle 
                             split 
                             variant="success" 
-                            disabled={isProcessing || !inputText}
                         >
                             模型
                         </Dropdown.Toggle>

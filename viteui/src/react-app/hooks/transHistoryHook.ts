@@ -73,7 +73,7 @@ export const useTransHistory = () => {
         return;
       }
       const translations = await __getTranslations(translationIds);
-      setTransHistory(translations);
+      setTransHistory(translations.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
     } catch (error) {
       console.error('Error getting translations:', error);
     }
