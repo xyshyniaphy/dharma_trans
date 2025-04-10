@@ -58,7 +58,12 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
             body: JSON.stringify({
                 model: selectedModel,
                 messages: [{ role: 'user', content: prompt }],
-                stream: true
+                stream: true,
+                temperature: 0,          // Deterministic output
+                top_p: 0.1,             // Focus on top 10% probable tokens
+                max_tokens: 500,        // Adjust based on your needs
+                presence_penalty: 0,    // No penalty for token repetition
+                frequency_penalty: 0    // No penalty for frequent token0
             })
         });
 

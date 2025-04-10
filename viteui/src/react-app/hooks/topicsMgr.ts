@@ -15,19 +15,13 @@ export function useTopicsManager() {
   } = useTopics();
   const { currentTopic, setCurrentTopic } = useCurrentTopic();
 
-
-  
-  const [_, setTranslate] = useCurrentTranslate();
   const { transHistory, insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
 
   useEffect(() => {
     if(!currentTopic || currentTopic.translationIds.length === 0) return;
     (async () => {
       try {
-        const storedHistory = await getTranslations(currentTopic.translationIds);
-        if (storedHistory.length > 0) {
-          setTransHistory(storedHistory);
-        }
+        await getTranslations(currentTopic.translationIds);
       } catch (error) {
         console.error('Error loading translations:', error);
       }
