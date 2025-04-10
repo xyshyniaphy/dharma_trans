@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Translation } from './interface/translation_interface';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type TranslateItemProps = {
@@ -44,6 +44,15 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   const BaseModelName = (translation? translation.modelName : '').replace('(free)', '');
   const modelName = (BaseModelName&& BaseModelName.length > 0 && BaseModelName.includes(':'))
   ? BaseModelName.split(':')[1]: BaseModelName;
+
+  const [showCopied, setShowCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(out);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 500);
+  };
+
   return (
     <tr>
       {/* Input Column */}
@@ -56,7 +65,12 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
         <Form.Group>
           {translation && removeFromHistory && (
             <div className="d-flex justify-content-between align-items-center">
-              <Form.Label className="fw-bold">{modelName}</Form.Label>
+              <div>
+                <Button variant="link" className="p-2 rounded" disabled={showCopied} onClick={handleCopy}>
+                  <FontAwesomeIcon icon={faCopy}/>
+                </Button>
+                <Form.Label className="fw-bold">{modelName}</Form.Label>
+              </div>
               <Button variant="link" className="p-2 rounded" onClick={removeFromHistory}>
                 <FontAwesomeIcon icon={faTrash} />
               </Button>
