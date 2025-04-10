@@ -13,6 +13,7 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 
 interface ConfigProps {
 }
+let loadedModels = false;
 
 const Config: React.FC<ConfigProps> = () => {
 
@@ -77,12 +78,10 @@ const Config: React.FC<ConfigProps> = () => {
 
     //assume user will paste api key
     useEffect(() => {
-        if(models.length > 0) return;
-        console.log('Fetching models...');
-        if (tempApiKey && tempApiKey.length >= 10) {
-            fetchAndFilterModels().then(setModels);
-        }
-    }, [tempApiKey]);
+        if(loadedModels) return;
+        loadedModels=true;
+        fetchAndFilterModels().then(setModels);
+    }, []);
 
     useEffect(() => {
         if (tempModel && models.length > 0) {
