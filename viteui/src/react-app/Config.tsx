@@ -79,6 +79,7 @@ const Config: React.FC<ConfigProps> = () => {
     //assume user will paste api key
     useEffect(() => {
         if(models.length > 0) return;
+        console.log('Fetching models...');
         if (tempApiKey && tempApiKey.length >= 10) {
             fetchAndFilterModels().then(setModels);
         }
