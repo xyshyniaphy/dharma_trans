@@ -11,8 +11,9 @@ import { Form, Stack, Dropdown, Button } from 'react-bootstrap';
 import { useCurrentModel } from './hooks/currentModelHook';
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
-import { useDTConfig } from './hooks/configHook';
-import { useTranslatorExe } from './hooks/translatorExeHook';        
+import { useDTConfig } from './hooks/configHook';     
+import { useCurrentTranslate } from './hooks/currentTranslateHook';
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 // Props interface for the Input component
 interface InputProps {
    
@@ -25,16 +26,29 @@ const Input: React.FC<InputProps> = ({
 
     const [inputText, setInputText] = React.useState<string>('');
 
-    const { translate } = useTranslatorExe();
+    const [_currentTranslate, setTranslate] = useCurrentTranslate();
 
     const [models, _setModels] = useModelsState();
+
+    const [{}, updateStatus] = useTranslatorStatus();
 
  
     function processText(_event: any): void {
         setInputText('');
-        translate(inputText);
+        setTranslate({
+            input: inputText,
+            output: '',
+            thinking: '',
+            timestamp: Date.now(),
+            modelName: currentModel?.name || '',
+            price: 0,
+            topicId: '',
+            translateId: Date.now().toString()+ "_" + (Math.random()*1000).toFixed(0),
+            modelId: currentModel?.id || ''
+        });
+        updateStatus({ isProcessing: true, status: '开始翻译' });
     }
-
+  
     return (
         <Stack gap={3} className="h-90 overflow-auto">
             {/* Input text area */}

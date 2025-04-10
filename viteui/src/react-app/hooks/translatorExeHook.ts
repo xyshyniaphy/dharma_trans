@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDTConfig } from './configHook';
 import { useCurrentModel } from './currentModelHook';
 import { useTranslatorStatus } from './useTranslatorStatus';
@@ -15,26 +15,14 @@ export const useTranslatorExe = () => {
   const [thinkingText, setThinkingText] = useState<string>('');
   const [price, setPrice] = useState(0);
 
-  const [_trans, setTranslate] = useCurrentTranslate();
+  const [trans, _setTranslate] = useCurrentTranslate();
 
-  const translate = async (input: string) => {
-    updateStatus({ isProcessing: true, status: '开始翻译' })
-    setTranslate({
-        input: input,
-        output: '',
-        thinking: '',
-        timestamp: Date.now(),
-        modelName: currentModel?.name || '',
-        price: 0,
-        topicId: '',
-        translateId: Date.now().toString()+ "_" + (Math.random()*1000).toFixed(0),
-        modelId: currentModel?.id || ''
-    });
-
-    await m_processText(
+  useEffect(() => {
+    if(!trans || status !== '开始翻译')return;
+    m_processText(
       explain,
       apiKey,
-      input,
+      trans.input || '',
       selectedModel,
       (value: boolean) => updateStatus({ showConfigModal: value }),
       (value: boolean) => updateStatus({ isProcessing: value }),
@@ -44,13 +32,13 @@ export const useTranslatorExe = () => {
       setPrice,
       currentModel
     );
-  };
+  }, [status, trans]);  
+
 
   return {
     outputText,
     thinkingText,
     price,
-    status,
-    translate
+    status
   };
 };

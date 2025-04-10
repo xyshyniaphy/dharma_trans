@@ -43,8 +43,6 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
     }
     setIsProcessing(true);
     setStatus('翻译中');
-    setOutputText('');
-    setThinkingText('');
     try {
         const prompt = await fetchPrompt(inputText,explain);
         console.log("prompt is " + prompt);
@@ -84,11 +82,13 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
             buffer = lines.pop() || '';
 
             for (const line of lines) {
+                
                 if (line.startsWith('data: ')) {
                     const data = line.slice(6);
                     if (data.trim() === '[DONE]') continue;
                     try {
                         const parsed = JSON.parse(data) as CompletionData;
+                        
                         if(parsed.usage && currentModel !== null){  
                             const totalPrice = calculateTotalPrice(parsed, currentModel);
                             console.log("totalPrice is " + totalPrice);
@@ -96,16 +96,19 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
                         }
                         const delta = parsed.choices?.[0]?.delta;
                         if (delta) {
-                            if (delta.reasoning) {
-                                if (delta.reasoning !== '\n'){
-                                    const reasoning = String(delta.reasoning);
+                            // console.log('received delta: ', delta);
+                            if (delta.reasoning &&delta.reasoning !== '\n') {
+                                const reasoning = String(delta.reasoning);
                                 setThinkingText((prev: string) => (prev + String(reasoning)));
                             }
-                        } else if (delta.content) {
-                            const content = (delta.content);
-                            setOutputText((prev: string) => prev + content);
-                        }
-                    }
+                            if (delta.content) {
+                                const content = (delta.content);
+                                // console.log('received output: ', content);
+                                if(content && content.length > 0 ){
+                                    setOutputText((prev: string) => prev + content);
+                                }
+                            }
+                        } 
                     } catch (error) {
                         console.error('Error parsing JSON data:', data, error);
                         setOutputText((prev: string) => prev + '\n[Error parsing response chunk]\n');
@@ -120,7 +123,10 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
         setThinkingText((prev: string) => prev.replace(/\\n$/, '\n'));
         setOutputText((prev: string) => prev.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, ''));
 
-        setStatus('翻译完成');
+        // Wait for a short duration to ensure the UI has time to update
+        setTimeout(() => {
+            setStatus('翻译完成');
+        }, 200);
     } catch (error: any) {
         console.error('Error:', error);
         setStatus('翻译出错，请重试');

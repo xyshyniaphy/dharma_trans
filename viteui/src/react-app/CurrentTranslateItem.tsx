@@ -10,12 +10,12 @@ type CurrentTranslateItemProps = {
 
 export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentTranslateItemProps) {
   const { outputText, thinkingText, price, status } = useTranslatorExe();
-  const [translateState, setTranslate] = useCurrentTranslate();
+  const [currentTranslate, setTranslate] = useCurrentTranslate();
 
   useEffect(() => {
-    if (status === '翻译完成' && translateState !== undefined) {
+    if (status === '翻译完成' && currentTranslate !== undefined) {
       const newTrans = {
-        ...translateState,
+        ...currentTranslate,
         output: outputText,
         thinking: thinkingText,
         price: price,
@@ -24,14 +24,14 @@ export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentT
       setTranslate(undefined);
       addTranslationToTopic && addTranslationToTopic(newTrans);
     }
-  }, [status, translateState, addTranslationToTopic, setTranslate]);
+  }, [status]);
 
-  if(!translateState) return null;
+  if(!currentTranslate) return null;
 
   return (
       <TranslateItem
-        translation={translateState}
-        key={translateState.timestamp}
+        translation={currentTranslate}
+        key={currentTranslate.timestamp}
         outputText={outputText}
         thinkingText={thinkingText}
       />
