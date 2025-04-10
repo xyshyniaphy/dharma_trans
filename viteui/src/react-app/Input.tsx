@@ -9,12 +9,10 @@
 import React from 'react';
 import { Form, Stack, Dropdown, Button } from 'react-bootstrap';
 import { useCurrentModel } from './hooks/currentModelHook';
-import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useModelsState } from './hooks/modelsHook';
-import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { TranslateItems } from './TranslateItems';
 import { useDTConfig } from './hooks/configHook';
-        
+import { useTranslatorExe } from './hooks/translatorExeHook';        
 // Props interface for the Input component
 interface InputProps {
    
@@ -22,31 +20,19 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
 }) => {
-    const [{isProcessing}, updateStatus] = useTranslatorStatus();
     const [currentModel, setCurrentModel] = useCurrentModel();
-    
     const { updateConfig } = useDTConfig();
 
     const [inputText, setInputText] = React.useState<string>('');
-;
-    const [_trans, setTranslate] = useCurrentTranslate();
+
+    const { translate } = useTranslatorExe();
 
     const [models, _setModels] = useModelsState();
 
+ 
     function processText(_event: any): void {
         setInputText('');
-        updateStatus({ isProcessing: true, status: '开始翻译' })
-        setTranslate({
-            input: inputText,
-            output: '',
-            thinking: '',
-            timestamp: Date.now(),
-            modelName: currentModel?.name || '',
-            price: 0,
-            topicId: '',
-            translateId: Date.now().toString()+ "_" + (Math.random()*1000).toFixed(0),
-            modelId: currentModel?.id || ''
-        });
+        translate(inputText);
     }
 
     return (
@@ -69,12 +55,12 @@ const Input: React.FC<InputProps> = ({
                 <div className="btn-group flex-grow-1">
                     <Button
                         variant="primary" 
-                        disabled={isProcessing || !inputText}
+                        disabled={!inputText}
                         onClick={processText}
                         className="flex-grow-1"
                         style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
                     >
-                        {isProcessing ? '翻译中' : '翻译 (' + currentModel?.name + ')'}
+                        { '翻译 (' + currentModel?.name + ')'}
                     </Button>
                     <Dropdown style={{ marginLeft: '8px' }}>
                         <Dropdown.Toggle 

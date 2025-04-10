@@ -1,55 +1,21 @@
 import { Translation } from './interface/translation_interface';
-import { useCurrentModel } from './hooks/currentModelHook';
-import { useDTConfig } from './hooks/configHook';
-import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { TranslateItem } from './TranslateItem';
-import m_processText from './utils/translate_tool';
+import { useTranslatorExe } from './hooks/translatorExeHook';
 
 type CurrentTranslateItemProps = {
   addTranslationToTopic?: (translation: Translation) => Promise<void>;
 };
 
 export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentTranslateItemProps) {
-  const { config } = useDTConfig();
-  const { explain, apiKey, selectedModel } = config;
-
-  const [currentModel] = useCurrentModel();
-
-
-  const [{ status }, updateStatus] = useTranslatorStatus();
-
-  //used for realtime translation stream
-  const [outputText, setOutputText] = useState<string>('');
-  const [thinkingText, setThinkingText] = useState<string>('');
-
-  const [price, setPrice] = useState(0);
-  const [translate, setTranslate] = useCurrentTranslate();
-
-  const processText = async () => {
-    await m_processText(
-      explain,
-      apiKey,
-      translate?.input ?? '',
-      selectedModel,
-      (value: boolean) => updateStatus({ showConfigModal: value }),
-      (value: boolean) => updateStatus({ isProcessing: value }),
-      (value: string) => updateStatus({ status: value }),
-      setOutputText,
-      setThinkingText,
-      setPrice,
-      currentModel
-    );
-  };
+  const { outputText, thinkingText, price, status } = useTranslatorExe();
+  const [translateState, setTranslate] = useCurrentTranslate();
 
   useEffect(() => {
-    if (status === '开始翻译') {
-      
-      processText();
-    } else if (status === '翻译完成' && translate !== undefined) {
+    if (status === '翻译完成' && translateState !== undefined) {
       const newTrans = {
-        ...translate,
+        ...translateState,
         output: outputText,
         thinking: thinkingText,
         price: price,
@@ -58,13 +24,14 @@ export default function CurrentTranslateItem({ addTranslationToTopic }: CurrentT
       setTranslate(undefined);
       addTranslationToTopic && addTranslationToTopic(newTrans);
     }
-  }, [status]);
-  if(!translate) return null;
+  }, [status, translateState, addTranslationToTopic, setTranslate]);
+
+  if(!translateState) return null;
 
   return (
       <TranslateItem
-        translation={translate}
-        key={translate.timestamp}
+        translation={translateState}
+        key={translateState.timestamp}
         outputText={outputText}
         thinkingText={thinkingText}
       />
