@@ -13,17 +13,20 @@ import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
 import { useDTConfig } from './hooks/configHook';     
 import { useTranslatorExe } from './hooks/translatorExeHook';
-import { useTopicsManager } from './hooks/topicsMgr';
+import { Translation } from './interface/translation_interface';
+
 // Props interface for the Input component
 interface InputProps {
-   
+    addTranslationToTopic: (translation: Translation) => Promise<void>;
+    deleteTranslation: (translationId: string) => Promise<void>;
 }
 
 const Input: React.FC<InputProps> = ({
+    addTranslationToTopic,
+    deleteTranslation
 }) => {
     const [currentModel, setCurrentModel] = useCurrentModel();
 
-    const { addTranslationToTopic,deleteTranslation } = useTopicsManager();
     const { startTranslate } = useTranslatorExe({addTranslationToTopic});
     const { updateConfig } = useDTConfig();
 

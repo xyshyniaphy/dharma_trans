@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useDTConfig } from './configHook';
 import { useCurrentModel } from './currentModelHook';
 import { useTranslatorStatus } from './useTranslatorStatus';

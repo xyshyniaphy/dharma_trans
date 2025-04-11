@@ -9,11 +9,11 @@ import ViewHistory from './ViewHistory';
 import { useDTConfig } from './hooks/configHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { ProgressOverlay } from './ProgressOverlay';
-import { useTopics } from './hooks/topicsHook';
+import { useTopicsManager } from './hooks/topicsMgr';
 
 const App: React.FC = () => {
     const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
-    const { initTopics } = useTopics();
+    const { topics, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
 
     const { config } = useDTConfig();
     const { loaded } = config;
@@ -40,11 +40,19 @@ const App: React.FC = () => {
             <Row className="h-90">
                 <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
                     {/* Left Panel */}
-                    <ViewHistory/>
+                    <ViewHistory 
+                        topics={topics}
+                        createTopic={createTopic}
+                        deleteTopic={deleteTopic}
+                        updateTopic={updateTopic}
+                    />
                 </Col>
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
                     {/* Main Panel - Replaced with Input component */}
-                    <Input/>
+                    <Input 
+                        addTranslationToTopic={addTranslationToTopic}
+                        deleteTranslation={deleteTranslation}
+                    />
                 </Col>
             </Row>
 
