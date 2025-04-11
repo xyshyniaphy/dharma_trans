@@ -1,7 +1,7 @@
 import { atom, useRecoilState } from 'recoil';
-import { useLocalStorage } from '../utils/useLocalStorage';
+import { useLocalStorage } from './useLocalStorage';
 
-type Theme = 'light' | 'dark' | 'auto';
+type Theme = 'light' | 'dark' | 'auto'; 
 
 const themeState = atom<Theme>({
   key: 'themeState',
@@ -27,7 +27,7 @@ export function useTheme() {
     setTheme: setThemeAndPersist,
     isDark: theme === 'dark',
     isLight: theme === 'light',
-    activeBgClass: theme === 'dark' ? 'bg-light' : 'bg-dark',
-    activeTextClass: theme === 'dark' ? 'text-dark' : 'text-light'
+    activeBgClass: theme === 'dark' ? 'bg-dark' : 'bg-grey',
+    activeTextClass: theme === 'dark' ? 'text-primary' : 'text-primary'
   };
 }

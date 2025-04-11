@@ -18,7 +18,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
   return (
     <>
       <Button 
-        variant="info" 
+        variant="outline-primary" 
         className="mb-3 w-100"
         onClick={() => createTopic('新话题')}
       >
@@ -29,7 +29,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
         <ListGroup.Item
           key={index}
           action={item.topicId !== currentTopicId}
-          className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : 'text-light'}
+          className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : ''}
           onClick={() => setCurrentTopicId(item.topicId)}
         >
           {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
