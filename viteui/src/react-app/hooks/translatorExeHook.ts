@@ -18,20 +18,24 @@ export const useTranslatorExe = () => {
   const [trans, _setTranslate] = useCurrentTranslate();
 
   useEffect(() => {
-    if(!trans || status !== '开始翻译')return;
-    m_processText(
-      explain,
-      apiKey,
-      trans.input || '',
-      selectedModel,
-      (value: boolean) => updateStatus({ showConfigModal: value }),
-      (value: boolean) => updateStatus({ isProcessing: value }),
-      (value: string) => updateStatus({ status: value }),
-      setOutputText,
-      setThinkingText,
-      setPrice,
-      currentModel
-    );
+    setTimeout(() => {
+      if(!trans || status !== '开始翻译')return;
+      updateStatus({ status: '翻译中' });
+      console.log('开始翻译');
+      m_processText(
+        explain,
+        apiKey,
+        trans.input || '',
+        selectedModel,
+        (value: boolean) => updateStatus({ showConfigModal: value }),
+        (value: boolean) => updateStatus({ isProcessing: value }),
+        (value: string) => updateStatus({ status: value }),
+        setOutputText,
+        setThinkingText,
+        setPrice,
+        currentModel
+      );
+    }, 50);
   }, [status, trans]);  
 
 

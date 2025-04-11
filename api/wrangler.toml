@@ -4,7 +4,7 @@ compatibility_date = "2024-04-16"
 
 
 
-routes = [{ pattern = "t.hdcx.site/rapi/*", zone_name = "hdcx.site" }]
+routes = [{ pattern = "t.hdcx.site/rapi/*", zone_name = "hdcx.site" }, { pattern = "t.198066.xyz/rapi/*", zone_name = "198066.xyz" }]
 
 
 [[r2_buckets]]

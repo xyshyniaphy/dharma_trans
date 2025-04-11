@@ -42,7 +42,6 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
         return;
     }
     setIsProcessing(true);
-    setStatus('翻译中');
     try {
         const prompt = await fetchPrompt(inputText,explain);
         //console.log("prompt is " + prompt);
