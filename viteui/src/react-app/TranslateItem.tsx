@@ -10,31 +10,26 @@ import styles from './TranslateItem.module.css';
 type TranslateItemProps = {
   //translation result
   translation?: Translation;
-  //realtime stream when translating, use this first
-  outputText?: string;
-  thinkingText?: string;
   deleteTranslation?: (translateId: string) => Promise<void>;
 };
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
   translation,
-  outputText,
-  thinkingText,
   deleteTranslation
 }) => {
   // Ref for auto-scrolling the thinking text area
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // this is used to show  translation result
-  const out = outputText || translation?.output || '';
-  const think = thinkingText || translation?.thinking || '';
+  const out = translation?.output || '';
+  const think = translation?.thinking || '';
 
   // Auto-scroll thinking text area when content changes
   React.useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.scrollTop = textAreaRef.current.scrollHeight;
     }
-  }, [thinkingText]);
+  }, [think]);
 
   //click delete button on input
   const removeFromHistory = () => {

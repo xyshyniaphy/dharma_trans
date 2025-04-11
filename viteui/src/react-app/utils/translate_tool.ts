@@ -121,10 +121,6 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
         setThinkingText((prev: string) => prev.replace(/\\n$/, '\n'));
         setOutputText((prev: string) => prev.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, ''));
 
-        // Wait for a short duration to ensure the UI has time to update
-        setTimeout(() => {
-            setStatus('翻译完成');
-        }, 200);
     } catch (error: any) {
         console.error('Error:', error);
         setStatus('翻译出错，请重试');

@@ -12,8 +12,8 @@ import { useCurrentModel } from './hooks/currentModelHook';
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
 import { useDTConfig } from './hooks/configHook';     
-import { useCurrentTranslate } from './hooks/currentTranslateHook';
-import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import { useTranslatorExe } from './hooks/translatorExeHook';
+import { useTopicsManager } from './hooks/topicsMgr';
 // Props interface for the Input component
 interface InputProps {
    
@@ -22,20 +22,18 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({
 }) => {
     const [currentModel, setCurrentModel] = useCurrentModel();
+
+    const { addTranslationToTopic,deleteTranslation } = useTopicsManager();
+    const { startTranslate } = useTranslatorExe({addTranslationToTopic});
     const { updateConfig } = useDTConfig();
 
     const [inputText, setInputText] = React.useState<string>('');
 
-    const [_currentTranslate, setTranslate] = useCurrentTranslate();
-
     const [models, _setModels] = useModelsState();
 
-    const [{}, updateStatus] = useTranslatorStatus();
-
- 
     function processText(_event: any): void {
         setInputText('');
-        setTranslate({
+        startTranslate({
             input: inputText,
             output: '',
             thinking: '',
@@ -46,7 +44,6 @@ const Input: React.FC<InputProps> = ({
             translateId: Date.now().toString()+ "_" + (Math.random()*1000).toFixed(0),
             modelId: currentModel?.id || ''
         });
-        updateStatus({ isProcessing: true, status: '开始翻译' });
     }
   
     return (
@@ -100,7 +97,7 @@ const Input: React.FC<InputProps> = ({
                     </Dropdown>
                 </div>
             </div>
-            <TranslateItems />
+            <TranslateItems deleteTranslation={deleteTranslation} />
         </Stack>
     );
 };

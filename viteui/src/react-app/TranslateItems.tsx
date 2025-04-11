@@ -2,24 +2,25 @@ import { TranslateItem } from './TranslateItem';
 import { Translation } from './interface/translation_interface';
 import { useCurrentTranslate } from './hooks/currentTranslateHook';
 import { useTransHistory } from './hooks/transHistoryHook';
-import CurrentTranslateItem from './CurrentTranslateItem';
 import { Table } from 'react-bootstrap';
-import { useTopicsManager } from './hooks/topicsMgr';
 
 type TranslateItemsProps = {
+  deleteTranslation: (translationId: string) => Promise<void>;
 };
 
 export const TranslateItems: React.FC<TranslateItemsProps> = ({ 
+  deleteTranslation
 }) => {
   
   const { transHistory } = useTransHistory();
-  const [translate] = useCurrentTranslate();
   
-  const { addTranslationToTopic,deleteTranslation } = useTopicsManager();
+  const [translate, _setTranslate] = useCurrentTranslate();
 
   const currentTransItem = translate ? (
-    <CurrentTranslateItem 
-      addTranslationToTopic={addTranslationToTopic}
+    <TranslateItem
+      key={translate.timestamp}
+      translation={translate}
+      deleteTranslation={undefined}
     />
   ) : null;
   
