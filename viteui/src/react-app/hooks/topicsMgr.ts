@@ -60,10 +60,30 @@ export function useTopicsManager() {
     await getTranslations(newIds);
   };
 
+  const deleteTopicAndTranslations = async (topicId: string) => {
+    try {
+      // Find the topic by ID from the topics array
+      const topic = topics.find(t => t.topicId === topicId);
+      if (!topic) return;
+      
+      // Delete all associated translations
+      if (topic.translationIds) {
+        for (const transId of topic.translationIds) {
+          await deleteTransHistory(transId);
+        }
+      }
+      
+      // Finally delete the topic itself
+      await deleteTopic(topicId);
+    } catch (error) {
+      console.error('Error deleting topic and translations:', error);
+    }
+  };
+
   return {
     topics,
     currentTopicId,
-    deleteTopic,
+    deleteTopic:deleteTopicAndTranslations,
     addTranslationToTopic,
     deleteTranslation,
     createTopic

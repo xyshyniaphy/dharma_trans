@@ -85,6 +85,7 @@ export function useTopics() {
       
       await store.delete(topicId);
       await loadTopics();
+      if(currentTopicId === topicId) setCurrentTopicId(null);
     } catch (error) {
       console.error(error);
     }
