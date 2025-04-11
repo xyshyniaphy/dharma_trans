@@ -6,6 +6,7 @@ export interface TranslatorStatus {
   isProcessing: boolean;
   showConfigModal: boolean;
   showLeftPanel: boolean;
+  showThinking: boolean;
 }
 
 export const useTranslatorStatus = (): [TranslatorStatus, (status: Partial<TranslatorStatus>) => void] => {
