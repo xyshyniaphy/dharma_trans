@@ -17,59 +17,26 @@ export const useTranslatorExe = (props: CurrentTranslateItemProps) => {
   const { explain, apiKey, selectedModel } = config;
   const [currentModel] = useCurrentModel();
   const [{  }, updateStatus] = useTranslatorStatus();
-  
-  const [outputText, setOutputText] = useState<string>('');
-  const [thinkingText, setThinkingText] = useState<string>('');
-  const [price, setPrice] = useState(0);
-
   const [_trans, setTranslate] = useCurrentTranslate();
 
-  useEffect(() => {
-    console.log('outputText:', outputText);
-    console.log('thinkingText:', thinkingText);
-    if(!outputText && !thinkingText) return;
-    if(!_trans) return;
-    setTranslate( {
-      ..._trans,
-      output: outputText,
-      thinking: thinkingText
-    });
-  }, [outputText, thinkingText]);
-
-
-
   const startTranslate = async (trans: Translation) => {
-    if(!trans)return;
-    setOutputText('');
-    setThinkingText('');
-    setPrice(0);
+    if(!trans) return;
     
-    updateStatus({ isProcessing: true, status: '开始翻译' });
-
-    await m_processText(
+    const newTrans = await m_processText(
       explain,
       apiKey,
-      trans.input || '',
+      trans,
       selectedModel,
-      (value: boolean) => updateStatus({ showConfigModal: value }),
-      (value: boolean) => updateStatus({ isProcessing: value }),
-      (value: string) => updateStatus({ status: value }),
-      setOutputText,
-      setThinkingText,
-      setPrice,
+      updateStatus,
+      setTranslate,
       currentModel
     );
     
-
-    const newTrans = {
-            ...trans,
-            output: outputText,
-            thinking: thinkingText,
-            price: price,
-          };
-          console.log('new translation:', newTrans);
-          setTranslate(undefined);
-          addTranslationToTopic && addTranslationToTopic(newTrans);
+    setTranslate(undefined);
+    if(!newTrans) return;
+    
+    console.log('new translation:', newTrans);
+    addTranslationToTopic && addTranslationToTopic(newTrans);
   };
 
   return {startTranslate};
