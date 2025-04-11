@@ -4,10 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import { Translation } from './interface/translation_interface';
-import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels'; // Keep OpenRouterModel if needed elsewhere, otherwise remove
+import { fetchAndFilterModels } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
-// import { useCurrentModel } from './hooks/currentModelHook'; // No longer needed here
 import { useTransHistory } from './hooks/transHistoryHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import ModelSelector from './ModelSelector'; // Import the new component
@@ -20,14 +19,10 @@ const Config: React.FC<ConfigProps> = () => {
 
     const { config, updateConfig } = useDTConfig();
     // Destructure selectedModels instead of selectedModel
-    const { explain, apiKey, selectedModels, loaded } = config;
-    // const [currentModel, setCurrentModel] = useCurrentModel(); // Removed
+    const { explain, apiKey, loaded } = config;
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
-    // Remove tempSelectedModelIds state as ModelSelector handles it internally
-    // const [tempSelectedModelIds, setTempSelectedModelIds] = useState<string[]>(selectedModels || []);
     const [models, setModels] = useModelsState(); // Keep for checking if models are loaded for save/disable logic
-    // const { config, updateConfig } = useDTConfig(); // Removed duplicate declaration
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
 
@@ -40,9 +35,6 @@ const Config: React.FC<ConfigProps> = () => {
 
 
     const handleHideConfigModal = () => {
-        // Reset temp state on cancel/hide if desired, or keep it to persist changes until save
-        // setTempApiKey(apiKey);
-        // setTempSelectedModelIds(selectedModels || []);
         updateStatus({ showConfigModal: false });
     };
 
@@ -159,8 +151,6 @@ const Config: React.FC<ConfigProps> = () => {
                         <ModelSelector
                             // selectedModelIds={tempSelectedModelIds} // Removed prop
                             // onChange={handleTempModelsChange} // Removed prop
-                            // Pass disabled state based on API key presence
-                            disabled={!tempApiKey}
                         />
                         {/* Remove single model details display */}
                         {/* <br/> ... */}

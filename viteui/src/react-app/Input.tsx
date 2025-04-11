@@ -6,8 +6,8 @@
  * - Display areas for model thinking process and translation results
  * - History management with delete functionality
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Stack, Button, InputGroup } from 'react-bootstrap'; // Removed Dropdown
+import React, { useState } from 'react';
+import { Form, Stack, Button } from 'react-bootstrap'; // Removed Dropdown
 // import { useCurrentModel } from './hooks/currentModelHook'; // No longer needed here
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
