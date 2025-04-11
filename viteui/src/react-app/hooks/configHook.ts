@@ -6,7 +6,7 @@ export interface DT_CONFIG {
   loaded: boolean;
   explain: boolean;
   apiKey: string;
-  selectedModel: string;
+  // selectedModel: string; // Removed
   selectedModels: string[];
   topicId: string;
 }
@@ -17,8 +17,8 @@ const configAtom = atom<DT_CONFIG>({
     loaded: false,
     explain: false,
     apiKey: '',
-    selectedModel: 'deepseek/deepseek-chat-v3-0324:free',
-    selectedModels: [],
+    // selectedModel: 'deepseek/deepseek-chat-v3-0324:free', // Removed default
+    selectedModels: [], // Keep selectedModels
     topicId: ''
   }
 });
@@ -32,16 +32,16 @@ export const useDTConfig = () => {
   const migrateConfig = () => {
     const explain = localStorage.getItem('EXPLAIN');
     const apiKey = localStorage.getItem('OPENROUTER_API_KEY');
-    const selectedModel = localStorage.getItem('SELECTED_MODEL');
-    
+    // const selectedModel = localStorage.getItem('SELECTED_MODEL'); // No longer needed
+
     if (apiKey) {
-      console.log("MIGRAGE OLD CONFIG");
+      console.log("MIGRATING OLD CONFIG (removing selectedModel)");
       const newConfig: DT_CONFIG = {
         loaded: true,
         explain: explain ? JSON.parse(explain) : false,
         apiKey: apiKey,
-        selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free',
-        selectedModels: [],
+        // selectedModel: selectedModel || 'deepseek/deepseek-chat-v3-0324:free', // Removed
+        selectedModels: [], // Initialize selectedModels
         topicId: ''
       };
       

@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import { Translation } from './interface/translation_interface';
-import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels';
+import { fetchAndFilterModels, OpenRouterModel } from './hooks/filterModels'; // Keep OpenRouterModel if needed elsewhere, otherwise remove
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
-import { useCurrentModel } from './hooks/currentModelHook';
+// import { useCurrentModel } from './hooks/currentModelHook'; // No longer needed here
 import { useTransHistory } from './hooks/transHistoryHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import ModelSelector from './ModelSelector'; // Import the new component
 
 interface ConfigProps {
 }
@@ -18,11 +19,13 @@ let loadedModels = false;
 const Config: React.FC<ConfigProps> = () => {
 
     const { config, updateConfig } = useDTConfig();
-    const { explain, apiKey, selectedModel, loaded } = config;
-    const [currentModel, setCurrentModel] = useCurrentModel();
+    // Destructure selectedModels instead of selectedModel
+    const { explain, apiKey, selectedModels, loaded } = config;
+    // const [currentModel, setCurrentModel] = useCurrentModel(); // Removed
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
-    const [tempModel, setTempModel] = useState(selectedModel);
+    // Replace tempModel state with tempSelectedModelIds
+    const [tempSelectedModelIds, setTempSelectedModelIds] = useState<string[]>(selectedModels || []);
     const [models, setModels] = useModelsState();
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
@@ -32,10 +35,13 @@ const Config: React.FC<ConfigProps> = () => {
         if (!apiKey) {
             updateStatus({ showConfigModal: true }); 
         }
-    }, [apiKey,loaded]);
-    
-    
+    }, [apiKey, loaded]);
+
+
     const handleHideConfigModal = () => {
+        // Reset temp state on cancel/hide if desired, or keep it to persist changes until save
+        // setTempApiKey(apiKey);
+        // setTempSelectedModelIds(selectedModels || []);
         updateStatus({ showConfigModal: false });
     };
 
@@ -83,37 +89,52 @@ const Config: React.FC<ConfigProps> = () => {
         fetchAndFilterModels().then(setModels);
     }, []);
 
-    useEffect(() => {
-        if (tempModel && models.length > 0) {
-            const foundModel = models.find(model => model.id === tempModel);
-            if (foundModel) {
-                setCurrentModel(foundModel);
-            }
-        }
-    }, [tempModel, models]);
-    
+    // Remove useEffect related to single currentModel update
+    // useEffect(() => { ... });
+
     const handleTempApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTempApiKey(event.target.value);
-        if(models.length > 0)setModels([]);
-        console.log('Temp API Key:', event.target.value);
+        const newKey = event.target.value;
+        setTempApiKey(newKey);
+        // Reset models if API key changes significantly, prompting a re-fetch potentially
+         if (models.length > 0 && newKey !== apiKey) {
+              setModels([]);
+              loadedModels = false; // Allow re-fetching models
+              // Assuming fetchAndFilterModels reads the key from config or env
+              fetchAndFilterModels().then(setModels).catch(err => console.error("Failed to fetch models with new key:", err));
+         } else if (!loadedModels && newKey.length >= 10) {
+              // Fetch models if not loaded and key seems valid
+              loadedModels = true;
+               // Assuming fetchAndFilterModels reads the key from config or env
+              fetchAndFilterModels().then(setModels).catch(err => console.error("Failed to fetch models:", err));
+         }
+         console.log('Temp API Key:', newKey);
     };
 
-    const handleTempModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        if (models.length > 0 && event.target.value !== '') {
-            setTempModel(event.target.value);
-            console.log('Selected model:', event.target.value);
-        }
+    // Remove handleTempModelChange for single select
+    // const handleTempModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => { ... };
+
+    // Add handler for multi-select change
+    const handleTempModelsChange = (selectedIds: string[]) => {
+        setTempSelectedModelIds(selectedIds);
+        console.log('Selected model IDs:', selectedIds);
     };
+
 
     function saveAndClose(): void {
-        if  (models.length > 0 && tempApiKey.length >= 10 && tempModel !== '') {
+        // Update condition to check tempSelectedModelIds length
+        if (models.length > 0 && tempApiKey.length >= 10 && tempSelectedModelIds.length > 0) {
             console.log('Saving API Key:', tempApiKey);
-            console.log('Saving model:', tempModel);
-            updateConfig({ apiKey: tempApiKey, selectedModel: tempModel });
+            console.log('Saving selected model IDs:', tempSelectedModelIds);
+            // Save selectedModels array instead of selectedModel string
+            updateConfig({ apiKey: tempApiKey, selectedModels: tempSelectedModelIds });
             handleHideConfigModal();
+        } else {
+            // Optionally provide feedback if save conditions aren't met
+            console.warn("Save conditions not met. API Key and at least one model must be selected.");
+            alert("Please ensure you have entered a valid API key and selected at least one model.");
         }
     }
-    if(!showConfigModal) return null;
+    if (!showConfigModal) return null;
 
     return (
         <Modal show={showConfigModal} onHide={handleHideConfigModal} >
@@ -128,25 +149,19 @@ const Config: React.FC<ConfigProps> = () => {
                         <Button variant="link" href="https://zhuanlan.zhihu.com/p/28203837581" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</Button>
                     </Form.Group>
                     <Form.Group className="mb-3">
-                        <Form.Label htmlFor="modelSelect">选择模型:</Form.Label>
-                        <Form.Select id="modelSelect" value={tempModel} onChange={handleTempModelChange} disabled={models.length === 0}>
-                            {models.length === 0 && <option>请先输入有效API Key</option>}
-                            {models.map((model: OpenRouterModel) => (
-                                <option key={model.name} value={model.id}>{model.name}</option>
-                            ))}
-                        </Form.Select>
-                        <br/>
-                        {currentModel? <Form.Text>
-                            {"价格 : "+ currentModel?.pricing.prompt || ""}
-                        </Form.Text>:null}
-                        <br/>
-                        {currentModel? <Form.Text>
-                            {"模型介绍 : "+ currentModel?.description || ""}
-                        </Form.Text>:null}
-                       
+                        <Form.Label htmlFor="model-selector-dropdown">选择模型 (可多选):</Form.Label>
+                        {/* Replace Form.Select with ModelSelector */}
+                        <ModelSelector
+                            models={models}
+                            selectedModelIds={tempSelectedModelIds}
+                            onChange={handleTempModelsChange}
+                            disabled={models.length === 0 || !tempApiKey}
+                        />
+                        {/* Remove single model details display */}
+                        {/* <br/> ... */}
                         <br/>
                         <Form.Text>
-                            推荐: DeepSeek V3 , Qwen:QWQ. 模型影响速度和质量。
+                            推荐: DeepSeek V3 , Qwen:QWQ. 模型影响速度和质量。选择多个模型将在翻译时轮流使用。
                         </Form.Text>
                     </Form.Group>
                 </Form>
@@ -171,8 +186,9 @@ const Config: React.FC<ConfigProps> = () => {
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button>
                 <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
-                <Button variant="outline-success"  onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
-                
+                {/* Update save button disabled condition */}
+                <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || tempSelectedModelIds.length === 0}>保存</Button>
+
             </Modal.Footer>
         </Modal>
     );

@@ -1,11 +1,13 @@
 import { atom, useRecoilState } from 'recoil';
 import { OpenRouterModel } from './filterModels';
 
-const currentModelAtom = atom<OpenRouterModel | null>({
+// Change the type to OpenRouterModel[] and default to an empty array
+const currentModelAtom = atom<OpenRouterModel[]>({
   key: 'currentModelState',
-  default: null,
+  default: [],
 });
 
 export const useCurrentModel = () => {
+  // The hook remains the same, but now manages an array
   return useRecoilState(currentModelAtom);
 };
