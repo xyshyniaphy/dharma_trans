@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ListGroup, Button, Dropdown, Modal } from 'react-bootstrap';
+import { ListGroup, Button, Dropdown } from 'react-bootstrap';
 
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useCurrentTopicId } from './hooks/currentTopicHook';

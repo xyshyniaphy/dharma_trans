@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "dharma-trans-tvite",
+  "name": "dharma-trans-bdb",
   "main": "./src/api/index.ts",
   "compatibility_date": "2024-11-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -15,7 +15,7 @@
   },
   "routes": [
     {
-      "pattern": "t.hdcx.site",
+      "pattern": "t.198066.xyz",
       "custom_domain": true
     }
   ]

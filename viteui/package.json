@@ -1,9 +1,9 @@
 {
-  "name": "vite-react-template",
-  "description": "A template for building a React application with Vite, Hono, and Cloudflare Workers",
+  "name": "dharma-trans",
+  "description": "Dharma Trans - A template for building a React application with Vite, Hono, and Cloudflare Workers",
   "version": "0.0.0",
   "cloudflare": {
-    "label": "Vite React Template",
+    "label": "Dharma Trans",
     "products": [
       "Workers"
     ],
@@ -41,7 +41,7 @@
     "typescript": "5.7.2",
     "typescript-eslint": "8.22.0",
     "vite": "^6.2.4",
-    "wrangler": "^4.6.0"
+    "wrangler": "^4.10.0"
   },
   "scripts": {
     "build": "tsc -b && vite build",
