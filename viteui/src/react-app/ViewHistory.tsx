@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListGroup, Button } from 'react-bootstrap';
+import { ListGroup, Button, Dropdown } from 'react-bootstrap';
 
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useCurrentTopicId } from './hooks/currentTopicHook';
@@ -10,7 +10,7 @@ type ViewHistoryProps = {};
 const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
 
-  const { topics, createTopic } = useTopicsManager();
+  const { topics, createTopic, deleteTopic } = useTopicsManager();
 
   const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
   const { activeBgClass, activeTextClass } = useTheme();
@@ -32,7 +32,33 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
           className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : ''}
           onClick={() => setCurrentTopicId(item.topicId)}
         >
-          {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
+          <div 
+            className="d-flex justify-content-between align-items-center"
+            onMouseEnter={(e) => {
+              const toggle = e.currentTarget.querySelector('.dropdown-toggle') as HTMLElement;
+              if (toggle) toggle.style.visibility = 'visible';
+            }}
+            onMouseLeave={(e) => {
+              const toggle = e.currentTarget.querySelector('.dropdown-toggle') as HTMLElement;
+              if (toggle) toggle.style.visibility = 'hidden';
+            }}
+          >
+            <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
+            <Dropdown className="ms-2" onClick={(e) => e.stopPropagation()}>
+              <Dropdown.Toggle 
+                variant="link" 
+                className="p-0 text-decoration-none" 
+                style={{ visibility: 'hidden' }}
+              >
+                <i className="bi bi-three-dots-vertical"></i>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => deleteTopic(item.topicId)}>
+                  <i className="bi bi-trash me-2"></i>删除
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
         </ListGroup.Item>
       ))}
     </ListGroup>

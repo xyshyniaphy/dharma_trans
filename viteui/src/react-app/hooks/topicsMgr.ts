@@ -7,6 +7,7 @@ export function useTopicsManager() {
   const { 
     topics, 
     updateTopic,
+    deleteTopic,
     currentTopic,
     currentTopicId,
     createTopic
@@ -61,6 +62,8 @@ export function useTopicsManager() {
 
   return {
     topics,
+    currentTopicId,
+    deleteTopic,
     addTranslationToTopic,
     deleteTranslation,
     createTopic
