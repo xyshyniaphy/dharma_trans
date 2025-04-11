@@ -1,19 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Dropdown, Button } from 'react-bootstrap';
-import { OpenRouterModel } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook'; // Import config hook
 
 interface ModelSelectorProps {
-    // selectedModelIds: string[]; // Removed prop
-    // onChange: (selectedIds: string[]) => void; // Removed prop
-    disabled?: boolean; // Keep disabled prop if needed externally
 }
 
 const ModelSelector: React.FC<ModelSelectorProps> = ({
-    // selectedModelIds, // Removed from destructuring
-    // onChange, // Removed from destructuring
-    disabled = false, // Keep disabled prop
 }) => {
     const [models] = useModelsState();
     const { config, updateConfig } = useDTConfig(); // Use config hook
@@ -101,7 +94,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
     return (
         <Dropdown show={isOpen} onToggle={handleToggle} ref={dropdownRef}>
             {/* Use disabled prop passed from parent OR internal logic */}
-            <Dropdown.Toggle variant="outline-secondary" id="model-selector-dropdown" disabled={disabled || !modelsAvailable}>
+            <Dropdown.Toggle variant="outline-primary" id="model-selector-dropdown" disabled={!modelsAvailable}>
                 {!modelsAvailable ? 'Loading models...' : getSelectedModelsText()}
             </Dropdown.Toggle>
 
@@ -111,7 +104,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
                          <Form.Check
                             type="checkbox"
                             id={`model-checkbox-${model.id}`}
-                            label={`${model.name} (${model.pricing?.prompt || 'N/A'})`}
+                            label={model.name}
                             // Use selectedModels from config state for checked status
                             checked={selectedModels.includes(model.id)}
                             onChange={(e) => handleCheckboxChange(model.id, e.target.checked)}

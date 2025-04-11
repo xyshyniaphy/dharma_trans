@@ -115,12 +115,7 @@ const Input: React.FC<InputProps> = ({
                 </Button>
                 {/* Use ModelSelector, passing only the configured models */}
                 <div style={{ minWidth: '150px' }}> {/* Wrapper to control width if needed */}
-                    <ModelSelector
-                        // selectedModelIds={modelsSelectedForTranslate} // Removed prop
-                        // onChange={handleModelSelectionChange} // Removed prop
-                        // Disable if no models are configured globally (via config hook)
-                        disabled={configuredModels.length === 0}
-                    />
+                    <ModelSelector />
                 </div>
             </div>
             <TranslateItems deleteTranslation={deleteTranslation} />
