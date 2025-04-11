@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListGroup } from 'react-bootstrap';
+import { ListGroup, Button } from 'react-bootstrap';
 
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useCurrentTopicId } from './hooks/currentTopicHook';
@@ -9,21 +9,31 @@ type ViewHistoryProps = {};
 const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
 
-  const { topics } = useTopicsManager();
+  const { topics, createTopic } = useTopicsManager();
 
-  const { setCurrentTopicId } = useCurrentTopicId();
+  const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
   return (
-    <ListGroup>
-    {topics.map((item, index) => (
-      <ListGroup.Item
-        key={index}
-        action
-        onClick={() => setCurrentTopicId(item.topicId)}
+    <>
+      <Button 
+        variant="info" 
+        className="mb-3 w-100"
+        onClick={() => createTopic('新话题')}
       >
-        {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
-      </ListGroup.Item>
-    ))}
-  </ListGroup>
+        新建话题
+      </Button>
+      <ListGroup>
+      {topics.map((item, index) => (
+        <ListGroup.Item
+          key={index}
+          action
+          onClick={() => setCurrentTopicId(item.topicId)}
+          active={item.topicId === currentTopicId}
+        >
+          {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
+        </ListGroup.Item>
+      ))}
+    </ListGroup>
+    </>
   );
 };
 

@@ -45,7 +45,7 @@ const m_processText = async (explain:boolean,apiKey: string, inputText: string, 
     setStatus('翻译中');
     try {
         const prompt = await fetchPrompt(inputText,explain);
-        console.log("prompt is " + prompt);
+        //console.log("prompt is " + prompt);
 
         const response = await fetch(`${apiUrl}/chat/completions`, {
             method: 'POST',

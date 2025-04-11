@@ -8,7 +8,8 @@ export function useTopicsManager() {
     topics, 
     updateTopic,
     currentTopic,
-    currentTopicId
+    currentTopicId,
+    createTopic
   } = useTopics();
 
   const { insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
@@ -61,6 +62,7 @@ export function useTopicsManager() {
   return {
     topics,
     addTranslationToTopic,
-    deleteTranslation
+    deleteTranslation,
+    createTopic
   };
 }
