@@ -12,6 +12,12 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
 
   const { topics, createTopic, deleteTopic } = useTopicsManager();
 
+  const handleDeleteTopic = (topicId: string) => {
+    if (window.confirm('确定要删除这个话题吗？\n删除后无法恢复')) {
+      deleteTopic(topicId);
+    }
+  };
+
   const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
   const { activeBgClass, activeTextClass } = useTheme();
   
@@ -53,7 +59,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                 <i className="bi bi-three-dots-vertical"></i>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => deleteTopic(item.topicId)}>
+                <Dropdown.Item onClick={() => handleDeleteTopic(item.topicId)}>
                   <i className="bi bi-trash me-2"></i>删除
                 </Dropdown.Item>
               </Dropdown.Menu>

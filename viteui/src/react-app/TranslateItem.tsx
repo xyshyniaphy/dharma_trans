@@ -41,6 +41,14 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
     if(!translation || !deleteTranslation) return;
     deleteTranslation(translation.translateId);
   };
+
+  const confirmDeleteFromHistory = () => {
+    const confirmed = window.confirm('确定要从历史记录中删除此项吗？');
+    if (confirmed) {
+      removeFromHistory();
+    }
+  };
+
   //get model name from translation
   const BaseModelName = (translation? translation.modelName : '').replace('(free)', '');
   const modelName = (BaseModelName&& BaseModelName.length > 0 && BaseModelName.includes(':'))
@@ -64,7 +72,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
       {/* Translation Result Column */}
       <td className="align-top p-2">
         <Form.Group>
-          {translation && removeFromHistory && (
+          {translation && (
             <div className="d-flex justify-content-between align-items-center">
              
                 <div className={`${styles['hover-buttons']} hover-buttons`} style={{ opacity: 0, transition: 'opacity 0.2s' }}>
@@ -74,7 +82,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
                 </div>
                 <Form.Label className="fw-bold">{modelName}</Form.Label>
                 <div className={`${styles['hover-buttons']} hover-buttons`} style={{ opacity: 0, transition: 'opacity 0.2s' }}>
-                  <Button variant="link" className="p-2 rounded" onClick={removeFromHistory}>
+                  <Button variant="link" className="p-2 rounded" onClick={confirmDeleteFromHistory}>
                     <FontAwesomeIcon icon={faTrash} />
                   </Button>
                 </div>
