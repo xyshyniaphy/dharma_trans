@@ -1,9 +1,9 @@
 import { useDTConfig } from './configHook';
-import { useCurrentModel } from './currentModelHook';
 import { useTranslatorStatus } from './useTranslatorStatus';
 import m_processText from '../utils/translate_tool';
 import { useCurrentTranslate } from './currentTranslateHook';
 import { Translation } from '../interface/translation_interface';
+import { OpenRouterModel } from '../hooks/filterModels';
 
 type CurrentTranslateItemProps = {
   addTranslationToTopic?: (translation: Translation) => Promise<void>;
@@ -13,24 +13,24 @@ type CurrentTranslateItemProps = {
 export const useTranslatorExe = (props: CurrentTranslateItemProps) => {
   const { addTranslationToTopic } = props;
   const { config } = useDTConfig();
-  const { explain, apiKey, selectedModel } = config;
-  const [currentModel] = useCurrentModel();
+  const { explain, apiKey } = config; // Removed selectedModel from here
   const [{  }, updateStatus] = useTranslatorStatus();
   const [_trans, setTranslate] = useCurrentTranslate();
 
-  const startTranslate = async (trans: Translation) => {
-    if(!trans) return;
-    
+  // Added currentModelId parameter
+  const startTranslate = async (trans: Translation, currentModel: OpenRouterModel) => {
+    // Check the passed ID
+    if(!trans || !currentModel) return;
+
     const newTrans = await m_processText(
       explain,
       apiKey,
       trans,
-      selectedModel,
       updateStatus,
       setTranslate,
       currentModel
     );
-    
+
     setTranslate(undefined);
     if(!newTrans) return;
     

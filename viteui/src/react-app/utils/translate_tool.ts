@@ -37,10 +37,9 @@ const m_processText = async (
   explain: boolean,
   apiKey: string, 
   trans: Translation,
-  selectedModel: string, 
   updateStatus: (status: { showConfigModal?: boolean, isProcessing?: boolean, status?: string }) => void,
   setTranslate: (trans: Translation | undefined) => void,
-  currentModel: OpenRouterModel | null
+  currentModel: OpenRouterModel | undefined
 ): Promise<Translation> => {
   if (!apiKey) {
     updateStatus({ showConfigModal: true, isProcessing: false, status: '请先配置API Key' });
@@ -50,14 +49,18 @@ const m_processText = async (
     alert('请输入需要翻译的文本');
     return trans;
   }
-  
-  updateStatus({ isProcessing: true, status: '开始翻译' });
+  if (!currentModel) {
+    alert('模型未配置');
+    return trans;
+  }
   
   let outputText = '';
+  let thinkingText = '';
+  let price = 0;
   
   try {
     const prompt = await fetchPrompt(trans.input, explain);
-
+    
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -65,7 +68,7 @@ const m_processText = async (
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: selectedModel,
+        model: currentModel.id,
         messages: [{ role: 'user', content: prompt }],
         stream: true,
         temperature: 0,
@@ -84,9 +87,6 @@ const m_processText = async (
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
-    let thinkingText = '';
-    let price = 0;
-
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -101,7 +101,7 @@ const m_processText = async (
           try {
             const parsed = JSON.parse(data) as CompletionData;
             
-            if(parsed.usage && currentModel !== null){  
+            if(parsed.usage){
               price = calculateTotalPrice(parsed, currentModel);
             }
             const delta = parsed.choices?.[0]?.delta;
@@ -125,32 +125,31 @@ const m_processText = async (
         }
       }
     }
-    
-    outputText = outputText.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, '');
-    thinkingText = thinkingText.replace(/\n$/, '\n');
-    
-    return { 
-      ...trans, 
-      output: outputText, 
-      thinking: thinkingText,
-      price: price 
-    };
 
   } catch (error: any) {
     console.error('Error:', error);
-    updateStatus({ isProcessing: false, status: '翻译出错，请重试' });
     if (error instanceof Error) {
-      outputText = `翻译出错: ${error.message}`;
+      outputText += `\n翻译出错: ${error.message}`;
       if (error.message.includes('401') || error.message.toLowerCase().includes('invalid key')) {
         updateStatus({ showConfigModal: true, isProcessing: false, status: '请先配置API Key' });
       }
     } else {
-      outputText = '发生未知错误';
+      outputText += `\n发生未知错误`;
     }
-    return { ...trans, output: outputText };
   } finally {
-    updateStatus({ isProcessing: false, status: '' });
+    updateStatus({ status: '' });
+    setTranslate(undefined);
   }
+
+  outputText = outputText.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, '');
+  thinkingText = thinkingText.replace(/\n$/, '\n');
+  
+  return { 
+    ...trans, 
+    output: outputText, 
+    thinking: thinkingText,
+    price: price 
+  };
 };
 
 export default m_processText;

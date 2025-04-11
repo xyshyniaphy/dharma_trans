@@ -8,7 +8,6 @@
  */
 import React, { useState } from 'react';
 import { Form, Stack, Button } from 'react-bootstrap'; // Removed Dropdown
-// import { useCurrentModel } from './hooks/currentModelHook'; // No longer needed here
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
 import ModelSelector from './ModelSelector'; // Import ModelSelector
@@ -16,7 +15,7 @@ import { useDTConfig } from './hooks/configHook';
 import { useTranslatorExe } from './hooks/translatorExeHook';
 import { Translation } from './interface/translation_interface';
 import { OpenRouterModel } from './hooks/filterModels'; // Import OpenRouterModel
-
+import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 // Props interface for the Input component
 interface InputProps {
     addTranslationToTopic: (translation: Translation) => Promise<void>;
@@ -29,23 +28,13 @@ const Input: React.FC<InputProps> = ({
 }) => {
     const { startTranslate } = useTranslatorExe({ addTranslationToTopic });
     const { config } = useDTConfig();
-    const { selectedModels = [] } = config; // Default to empty array
 
     const [inputText, setInputText] = useState<string>('');
     const [models] = useModelsState(); // Get the full list of available models
 
-    // Remove local state for selected models, rely on global config.selectedModels
-    // const [modelsSelectedForTranslate, setModelsSelectedForTranslate] = useState<string[]>([]);
+    const [{ }, updateStatus] = useTranslatorStatus();
 
-    // Get only the models configured in settings from the full list
-    // Note: This filtering might still be useful for disabling the selector if no models are configured
-    const configuredModels = models.filter((m: OpenRouterModel) => selectedModels.includes(m.id));
-
-    // Remove effect that managed local selection state
-    // useEffect(() => { ... }, [selectedModels]);
-
-
-    function processText(_event: any): void {
+    async function processText(_event: any): Promise<void> {
         // Use the global config state directly
         if (!config.selectedModels || config.selectedModels.length === 0) {
             alert("Please select at least one model in settings to use for translation.");
@@ -53,37 +42,43 @@ const Input: React.FC<InputProps> = ({
         }
         if (!inputText) return;
 
-        // --- Logic to select a model for this translation ---
-        // Simple approach: use the first model from the global config selection.
-        const modelIdToUse = config.selectedModels[0];
-        const modelToUse = models.find((m: OpenRouterModel) => m.id === modelIdToUse);
-        // --- End model selection logic ---
+        const textToTranslate = inputText; // Store input before clearing
+        setInputText(''); // Clear input field immediately
+        
+        updateStatus({ isProcessing: true, status: '开始翻译' });
 
+        try {
+            let transNo=0;
+            const transBatchId = `${Date.now()}_${(Math.random() * 1000).toFixed(0)}`;
+            // Loop through all selected models from the global config
+            for (let i = 0; i < config.selectedModels.length; i++) {
+                const modelIdToUse = config.selectedModels[i];
+                const modelToUse = models.find((m: OpenRouterModel) => m.id === modelIdToUse);
 
-        if (!modelToUse) {
-            console.error(`Selected model ID ${modelIdToUse} not found in available models.`);
-            alert(`Error: Selected model ${modelIdToUse} not found. Please check settings or select another model.`);
-            return;
+                if (!modelToUse) {
+                    console.error(`Selected model ID ${modelIdToUse} not found in available models.`);
+                    continue; // Skip this model and continue with the next
+                }
+
+                // Generate a unique ID for each translation instance
+                const uniqueTranslateId = `${transBatchId}_${transNo}`;
+
+                await startTranslate({
+                    input: textToTranslate, // Use the stored input text
+                    output: '',
+                    thinking: '',
+                    timestamp: Date.now(),
+                    modelName: modelToUse.name, // Use name or ID
+                    price: 0, // Price calculation might need adjustment
+                    translateId: uniqueTranslateId, // Use the unique ID
+                    modelId: modelToUse.id // Use the current model's ID
+                }, modelToUse); // Pass the modelId as the second argument
+                transNo++;
+            }
+        }finally{
+            updateStatus({ isProcessing: false, status: '' });
         }
-
-        setInputText(''); // Clear input after starting
-        startTranslate({
-            input: inputText,
-            output: '',
-            thinking: '',
-            timestamp: Date.now(),
-            modelName: modelToUse.name || '', // Use selected model's name (modelToUse derived from local selection)
-            price: 0, // Price calculation might need adjustment based on the model
-            topicId: '', // Assuming topicId is handled elsewhere or not needed here
-            translateId: Date.now().toString() + "_" + (Math.random() * 1000).toFixed(0),
-            modelId: modelToUse.id || '' // Use selected model's ID
-        });
     }
-
-    // Remove handler for local ModelSelector change
-    // const handleModelSelectionChange = (selectedIds: string[]) => {
-    //     setModelsSelectedForTranslate(selectedIds);
-    // };
 
 
     return (

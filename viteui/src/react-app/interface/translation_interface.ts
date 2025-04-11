@@ -5,7 +5,6 @@ export interface Translation {
     timestamp: number;
     modelName: string;
     price: number;
-    topicId: string;
     translateId: string;
     modelId: string;
 }

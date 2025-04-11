@@ -82,9 +82,6 @@ const Config: React.FC<ConfigProps> = () => {
         fetchAndFilterModels().then(setModels);
     }, []);
 
-    // Remove useEffect related to single currentModel update
-    // useEffect(() => { ... });
-
     const handleTempApiKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newKey = event.target.value;
         setTempApiKey(newKey);
@@ -102,16 +99,6 @@ const Config: React.FC<ConfigProps> = () => {
          }
          console.log('Temp API Key:', newKey);
     };
-
-    // Remove handleTempModelChange for single select
-    // const handleTempModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => { ... };
-
-    // Remove handler for multi-select change as ModelSelector handles it internally
-    // const handleTempModelsChange = (selectedIds: string[]) => {
-    //     setTempSelectedModelIds(selectedIds);
-    //     console.log('Selected model IDs:', selectedIds);
-    // };
-
 
     function saveAndClose(): void {
         // Update condition to check config.selectedModels length directly
