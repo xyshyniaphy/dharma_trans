@@ -1,16 +1,18 @@
-import React from 'react';
-import { ListGroup, Button, Dropdown } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { ListGroup, Button, Dropdown, Modal } from 'react-bootstrap';
 
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useCurrentTopicId } from './hooks/currentTopicHook';
 import { useTheme } from './hooks/useTheme';
+import TopicEdit from './TopicEdit';
+import { Topic } from './interface/topic_interface';
 
 type ViewHistoryProps = {};
 
 const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
 
-  const { topics, createTopic, deleteTopic } = useTopicsManager();
+  const { topics, createTopic, deleteTopic, updateTopic } = useTopicsManager();
 
   const handleDeleteTopic = (topicId: string) => {
     if (window.confirm('确定要删除这个话题吗？\n删除后无法恢复')) {
@@ -20,7 +22,29 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
 
   const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
   const { activeBgClass, activeTextClass } = useTheme();
-  
+
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+
+  const handleRenameTopic = (topic: Topic) => {
+    setSelectedTopic(topic);
+    setShowRenameModal(true);
+  };
+
+  const handleRenameTopicSubmit = (newTopicName: string, topicId: string) => {
+    updateTopic(topicId, { name: newTopicName });
+    setShowRenameModal(false);
+  };
+
+  const renameEdit =showRenameModal? (
+    <TopicEdit 
+      show={showRenameModal}
+      onClose={() => setShowRenameModal(false)}
+      currentName={selectedTopic?.name || ''}
+      onSave={(newName) => handleRenameTopicSubmit(newName, selectedTopic?.topicId || '新话题')}
+    />
+  ):null;
+
   return (
     <>
       <Button 
@@ -59,6 +83,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                 <i className="bi bi-three-dots-vertical"></i>
               </Dropdown.Toggle>
               <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleRenameTopic(item)}><i className="bi bi-pencil me-2"></i>重命名主题</Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDeleteTopic(item.topicId)}>
                   <i className="bi bi-trash me-2"></i>删除
                 </Dropdown.Item>
@@ -67,7 +92,8 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
           </div>
         </ListGroup.Item>
       ))}
-    </ListGroup>
+      </ListGroup>
+      {renameEdit}
     </>
   );
 };

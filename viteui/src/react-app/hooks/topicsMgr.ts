@@ -86,6 +86,7 @@ export function useTopicsManager() {
     deleteTopic:deleteTopicAndTranslations,
     addTranslationToTopic,
     deleteTranslation,
-    createTopic
+    createTopic,
+    updateTopic
   };
 }
