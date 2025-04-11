@@ -3,6 +3,7 @@ import { ListGroup, Button } from 'react-bootstrap';
 
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useCurrentTopicId } from './hooks/currentTopicHook';
+import { useTheme } from './hooks/useTheme';
 
 type ViewHistoryProps = {};
 
@@ -12,6 +13,8 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
   const { topics, createTopic } = useTopicsManager();
 
   const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
+  const { activeBgClass, activeTextClass } = useTheme();
+  
   return (
     <>
       <Button 
@@ -25,9 +28,9 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
       {topics.map((item, index) => (
         <ListGroup.Item
           key={index}
-          action
+          action={item.topicId !== currentTopicId}
+          className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : 'text-light'}
           onClick={() => setCurrentTopicId(item.topicId)}
-          active={item.topicId === currentTopicId}
         >
           {item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}
         </ListGroup.Item>
