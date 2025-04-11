@@ -74,7 +74,7 @@ const Input: React.FC<InputProps> = ({
                         className="flex-grow-1"
                         style={{ borderTopRightRadius: '0.375rem', borderBottomRightRadius: '0.375rem' }}
                     >
-                        { '翻译 (' + currentModel?.name + ')'}
+                        { '翻译 (' + (currentModel?.name || '') + ')'}
                     </Button>
                     <Dropdown style={{ marginLeft: '8px' }}>
                         <Dropdown.Toggle 

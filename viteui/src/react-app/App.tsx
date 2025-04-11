@@ -26,6 +26,8 @@ const App: React.FC = () => {
 
     if(!loaded) return null;
 
+    const progressOverlay = isProcessing ? <ProgressOverlay/> : null;
+
 
     return (
         <Container fluid className="vh-95">
@@ -50,7 +52,7 @@ const App: React.FC = () => {
             <Config/>
 
             {/* Progress Overlay */}
-            <ProgressOverlay isProcessing={isProcessing} />
+            {progressOverlay}
         </Container>
     );
 };

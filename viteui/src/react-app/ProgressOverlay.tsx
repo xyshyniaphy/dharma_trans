@@ -1,12 +1,10 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
 
-interface ProgressOverlayProps {
-  isProcessing: boolean;
+interface ProgressOverlayProps {  
 }
 
-export const ProgressOverlay: React.FC<ProgressOverlayProps> = ({ isProcessing }) => {
-  if (!isProcessing) return null;
+export const ProgressOverlay: React.FC<ProgressOverlayProps> = () => {
   
   return (
     <div style={{
