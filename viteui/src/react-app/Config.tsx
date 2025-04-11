@@ -24,9 +24,10 @@ const Config: React.FC<ConfigProps> = () => {
     // const [currentModel, setCurrentModel] = useCurrentModel(); // Removed
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
-    // Replace tempModel state with tempSelectedModelIds
-    const [tempSelectedModelIds, setTempSelectedModelIds] = useState<string[]>(selectedModels || []);
-    const [models, setModels] = useModelsState();
+    // Remove tempSelectedModelIds state as ModelSelector handles it internally
+    // const [tempSelectedModelIds, setTempSelectedModelIds] = useState<string[]>(selectedModels || []);
+    const [models, setModels] = useModelsState(); // Keep for checking if models are loaded for save/disable logic
+    // const { config, updateConfig } = useDTConfig(); // Removed duplicate declaration
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
 
@@ -113,25 +114,29 @@ const Config: React.FC<ConfigProps> = () => {
     // Remove handleTempModelChange for single select
     // const handleTempModelChange = (event: React.ChangeEvent<HTMLSelectElement>) => { ... };
 
-    // Add handler for multi-select change
-    const handleTempModelsChange = (selectedIds: string[]) => {
-        setTempSelectedModelIds(selectedIds);
-        console.log('Selected model IDs:', selectedIds);
-    };
+    // Remove handler for multi-select change as ModelSelector handles it internally
+    // const handleTempModelsChange = (selectedIds: string[]) => {
+    //     setTempSelectedModelIds(selectedIds);
+    //     console.log('Selected model IDs:', selectedIds);
+    // };
 
 
     function saveAndClose(): void {
-        // Update condition to check tempSelectedModelIds length
-        if (models.length > 0 && tempApiKey.length >= 10 && tempSelectedModelIds.length > 0) {
+        // Update condition to check config.selectedModels length directly
+        // Also ensure models have loaded and API key is present
+        if (models.length > 0 && tempApiKey.length >= 10 && config.selectedModels && config.selectedModels.length > 0) {
             console.log('Saving API Key:', tempApiKey);
-            console.log('Saving selected model IDs:', tempSelectedModelIds);
-            // Save selectedModels array instead of selectedModel string
-            updateConfig({ apiKey: tempApiKey, selectedModels: tempSelectedModelIds });
+            console.log('Saving selected model IDs from config:', config.selectedModels);
+            // Only need to save apiKey if it changed, selectedModels is updated directly by ModelSelector
+            if (tempApiKey !== apiKey) {
+                updateConfig({ apiKey: tempApiKey });
+            }
+            // updateConfig({ apiKey: tempApiKey, selectedModels: config.selectedModels }); // selectedModels already updated
             handleHideConfigModal();
         } else {
             // Optionally provide feedback if save conditions aren't met
-            console.warn("Save conditions not met. API Key and at least one model must be selected.");
-            alert("Please ensure you have entered a valid API key and selected at least one model.");
+            console.warn("Save conditions not met. API Key and at least one model must be selected (check config).");
+            alert("Please ensure you have entered a valid API key and selected at least one model using the dropdown.");
         }
     }
     if (!showConfigModal) return null;
@@ -152,10 +157,10 @@ const Config: React.FC<ConfigProps> = () => {
                         <Form.Label htmlFor="model-selector-dropdown">选择模型 (可多选):</Form.Label>
                         {/* Replace Form.Select with ModelSelector */}
                         <ModelSelector
-                            models={models}
-                            selectedModelIds={tempSelectedModelIds}
-                            onChange={handleTempModelsChange}
-                            disabled={models.length === 0 || !tempApiKey}
+                            // selectedModelIds={tempSelectedModelIds} // Removed prop
+                            // onChange={handleTempModelsChange} // Removed prop
+                            // Pass disabled state based on API key presence
+                            disabled={!tempApiKey}
                         />
                         {/* Remove single model details display */}
                         {/* <br/> ... */}
@@ -186,8 +191,8 @@ const Config: React.FC<ConfigProps> = () => {
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button>
                 <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
-                {/* Update save button disabled condition */}
-                <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || tempSelectedModelIds.length === 0}>保存</Button>
+                {/* Update save button disabled condition to check config.selectedModels */}
+                <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
 
             </Modal.Footer>
         </Modal>

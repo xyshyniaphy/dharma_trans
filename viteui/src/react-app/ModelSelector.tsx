@@ -1,20 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Dropdown, Button } from 'react-bootstrap';
 import { OpenRouterModel } from './hooks/filterModels';
+import { useModelsState } from './hooks/modelsHook';
+import { useDTConfig } from './hooks/configHook'; // Import config hook
 
 interface ModelSelectorProps {
-    models: OpenRouterModel[];
-    selectedModelIds: string[];
-    onChange: (selectedIds: string[]) => void;
-    disabled?: boolean;
+    // selectedModelIds: string[]; // Removed prop
+    // onChange: (selectedIds: string[]) => void; // Removed prop
+    disabled?: boolean; // Keep disabled prop if needed externally
 }
 
 const ModelSelector: React.FC<ModelSelectorProps> = ({
-    models,
-    selectedModelIds,
-    onChange,
-    disabled = false,
+    // selectedModelIds, // Removed from destructuring
+    // onChange, // Removed from destructuring
+    disabled = false, // Keep disabled prop
 }) => {
+    const [models] = useModelsState();
+    const { config, updateConfig } = useDTConfig(); // Use config hook
+    const { selectedModels = [] } = config; // Get selectedModels from config, default to empty array
+
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -68,42 +72,52 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
     const handleCheckboxChange = (modelId: string, checked: boolean) => {
         let newSelectedIds: string[];
         if (checked) {
-            newSelectedIds = [...selectedModelIds, modelId];
+            // Use selectedModels from config state
+            newSelectedIds = [...selectedModels, modelId];
         } else {
-            newSelectedIds = selectedModelIds.filter(id => id !== modelId);
+            // Use selectedModels from config state
+            newSelectedIds = selectedModels.filter(id => id !== modelId);
         }
-        onChange(newSelectedIds);
+        // Update global config state
+        updateConfig({ selectedModels: newSelectedIds });
+        // onChange(newSelectedIds); // Removed call to prop
     };
 
     const getSelectedModelsText = () => {
-        if (selectedModelIds.length === 0) {
+        // Use selectedModels from config state
+        if (selectedModels.length === 0) {
             return 'Select Models';
         }
-        if (selectedModelIds.length === 1) {
-            const model = models.find(m => m.id === selectedModelIds[0]);
+        if (selectedModels.length === 1) {
+            const model = models?.find(m => m.id === selectedModels[0]);
             return model?.name || '1 model selected';
         }
-        return `${selectedModelIds.length} models selected`;
+        return `${selectedModels.length} models selected`;
     };
+
+    // Add a check for models being loaded
+    const modelsAvailable = models && models.length > 0;
 
     return (
         <Dropdown show={isOpen} onToggle={handleToggle} ref={dropdownRef}>
-            <Dropdown.Toggle variant="outline-secondary" id="model-selector-dropdown" disabled={disabled || models.length === 0}>
-                {models.length === 0 ? 'Enter API Key First' : getSelectedModelsText()}
+            {/* Use disabled prop passed from parent OR internal logic */}
+            <Dropdown.Toggle variant="outline-secondary" id="model-selector-dropdown" disabled={disabled || !modelsAvailable}>
+                {!modelsAvailable ? 'Loading models...' : getSelectedModelsText()}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                {models.map((model) => (
+                {modelsAvailable ? models.map((model) => ( // Check modelsAvailable before mapping
                     <Dropdown.ItemText key={model.id} as="div">
                          <Form.Check
                             type="checkbox"
                             id={`model-checkbox-${model.id}`}
                             label={`${model.name} (${model.pricing?.prompt || 'N/A'})`}
-                            checked={selectedModelIds.includes(model.id)}
+                            // Use selectedModels from config state for checked status
+                            checked={selectedModels.includes(model.id)}
                             onChange={(e) => handleCheckboxChange(model.id, e.target.checked)}
                         />
                     </Dropdown.ItemText>
-                ))}
+                )) : <Dropdown.ItemText>No models available.</Dropdown.ItemText>}
                  <Dropdown.Divider />
                  <Dropdown.ItemText>
                     <Button variant="link" size="sm" onClick={() => setIsOpen(false)}>Close</Button>

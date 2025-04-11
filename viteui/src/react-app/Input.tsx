@@ -34,39 +34,28 @@ const Input: React.FC<InputProps> = ({
     const [inputText, setInputText] = useState<string>('');
     const [models] = useModelsState(); // Get the full list of available models
 
-    // State to track the models selected *in this component* for the next translation
-    const [modelsSelectedForTranslate, setModelsSelectedForTranslate] = useState<string[]>([]);
+    // Remove local state for selected models, rely on global config.selectedModels
+    // const [modelsSelectedForTranslate, setModelsSelectedForTranslate] = useState<string[]>([]);
 
     // Get only the models configured in settings from the full list
+    // Note: This filtering might still be useful for disabling the selector if no models are configured
     const configuredModels = models.filter((m: OpenRouterModel) => selectedModels.includes(m.id));
 
-    // Effect to initialize or update the selection in this component based on global config
-    useEffect(() => {
-        // When global config changes, update the local selection
-        // Prioritize keeping existing valid selections if possible, otherwise default to global
-        const validLocalSelection = modelsSelectedForTranslate.filter(id => selectedModels.includes(id));
-        if (validLocalSelection.length > 0) {
-             // If some locally selected models are still valid in the global config, keep them
-             setModelsSelectedForTranslate(validLocalSelection);
-        } else {
-             // Otherwise, reset local selection to match the global config (or empty if none)
-             setModelsSelectedForTranslate(selectedModels);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedModels]); // Rerun only when global config models change
+    // Remove effect that managed local selection state
+    // useEffect(() => { ... }, [selectedModels]);
 
 
     function processText(_event: any): void {
-        // Use the local selection state
-        if (!modelsSelectedForTranslate || modelsSelectedForTranslate.length === 0) {
-            alert("Please select at least one model to use for translation or configure models in settings.");
+        // Use the global config state directly
+        if (!config.selectedModels || config.selectedModels.length === 0) {
+            alert("Please select at least one model in settings to use for translation.");
             return;
         }
         if (!inputText) return;
 
         // --- Logic to select a model for this translation ---
-        // Simple approach: use the first model from the local selection.
-        const modelIdToUse = modelsSelectedForTranslate[0];
+        // Simple approach: use the first model from the global config selection.
+        const modelIdToUse = config.selectedModels[0];
         const modelToUse = models.find((m: OpenRouterModel) => m.id === modelIdToUse);
         // --- End model selection logic ---
 
@@ -91,10 +80,10 @@ const Input: React.FC<InputProps> = ({
         });
     }
 
-    // Handler for the ModelSelector change
-    const handleModelSelectionChange = (selectedIds: string[]) => {
-        setModelsSelectedForTranslate(selectedIds);
-    };
+    // Remove handler for local ModelSelector change
+    // const handleModelSelectionChange = (selectedIds: string[]) => {
+    //     setModelsSelectedForTranslate(selectedIds);
+    // };
 
 
     return (
@@ -117,8 +106,8 @@ const Input: React.FC<InputProps> = ({
             <div className="d-flex gap-2 w-100">
                  <Button
                     variant="primary"
-                    // Disable if no input OR no model is selected in the local state
-                    disabled={!inputText || !modelsSelectedForTranslate || modelsSelectedForTranslate.length === 0}
+                    // Disable if no input OR no model is selected in the global config state
+                    disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
                     onClick={processText}
                     className="flex-grow-1" // Let button take available space
                  >
@@ -127,10 +116,10 @@ const Input: React.FC<InputProps> = ({
                 {/* Use ModelSelector, passing only the configured models */}
                 <div style={{ minWidth: '150px' }}> {/* Wrapper to control width if needed */}
                     <ModelSelector
-                        models={configuredModels} // Pass only the models configured in settings
-                        selectedModelIds={modelsSelectedForTranslate} // Use local state for selection
-                        onChange={handleModelSelectionChange} // Update local state
-                        disabled={configuredModels.length === 0} // Disable if no models are configured globally
+                        // selectedModelIds={modelsSelectedForTranslate} // Removed prop
+                        // onChange={handleModelSelectionChange} // Removed prop
+                        // Disable if no models are configured globally (via config hook)
+                        disabled={configuredModels.length === 0}
                     />
                 </div>
             </div>
