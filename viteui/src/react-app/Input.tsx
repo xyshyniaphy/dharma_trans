@@ -99,7 +99,7 @@ const Input: React.FC<InputProps> = ({
 
             {/* Processing button and ModelSelector */}
             {/* Use d-flex for row layout, InputGroup might interfere with ModelSelector's dropdown */}
-            <div className="d-flex gap-2 w-100">
+            <div className="d-flex gap-2">
                  <Button
                     variant="primary"
                     // Disable if no input OR no model is selected in the global config state

@@ -100,7 +100,8 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
 
             <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {modelsAvailable ? models.map((model) => ( // Check modelsAvailable before mapping
-                    <Dropdown.ItemText key={model.id} as="div">
+                    // Added inline style to make the item width fit its content
+                    <Dropdown.ItemText key={model.id} as="div" style={{ minWidth: 'max-content' }}>
                          <Form.Check
                             type="checkbox"
                             id={`model-checkbox-${model.id}`}
