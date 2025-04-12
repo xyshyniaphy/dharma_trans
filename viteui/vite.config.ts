@@ -4,6 +4,9 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 
 export default defineConfig({
   plugins: [react(), cloudflare()],
+  build: {
+    target: 'es2015' // Add this line to ensure async/await is transpiled
+  },
   resolve: {
     alias: {
       react: 'react',

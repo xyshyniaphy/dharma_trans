@@ -1,7 +1,7 @@
 // src/react-app/Config.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Stack } from 'react-bootstrap'; // Added Stack
+import { Modal, Button, Form } from 'react-bootstrap';
 
 import { Translation } from './interface/translation_interface';
 import DictViewer from './DictViewer'; // Import the new component

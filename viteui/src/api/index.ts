@@ -1,5 +1,7 @@
+/// <reference types="@cloudflare/workers-types" />
 import { Hono } from "hono";
-const app = new Hono<{ Bindings: Env }>();
+// Use the fully qualified name for the Env type
+const app = new Hono<{ Bindings: Cloudflare.Env }>();
 
 app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
 

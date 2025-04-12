@@ -2,30 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Table, Form, Button } from 'react-bootstrap';
 import Papa from 'papaparse';
 // Import necessary types and hooks from react-table
-import { 
+import {
     useTable, 
     useFilters, 
     useGlobalFilter, 
     Column, 
-    FilterProps, 
-    ColumnInstance, 
-    HeaderGroup, 
-    Cell,
-    // Import hook-specific types for augmentation
-    UseFiltersColumnOptions,
-    UseFiltersColumnProps,
-    UseFiltersInstanceProps,
-    UseFiltersOptions,
-    UseFiltersState,
-    UseGlobalFiltersColumnOptions,
-    UseGlobalFiltersInstanceProps,
-    UseGlobalFiltersOptions,
-    UseGlobalFiltersState,
-    TableOptions,
-    TableInstance,
-    TableState,
-    ColumnInterface,
-    Row,
+    FilterProps,
     useAsyncDebounce // Import react-table's debounce hook
 } from 'react-table';
 
