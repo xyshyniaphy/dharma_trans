@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ListGroup, Button, Dropdown } from 'react-bootstrap';
+import styles from './ViewHistory.module.css'; // Import CSS module
 
 import { useCurrentTopicId } from './hooks/currentTopicHook';
 import TopicEdit from './TopicEdit';
@@ -23,6 +24,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
 
     const [showRenameModal, setShowRenameModal] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+    // Removed hoveredTopicId state
 
     const handleDeleteTopic = (topicId: string) => {
         if (window.confirm('确定要删除这个话题吗？\n删除后无法恢复')) {
@@ -49,6 +51,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
         />
     ):null;
 
+    // I have a drop down for each topic,  the dropdown is shown when the mouse is over the whole topic
     return (
         <>
             <Button 
@@ -60,32 +63,30 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
             </Button>
             <ListGroup>
             {topics.map((item) => (
-                <div className="position-relative" key={item.topicId}>
+                // Apply CSS module class and remove hover handlers
+                <div 
+                    className={styles.topicItemContainer} // Use CSS module class
+                    key={item.topicId}
+                    // Removed onMouseEnter/onMouseLeave
+                >
+                    {/* ListGroup.Item now only contains the topic name and handles click */}
                     <ListGroup.Item
-                        action={item.topicId !== currentTopicId}
-                        className={item.topicId === currentTopicId ? 'text-primary' : ''}
+                        action={item.topicId !== currentTopicId} // Renders as button if not current
+                        className={item.topicId === currentTopicId ? 'text-primary' : ''} // Removed flex classes
                         onClick={() => setCurrentTopicId(item.topicId)}
                     >
-                        <div className="d-flex justify-content-between align-items-center">
-                            <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
-                        </div>
+                        <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
                     </ListGroup.Item>
+                    {/* Apply CSS module class to dropdown container */}
                     <div 
-                        className="position-absolute end-0 top-50 translate-middle-y me-2"
-                        onMouseEnter={(e) => {
-                            const toggle = e.currentTarget.querySelector('.dropdown-toggle') as HTMLElement;
-                            if (toggle) toggle.style.visibility = 'visible';
-                        }}
-                        onMouseLeave={(e) => {
-                            const toggle = e.currentTarget.querySelector('.dropdown-toggle') as HTMLElement;
-                            if (toggle) toggle.style.visibility = 'hidden';
-                        }}
+                        className={styles.dropdownContainer} // Use CSS module class
+                        // Removed inline positioning classes, handled by CSS module now
                     >
                         <Dropdown onClick={(e) => e.stopPropagation()}>
-                            <Dropdown.Toggle 
-                                variant="link" 
-                                className="p-0 text-decoration-none" 
-                                style={{ visibility: 'hidden' }}
+                            <Dropdown.Toggle
+                                variant="link"
+                                className="p-0 text-decoration-none border-0" // Added border-0
+                                // Removed inline style, handled by CSS module now
                             >
                                 <i className="bi bi-three-dots-vertical"></i>
                             </Dropdown.Toggle>
@@ -97,6 +98,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
+
                 </div>
             ))}
             </ListGroup>

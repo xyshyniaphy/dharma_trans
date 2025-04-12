@@ -1,0 +1,22 @@
+.topicItemContainer {
+  position: relative; /* Ensure positioning context for the dropdown */
+}
+
+.dropdownContainer {
+  position: absolute;
+  right: 0.5rem; /* Adjust as needed (me-2 equivalent) */
+  top: 50%;
+  transform: translateY(-50%);
+  visibility: hidden; /* Hide by default */
+  z-index: 1; /* Ensure dropdown is above list item */
+}
+
+/* Show dropdown when parent container is hovered */
+.topicItemContainer:hover .dropdownContainer {
+  visibility: visible;
+}
+
+/* Ensure dropdown toggle itself doesn't have conflicting visibility */
+.dropdownContainer .dropdown-toggle {
+  visibility: inherit !important; /* Inherit visibility from container, override inline styles */
+}
