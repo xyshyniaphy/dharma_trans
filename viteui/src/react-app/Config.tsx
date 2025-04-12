@@ -165,7 +165,7 @@ const Config: React.FC<ConfigProps> = () => {
                     onClick={() => setShowDictViewer(true)} 
                     className="ms-3 p-0 align-baseline" // Adjust styling as needed
                 >
-                    查看词典 (View Dictionary)
+                    查看词典
                 </Button>
               
             </Modal.Body>

@@ -25,8 +25,9 @@ import {
     TableInstance,
     TableState,
     ColumnInterface,
-    Row
-} from 'react-table'; 
+    Row,
+    useAsyncDebounce // Import react-table's debounce hook
+} from 'react-table';
 
 // Type augmentation moved to src/react-table-config.d.ts
 
@@ -40,22 +41,30 @@ interface DictViewerProps {
     onHide: () => void;
 }
 
-// Define a default UI for filtering
-// Use FilterProps as originally intended
+// Define a default UI for filtering using useAsyncDebounce
 function DefaultColumnFilter({
-    column: { filterValue, preFilteredRows, setFilter },
+    column: { filterValue, setFilter },
 }: FilterProps<DictEntry>) {
-    const count = preFilteredRows.length;
+    const [value, setValue] = useState(filterValue || '');
+
+    // Debounce setFilter call for 500ms
+    const debouncedSetFilter = useAsyncDebounce(val => {
+        setFilter(val || undefined); // Set undefined to remove the filter entirely
+    }, 500);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setValue(newValue); // Update local state immediately for responsive input
+        debouncedSetFilter(newValue); // Trigger the debounced filter update
+    };
 
     return (
         <Form.Control
-            value={filterValue || ''}
-            onChange={e => {
-                setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-            }}
-            placeholder={`Search ${count} records...`}
-            size="sm" // Make filter input smaller
-            className="mt-1" // Add some margin top
+            value={value}
+            onChange={handleChange}
+            placeholder={`搜索...`} // Simplified placeholder
+            size="sm"
+            className="mt-1"
         />
     );
 }
@@ -94,39 +103,40 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
                         },
                         error: (err: Error) => {
                             console.error("CSV parsing error:", err);
-                            setError(`Failed to parse CSV: ${err.message}`);
+                            setError(`解析CSV失败: ${err.message}`); // Translate error
                             setLoading(false);
                         }
                     });
                 })
                 .catch(err => {
                     console.error("Failed to fetch dictionary:", err);
-                    setError(`Failed to load dictionary: ${err.message}`);
+                    setError(`加载词典失败: ${err.message}`); // Translate error
                     setLoading(false);
                 });
         } else if (!csvUrl && show) {
-             setError("API URL (VITE_DHARMA_PROMPT_API_URL) is not configured.");
+             setError("API URL (VITE_DHARMA_PROMPT_API_URL) 未配置。"); // Translate error
              setLoading(false);
         }
     }, [show, csvUrl, data.length]); // Rerun effect if show, csvUrl, or data.length changes
 
     const columns = useMemo<Column<DictEntry>[]>(() => [
         {
-            Header: 'Chinese',
+            Header: '中文', // Translate Header
             accessor: 'chinese',
-            Filter: DefaultColumnFilter, // Add filter UI
+            // Filter: DefaultColumnFilter, // Filter UI is now handled by defaultColumn
             filter: 'text', // Use the default text filter logic
         },
         {
-            Header: 'English',
+            Header: '英文', // Translate Header
             accessor: 'english',
-            Filter: DefaultColumnFilter, // Add filter UI
+            // Filter: DefaultColumnFilter, // Filter UI is now handled by defaultColumn
             filter: 'text', // Use the default text filter logic
         },
     ], []);
 
+    // Define defaultColumn directly, relying on type augmentation for Filter property
+    // Apply the custom debounced filter to all columns by default
     const defaultColumn = useMemo(() => ({
-        // Let's set up our default Filter UI
         Filter: DefaultColumnFilter,
     }), []);
 
@@ -142,6 +152,9 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
             columns,
             data,
             defaultColumn, // Be sure to pass the defaultColumn option
+            // filterTypes, // Removed - default types are usually sufficient
+            // The debounced DefaultColumnFilter handles *when* setFilter is called.
+            // react-table will automatically filter when filterValue changes.
         },
         useFilters, // Use the useFilters plugin hook
         useGlobalFilter // Use the useGlobalFilter plugin hook (optional, for global search)
@@ -150,18 +163,18 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg" centered>
             <Modal.Header closeButton>
-                <Modal.Title>Dictionary Viewer</Modal.Title>
+                <Modal.Title>词典查看器</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-                {loading && <p>Loading dictionary...</p>}
+                {loading && <p>正在加载词典...</p>}
                 {error && <p className="text-danger">{error}</p>}
                 {!loading && !error && csvUrl && (
                      <Table striped bordered hover responsive {...getTableProps()} size="sm">
                         <thead>
                             {headerGroups.map(headerGroup => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {/* Explicitly type the column parameter */}
-                                    {headerGroup.headers.map((column: ColumnInstance<DictEntry>) => ( 
+                                    {/* Remove incorrect cast, rely on augmentation for column properties */}
+                                    {headerGroup.headers.map(column => ( 
                                         <th {...column.getHeaderProps()}>
                                             {column.render('Header')}
                                             {/* Render the columns filter UI */}
@@ -187,11 +200,11 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
                         </tbody>
                     </Table>
                 )}
-                 {!csvUrl && <p className="text-warning">Dictionary URL could not be determined. Check VITE_DHARMA_PROMPT_API_URL environment variable.</p>}
+                 {!csvUrl && <p className="text-warning">无法确定词典URL。请检查 VITE_DHARMA_PROMPT_API_URL 环境变量。</p>}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>
-                    Close
+                    关闭 
                 </Button>
             </Modal.Footer>
         </Modal>

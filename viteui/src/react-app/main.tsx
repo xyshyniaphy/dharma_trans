@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime'; // Polyfill for async/await runtime support
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
