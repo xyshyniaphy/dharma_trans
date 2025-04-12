@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ListGroup, Button, Dropdown } from 'react-bootstrap';
 
 import { useCurrentTopicId } from './hooks/currentTopicHook';
-import { useTheme } from './hooks/useTheme';
 import TopicEdit from './TopicEdit';
 import { Topic } from './interface/topic_interface';
 
@@ -21,7 +20,6 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
 }) => {
 
     const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
-    const { activeBgClass, activeTextClass } = useTheme();
 
     const [showRenameModal, setShowRenameModal] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -61,12 +59,12 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                 新建话题
             </Button>
             <ListGroup>
-            {topics.map((item, index) => (
+            {topics.map((item) => (
                 <div className="position-relative">
                     <ListGroup.Item
-                        key={index}
+                        key={item.topicId}
                         action={item.topicId !== currentTopicId}
-                        className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : ''}
+                        className={item.topicId === currentTopicId ? 'text-primary' : ''}
                         onClick={() => setCurrentTopicId(item.topicId)}
                     >
                         <div className="d-flex justify-content-between align-items-center">
