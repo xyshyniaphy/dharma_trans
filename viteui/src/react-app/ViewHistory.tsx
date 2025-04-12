@@ -62,14 +62,19 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
             </Button>
             <ListGroup>
             {topics.map((item, index) => (
-                <ListGroup.Item
-                    key={index}
-                    action={item.topicId !== currentTopicId}
-                    className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : ''}
-                    onClick={() => setCurrentTopicId(item.topicId)}
-                >
+                <div className="position-relative">
+                    <ListGroup.Item
+                        key={index}
+                        action={item.topicId !== currentTopicId}
+                        className={item.topicId === currentTopicId ? `${activeBgClass} ${activeTextClass}` : ''}
+                        onClick={() => setCurrentTopicId(item.topicId)}
+                    >
+                        <div className="d-flex justify-content-between align-items-center">
+                            <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
+                        </div>
+                    </ListGroup.Item>
                     <div 
-                        className="d-flex justify-content-between align-items-center"
+                        className="position-absolute end-0 top-50 translate-middle-y me-2"
                         onMouseEnter={(e) => {
                             const toggle = e.currentTarget.querySelector('.dropdown-toggle') as HTMLElement;
                             if (toggle) toggle.style.visibility = 'visible';
@@ -79,8 +84,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                             if (toggle) toggle.style.visibility = 'hidden';
                         }}
                     >
-                        <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
-                        <Dropdown className="ms-2" onClick={(e) => e.stopPropagation()}>
+                        <Dropdown onClick={(e) => e.stopPropagation()}>
                             <Dropdown.Toggle 
                                 variant="link" 
                                 className="p-0 text-decoration-none" 
@@ -96,7 +100,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
-                </ListGroup.Item>
+                </div>
             ))}
             </ListGroup>
             {renameEdit}

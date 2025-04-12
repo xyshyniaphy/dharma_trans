@@ -8,7 +8,7 @@ import {
     useGlobalFilter, 
     Column, 
     FilterProps,
-    useAsyncDebounce // Import react-table's debounce hook
+    useAsyncDebounce
 } from 'react-table';
 
 // Type augmentation moved to src/react-table-config.d.ts
