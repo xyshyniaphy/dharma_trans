@@ -45,7 +45,7 @@ const Input: React.FC<InputProps> = ({
         const textToTranslate = inputText; // Store input before clearing
         setInputText(''); // Clear input field immediately
         
-        updateStatus({ isProcessing: true, status: '开始翻译' });
+        updateStatus({ isProcessing: true, status: '翻译中' });
 
         try {
             let transNo=0;
@@ -62,6 +62,7 @@ const Input: React.FC<InputProps> = ({
 
                 // Generate a unique ID for each translation instance
                 const uniqueTranslateId = `${transBatchId}_${transNo}`;
+                console.log('Starting translation for model:', modelToUse.name, 'ID:', modelToUse.id);
 
                 await startTranslate({
                     input: textToTranslate, // Use the stored input text

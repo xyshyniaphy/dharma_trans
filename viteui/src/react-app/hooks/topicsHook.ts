@@ -41,7 +41,7 @@ export function useTopics() {
   useEffect(() => {
     if(!topics || topics.length === 0) return;
     if(currentTopicId) return;
-    console.log('Setting first topic as current:', topics[0]);
+    //console.log('Setting first topic as current:', topics[0]);
     setCurrentTopicId(topics[0].topicId);
   }, [currentTopicId,topics]);
 

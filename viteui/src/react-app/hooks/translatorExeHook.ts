@@ -31,7 +31,6 @@ export const useTranslatorExe = (props: CurrentTranslateItemProps) => {
       currentModel
     );
 
-    setTranslate(undefined);
     if(!newTrans) return;
     
     console.log('new translation:', newTrans);

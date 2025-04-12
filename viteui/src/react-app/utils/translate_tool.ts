@@ -137,12 +137,11 @@ const m_processText = async (
       outputText += `\n发生未知错误`;
     }
   } finally {
-    updateStatus({ status: '' });
     setTranslate(undefined);
   }
 
   outputText = outputText.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, '');
-  thinkingText = thinkingText.replace(/\n$/, '\n');
+  thinkingText = thinkingText.replace(/\n/g, '\n');
   
   return { 
     ...trans, 

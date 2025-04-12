@@ -66,7 +66,7 @@ export const useTransHistory = () => {
 
   const getTranslations = async (translationIds: string[]) => {
     try {
-      console.log('Getting translations for:', translationIds);
+      //console.log('Getting translations for:', translationIds);
 
       if(!translationIds || translationIds.length === 0) {
         setTransHistory([]);

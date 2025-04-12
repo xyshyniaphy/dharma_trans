@@ -30,7 +30,7 @@ export function useTopicsManager() {
 
   //reload translations when current topic changed
   useEffect(() => {
-    if(currentTopic) console.log('current topic is :', currentTopic.name + ' ' + currentTopic.topicId);
+    //if(currentTopic) console.log('current topic is :', currentTopic.name + ' ' + currentTopic.topicId);
     reloadTranslations();
   }, [currentTopicId]);
 
