@@ -4,12 +4,12 @@ import Papa from 'papaparse';
 // Import necessary types and hooks from react-table
 import {
     useTable, 
-    useFilters, 
-    useGlobalFilter, 
-    Column, 
-    FilterProps,
-    useAsyncDebounce
+    useFilters,
+    useGlobalFilter,
+    Column,
+    FilterProps
 } from 'react-table';
+import { useDebouncedCallback } from './hooks/useDebounce'; // Import custom hook
 
 // Type augmentation moved to src/react-table-config.d.ts
 
@@ -29,8 +29,8 @@ function DefaultColumnFilter({
 }: FilterProps<DictEntry>) {
     const [value, setValue] = useState(filterValue || '');
 
-    // Debounce setFilter call for 500ms
-    const debouncedSetFilter = useAsyncDebounce(val => {
+    // Debounce setFilter call for 500ms using the custom hook
+    const debouncedSetFilter = useDebouncedCallback((val: string) => {
         setFilter(val || undefined); // Set undefined to remove the filter entirely
     }, 500);
 

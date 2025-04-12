@@ -60,9 +60,8 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
             </Button>
             <ListGroup>
             {topics.map((item) => (
-                <div className="position-relative">
+                <div className="position-relative" key={item.topicId}>
                     <ListGroup.Item
-                        key={item.topicId}
                         action={item.topicId !== currentTopicId}
                         className={item.topicId === currentTopicId ? 'text-primary' : ''}
                         onClick={() => setCurrentTopicId(item.topicId)}
