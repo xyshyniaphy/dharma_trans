@@ -1,9 +1,10 @@
 // src/react-app/Config.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Stack } from 'react-bootstrap'; // Added Stack
 
 import { Translation } from './interface/translation_interface';
+import DictViewer from './DictViewer'; // Import the new component
 import { fetchAndFilterModels } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
@@ -23,6 +24,7 @@ const Config: React.FC<ConfigProps> = () => {
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [models, setModels] = useModelsState(); // Keep for checking if models are loaded for save/disable logic
+    const [showDictViewer, setShowDictViewer] = useState(false); // State for DictViewer modal
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
 
@@ -157,6 +159,14 @@ const Config: React.FC<ConfigProps> = () => {
                     }}
                     className="ms-3"
                 />
+                {/* Add button to show Dictionary Viewer */}
+                <Button 
+                    variant="link" 
+                    onClick={() => setShowDictViewer(true)} 
+                    className="ms-3 p-0 align-baseline" // Adjust styling as needed
+                >
+                    查看词典 (View Dictionary)
+                </Button>
               
             </Modal.Body>
             <Modal.Footer>
@@ -172,6 +182,9 @@ const Config: React.FC<ConfigProps> = () => {
                 <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
 
             </Modal.Footer>
+
+            {/* Render DictViewer Modal */}
+            <DictViewer show={showDictViewer} onHide={() => setShowDictViewer(false)} />
         </Modal>
     );
 };
