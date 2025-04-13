@@ -11,7 +11,8 @@ export function useTopicsManager() {
     //currentTopic, // Avoid using potentially stale state for modifications
     currentTopicId,
     createTopic,
-    initTopics
+    initTopics,
+    topicsInited,
   } = useTopics();
 
   const { insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
@@ -192,6 +193,7 @@ export function useTopicsManager() {
 
   return {
     topics, // Export state for UI
+    topicsInited,
     // Export the manager's composite delete function
     deleteTopic: deleteTopicAndTranslations,
     addTranslationToTopic,

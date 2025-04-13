@@ -33,6 +33,8 @@ interface OpenRouterModel {
     per_request_limits: null;
 }
 
+
+//models are static, just load for once
 const fetchAndFilterModels = async () => {
     try {
         

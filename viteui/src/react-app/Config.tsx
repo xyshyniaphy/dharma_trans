@@ -14,13 +14,15 @@ import ModelSelector from './ModelSelector'; // Import the new component
 
 interface ConfigProps {
 }
+
+//models list is static, no need to reload
 let loadedModels = false;
 
 const Config: React.FC<ConfigProps> = () => {
 
-    const { config, updateConfig } = useDTConfig();
+    const { loaded,config, updateConfig } = useDTConfig();
     // Destructure selectedModels instead of selectedModel
-    const { explain, apiKey, loaded } = config;
+    const { explain, apiKey  } = config;
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
     const [models, setModels] = useModelsState(); // Keep for checking if models are loaded for save/disable logic
@@ -90,18 +92,7 @@ const Config: React.FC<ConfigProps> = () => {
         const newKey = event.target.value;
         setTempApiKey(newKey);
         // Reset models if API key changes significantly, prompting a re-fetch potentially
-         if (models.length > 0 && newKey !== apiKey) {
-              setModels([]);
-              loadedModels = false; // Allow re-fetching models
-              // Assuming fetchAndFilterModels reads the key from config or env
-              fetchAndFilterModels().then(setModels).catch(err => console.error("Failed to fetch models with new key:", err));
-         } else if (!loadedModels && newKey.length >= 10) {
-              // Fetch models if not loaded and key seems valid
-              loadedModels = true;
-               // Assuming fetchAndFilterModels reads the key from config or env
-              fetchAndFilterModels().then(setModels).catch(err => console.error("Failed to fetch models:", err));
-         }
-         console.log('Temp API Key:', newKey);
+        console.log('Temp API Key:', newKey);
     };
 
     function saveAndClose(): void {

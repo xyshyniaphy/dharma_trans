@@ -53,6 +53,7 @@ export const getAllTopicsFromDB = (): Promise<Topic[]> => {
 };
 
 let topicsInited = false;
+let initingTopic = false;
 
 export function useTopics() {
   const [topics, setTopics] = useRecoilState(topicsState);
@@ -67,7 +68,9 @@ export function useTopics() {
 
   const initTopics = async () => {
     if(topicsInited) return;
-    topicsInited = true;
+    if(initingTopic) return;
+    initingTopic = true;
+
     try {
       const existingTopics = await getAllTopicsFromDB();
       if (existingTopics.length === 0) {
@@ -86,6 +89,10 @@ export function useTopics() {
       }
     } catch (error) {
        console.error("Error initializing topics:", error);
+    }
+    finally{
+      //global cache, do not change this logic
+      topicsInited = true;
     }
   };
 
@@ -106,17 +113,17 @@ export function useTopics() {
 
   //do not add dependency to useEffect
   useEffect(() => {
+    if(!topicsInited)return;
+    if(topics.length === 0)return;
     // Set initial current topic only if topics are loaded and no currentTopicId is set
-    if(topics.length > 0 && !config.topicId) {
+    if(!config.topicId) {
         //console.log('Setting first topic as current:', topics[0]);
         updateConfig({ topicId: topics[0].topicId });
     }
     // If currentTopicId exists but the topic is no longer in the list (e.g., deleted), reset it
-    else if (config.topicId && !topics.some(t => t.topicId === config.topicId) && topics.length > 0) {
+    else if (config.topicId && !topics.some(t => t.topicId === config.topicId)) {
         updateConfig({ topicId: topics[0].topicId }); // Set to first available topic
-    } else if (topics.length === 0) {
-        updateConfig({ topicId: "" }); // No topics, no current topic
-    }
+    } 
     // Removed updateConfig from dependency array to prevent infinite loop
   }, [topics]);
 
@@ -200,6 +207,7 @@ export function useTopics() {
   };
 
   return {
+    topicsInited,
     topics, // The state
     createTopic,
     deleteTopic,

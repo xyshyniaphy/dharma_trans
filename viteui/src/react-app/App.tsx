@@ -14,12 +14,12 @@ import { useTransHistory } from './hooks/transHistoryHook'; // Import useTransHi
 
 const App: React.FC = () => {
     const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
-    const { topics, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
+    const { topics, topicsInited, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
     const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
 
-    const { loaded,config, initConfig } = useDTConfig();
-    console.log('App config:', config);
-    console.log('App loaded:', loaded);
+    const { loaded, initConfig } = useDTConfig();
+    //console.log('App config:', config);
+    //console.log('App loaded:', loaded);
 
 
     // Initialize config when component mounts
@@ -37,7 +37,7 @@ const App: React.FC = () => {
     }, [loaded]); // Added initTopics to dependency array
 
 
-    if(!loaded) return null; // Don't render until config is loaded
+    if(!loaded || !topicsInited) return null; // Don't render until config is loaded
 
     const progressOverlay = isProcessing ? <ProgressOverlay/> : null;
 

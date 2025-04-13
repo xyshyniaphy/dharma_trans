@@ -42,7 +42,7 @@ export const useDTConfig = () => {
   };
 
   useEffect(() => {
-console.log('Config changed:', config);
+    //console.log('Config changed:', config);
   }, [config]);
   
   // Migrate from old localStorage keys to new config object
@@ -113,12 +113,19 @@ console.log('Config changed:', config);
     }
   };
 
+  // Updated function to use the callback form of setConfig
   const updateConfig = (newConfig: Partial<DT_CONFIG>) => {
-    console.log('Updating config:', newConfig,config);
-    const updated = { ...config, ...newConfig };
-    setConfig(updated);
-    setStoredConfig(JSON.stringify(updated)); // No need to cast to string here
+    console.log('Updating config with:', newConfig);
+    setConfig((currentConfig) => { // Use callback form to get the latest state
+      const updated = { ...currentConfig, ...newConfig };
+      console.log('New config state:', updated);
+      // Store the updated config to localStorage
+      setStoredConfig(JSON.stringify(updated));
+      // Return the new state for Recoil
+      return updated;
+    });
   };
+
 
   return {
     loaded:configLoaded,
