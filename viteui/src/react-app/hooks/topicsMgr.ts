@@ -18,6 +18,7 @@ export function useTopicsManager() {
 
   // Reload translations based on the current topic ID, fetching latest data from DB
   const reloadTranslations = async () => {
+    // Check if currentTopicId is falsy (null, undefined, or empty string)
     if(!currentTopicId) return; // Only need ID
 
     try {
@@ -33,6 +34,8 @@ export function useTopicsManager() {
     } catch (error) {
       console.error('Error loading translations after fetching topic from DB:', error);
       await getTranslations([]); // Attempt to clear translations on error
+      // Added error handling: rethrow the error after logging
+      throw error;
     }
   };
 
@@ -45,6 +48,7 @@ export function useTopicsManager() {
 
   // Add translation to a topic
   const addTranslationToTopic = async (translation: Translation): Promise<void> => {
+    // Check if currentTopicId is falsy (null, undefined, or empty string)
     if(!currentTopicId) {
         console.error("addTranslationToTopic: No current topic ID selected.");
         return;
@@ -84,11 +88,14 @@ export function useTopicsManager() {
 
     } catch (error) {
         console.error(`Error adding translation to topic ${currentTopicId}:`, error);
+        // Added error handling: rethrow the error after logging
+        throw error;
     }
   };
 
   // Delete translation from topic and history
   const deleteTranslation = async (translationId: string): Promise<void> => {
+    // Check if currentTopicId is falsy (null, undefined, or empty string)
     if (!currentTopicId) {
         console.error("deleteTranslation: No current topic ID selected.");
         return;
@@ -113,7 +120,15 @@ export function useTopicsManager() {
       // Use the translationIds from the fetched DB topic data, ensuring it's an array
       const currentTranslationIds = topicFromDB.translationIds || [];
       // Filter out the deleted ID - Add explicit type for 'id'
-      const newIds=currentTranslationIds.filter((id: string) => id !== translationId);
+      // Using traditional for loop as requested
+      const newIds = [];
+      for (let i = 0; i < currentTranslationIds.length; i++) {
+        const id: string = currentTranslationIds[i]; // Explicit type
+        if (id !== translationId) {
+          newIds.push(id);
+        }
+      }
+      // const newIds=currentTranslationIds.filter((id: string) => id !== translationId); // Original filter method
 
       // Update the topic in the database/state with the modified list of IDs
       await updateTopic(currentTopicId, {
@@ -127,6 +142,8 @@ export function useTopicsManager() {
 
     } catch (error) {
         console.error(`Error deleting translation ${translationId} from topic ${currentTopicId}:`, error);
+        // Added error handling: rethrow the error after logging
+        throw error;
     }
   };
 
@@ -149,8 +166,16 @@ export function useTopicsManager() {
 
       // Delete all associated translations from history based on DB data
       if (topicFromDB.translationIds && topicFromDB.translationIds.length > 0) {
-        // Add explicit type for 'transId'
-        await Promise.all(topicFromDB.translationIds.map((transId: string) => deleteTransHistory(transId)));
+        // Using traditional for loop as requested
+        const deletePromises = [];
+        for (let i = 0; i < topicFromDB.translationIds.length; i++) {
+          const transId: string = topicFromDB.translationIds[i]; // Explicit type
+          // Collect promises
+          deletePromises.push(deleteTransHistory(transId));
+        }
+        // Wait for all deletions to complete
+        await Promise.all(deletePromises);
+        // await Promise.all(topicFromDB.translationIds.map((transId: string) => deleteTransHistory(transId))); // Original map method
       }
 
       // Finally delete the topic itself using the hook function from useTopics
@@ -158,6 +183,8 @@ export function useTopicsManager() {
 
     } catch (error) {
       console.error(`Error deleting topic ${topicId} and translations:`, error);
+      // Added error handling: rethrow the error after logging
+      throw error;
     }
   };
 
