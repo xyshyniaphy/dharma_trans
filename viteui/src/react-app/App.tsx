@@ -13,11 +13,13 @@ import { useTopicsManager } from './hooks/topicsMgr';
 import { useTransHistory } from './hooks/transHistoryHook'; // Import useTransHistory
 
 const App: React.FC = () => {
-    const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
+    // Get showLeftPanel from config, updateConfig from useDTConfig
+    const { loaded, config, initConfig, updateConfig } = useDTConfig();
+    // Remove showLeftPanel from useTranslatorStatus
+    const [{ isProcessing }, updateStatus] = useTranslatorStatus();
     const { topics, topicsInited, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
     const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
 
-    const { loaded, initConfig } = useDTConfig();
     //console.log('App config:', config);
     //console.log('App loaded:', loaded);
 
@@ -45,14 +47,15 @@ const App: React.FC = () => {
     return (
         <Container fluid className="vh-95">
             <DNavBar
-              showLeftPanel={showLeftPanel}
-              setShowLeftPanel={(value) => updateStatus({ showLeftPanel: value })}
+              // Use config.showLeftPanel and updateConfig
+              showLeftPanel={config.showLeftPanel}
+              setShowLeftPanel={(value) => updateConfig({ showLeftPanel: value })}
               setShowConfigModal={(value) => updateStatus({ showConfigModal: value })}
             />
             <hr />
             <Row className="h-90">
-                {/* Left Panel - Conditional rendering */}
-                {showLeftPanel && (
+                {/* Left Panel - Conditional rendering using config.showLeftPanel */}
+                {config.showLeftPanel && (
                     <Col md={3} className="p-3">
                         <ViewHistory
                             topics={topics}
@@ -62,8 +65,8 @@ const App: React.FC = () => {
                         />
                     </Col>
                 )}
-                {/* Main Panel - Adjust column size based on left panel visibility */}
-                <Col md={showLeftPanel ? 9 : 12} className="p-3">
+                {/* Main Panel - Adjust column size based on config.showLeftPanel */}
+                <Col md={config.showLeftPanel ? 9 : 12} className="p-3">
                     <Input
                         addTranslationToTopic={addTranslationToTopic}
                         deleteTranslation={deleteTranslation}

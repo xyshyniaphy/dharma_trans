@@ -5,7 +5,7 @@ export interface TranslatorStatus {
   status: string;
   isProcessing: boolean;
   showConfigModal: boolean;
-  showLeftPanel: boolean;
+  // showLeftPanel: boolean; // Removed showLeftPanel
   showThinking: boolean;
 }
 

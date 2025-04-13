@@ -7,7 +7,7 @@ export const translatorStatusState = atom<TranslatorStatus>({
     status: '',
     isProcessing: false,
     showConfigModal: false,
-    showLeftPanel: true,
+    // showLeftPanel: true, // Removed showLeftPanel default
     showThinking: false
   }
 });

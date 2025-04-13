@@ -12,6 +12,7 @@ export interface DT_CONFIG {
   selectedModels: string[];
   topicId: string;// current seleccted topic id
   theme: Theme; // Added theme property
+  showLeftPanel: boolean; // Added showLeftPanel property
 }
 
 const configAtom = atom<DT_CONFIG>({
@@ -22,7 +23,8 @@ const configAtom = atom<DT_CONFIG>({
     // selectedModel: 'deepseek/deepseek-chat-v3-0324:free', // Removed default
     selectedModels: [], // Keep selectedModels
     topicId: '',
-    theme: 'dark' // Default theme added
+    theme: 'dark', // Default theme added
+    showLeftPanel: true // Default showLeftPanel added
   }
 });
 
@@ -44,7 +46,7 @@ export const useDTConfig = () => {
   useEffect(() => {
     //console.log('Config changed:', config);
   }, [config]);
-  
+
   // Migrate from old localStorage keys to new config object
   const migrateConfig = () => {
     console.log('Migrating config...');
@@ -68,7 +70,8 @@ export const useDTConfig = () => {
       apiKey: apiKeyValue,
       selectedModels: [], // Initialize selectedModels
       topicId: '',
-      theme: 'dark' // Initialize theme during migration
+      theme: 'dark', // Initialize theme during migration
+      showLeftPanel: true // Initialize showLeftPanel during migration
     };
 
     setStoredConfig(JSON.stringify(newConfig));
@@ -93,7 +96,8 @@ export const useDTConfig = () => {
           apiKey: parsedConfig.apiKey ?? '',
           selectedModels: parsedConfig.selectedModels ?? [],
           topicId: parsedConfig.topicId ?? '',
-          theme: parsedConfig.theme ?? 'dark' // Default theme if missing
+          theme: parsedConfig.theme ?? 'dark', // Default theme if missing
+          showLeftPanel: parsedConfig.showLeftPanel ?? true // Default showLeftPanel if missing
         };
         console.log('Config loaded from localStorage:', fullConfig);
 
