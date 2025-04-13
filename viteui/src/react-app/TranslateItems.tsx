@@ -5,7 +5,7 @@ import { useCurrentTranslate } from "./hooks/currentTranslateHook";
 import { useTransHistory } from "./hooks/transHistoryHook";
 import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
-import { faCopy } from '@fortawesome/free-solid-svg-icons'; // Import the copy icon
+import { faCloudDownload } from '@fortawesome/free-solid-svg-icons'; // Import the copy icon
 import { cleanHtmlForExcel } from "./excel_paste"; // Import the cleaning function
 // Removed useTranslatorStatus import
 
@@ -67,7 +67,15 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       // Create a link to download the Excel file
       const link = document.createElement('a');
       link.href = excelData;
-      link.download = 'translation.xlsx';
+
+      // Get the current date in yy_mm_dd format
+      const now = new Date();
+      const year = now.getFullYear().toString().slice(2);
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const filename = `translation_${year}_${month}_${day}.xlsx`;
+
+      link.download = filename;
 
       // Append the link to the document and trigger the download
       document.body.appendChild(link);
@@ -89,7 +97,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
           <th style={{ width: "50%" }}>
             翻译结果
             <FontAwesomeIcon
-              icon={faCopy}
+              icon={faCloudDownload}
               style={{ marginLeft: "5px", cursor: "pointer" }}
               onClick={handleCopyToExcel} // Attach the click handler
             />
