@@ -145,7 +145,7 @@ const m_processText = async (
   }
 
   outputText = outputText.replace(/```md/g, '').replace(/```markdown/g, '').replace(/```/g, '');
-  thinkingText = thinkingText.replace(/\n/g, '\n');
+  thinkingText = thinkingText.replace(/\\n/g, '\n');
   
   return { 
     ...trans, 

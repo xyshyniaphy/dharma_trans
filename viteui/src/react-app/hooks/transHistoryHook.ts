@@ -90,6 +90,9 @@ export const useTransHistory = () => {
         return;
       }
       const translations = await __getTranslations(translationIds);
+      translations.forEach(t => {
+        t.thinking = t.thinking.replace(/\n/g, '\n').replace(/\\n/g, '\n');
+      });
       // Sort by timestamp descending
       setTransHistory(translations.sort((a, b) => b.timestamp - a.timestamp));
     } catch (error) {
