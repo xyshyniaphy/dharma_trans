@@ -17,8 +17,10 @@ const App: React.FC = () => {
     const { topics, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
     const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
 
-    const { config, initConfig } = useDTConfig();
-    const { loaded } = config;
+    const { loaded,config, initConfig } = useDTConfig();
+    console.log('App config:', config);
+    console.log('App loaded:', loaded);
+
 
     // Initialize config when component mounts
     // dependency must be empty, no dependency!!

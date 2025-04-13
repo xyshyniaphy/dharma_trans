@@ -52,6 +52,7 @@ export const getAllTopicsFromDB = (): Promise<Topic[]> => {
   });
 };
 
+let topicsInited = false;
 
 export function useTopics() {
   const [topics, setTopics] = useRecoilState(topicsState);
@@ -65,6 +66,8 @@ export function useTopics() {
 
 
   const initTopics = async () => {
+    if(topicsInited) return;
+    topicsInited = true;
     try {
       const existingTopics = await getAllTopicsFromDB();
       if (existingTopics.length === 0) {

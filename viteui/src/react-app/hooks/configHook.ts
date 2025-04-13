@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
 
@@ -5,7 +6,6 @@ import { atom } from 'recoil';
 export type Theme = 'light' | 'dark' | 'auto';
 
 export interface DT_CONFIG {
-  loaded: boolean;
   explain: boolean;
   apiKey: string;
   // selectedModel: string; // Removed
@@ -17,7 +17,6 @@ export interface DT_CONFIG {
 const configAtom = atom<DT_CONFIG>({
   key: 'configState',
   default: {
-    loaded: false,
     explain: false,
     apiKey: '',
     // selectedModel: 'deepseek/deepseek-chat-v3-0324:free', // Removed default
@@ -33,6 +32,7 @@ export const useDTConfig = () => {
 
   const setStoredConfig = (value: string) => {
     try {
+      console.log('Setting config in localStorage:', value);
       window.localStorage.setItem('DT_CONFIG', value);
     } catch (error) {
       console.error("Failed to set config in localStorage:", error);
@@ -41,8 +41,14 @@ export const useDTConfig = () => {
     }
   };
 
+  useEffect(() => {
+console.log('Config changed:', config);
+  }, [config]);
+  
   // Migrate from old localStorage keys to new config object
   const migrateConfig = () => {
+    console.log('Migrating config...');
+
     let explainValue = false;
     let apiKeyValue = '';
     try {
@@ -58,8 +64,6 @@ export const useDTConfig = () => {
 
 
     const newConfig: DT_CONFIG = {
-      //must set to false as default, do not change this logic
-      loaded: false,
       explain: explainValue,
       apiKey: apiKeyValue,
       selectedModels: [], // Initialize selectedModels
@@ -76,22 +80,23 @@ export const useDTConfig = () => {
     //use global cache to prevent multiple init
     //global cache, do not change this logic
     if(configLoaded) return;
-    //global cache, do not change this logic
-    configLoaded = true;
 
     try {
       const storedConfig = window.localStorage.getItem('DT_CONFIG');
       if (storedConfig) {
+        console.log('Config String found in localStorage:', storedConfig);
+
         const parsedConfig = JSON.parse(storedConfig) as Partial<DT_CONFIG>; // Parse as partial first
         // Ensure all properties exist, providing defaults if necessary
         const fullConfig: DT_CONFIG = {
-          loaded: true, // Always set loaded to true on init
           explain: parsedConfig.explain ?? false,
           apiKey: parsedConfig.apiKey ?? '',
           selectedModels: parsedConfig.selectedModels ?? [],
           topicId: parsedConfig.topicId ?? '',
           theme: parsedConfig.theme ?? 'dark' // Default theme if missing
         };
+        console.log('Config loaded from localStorage:', fullConfig);
+
         setConfig(fullConfig);
       } else {
         migrateConfig();
@@ -102,15 +107,21 @@ export const useDTConfig = () => {
       migrateConfig(); // Or set a default config directly
       // throw error; // Rethrow if critical
     }
+    finally{
+      //global cache, do not change this logic
+      configLoaded = true;
+    }
   };
 
   const updateConfig = (newConfig: Partial<DT_CONFIG>) => {
+    console.log('Updating config:', newConfig,config);
     const updated = { ...config, ...newConfig };
     setConfig(updated);
     setStoredConfig(JSON.stringify(updated)); // No need to cast to string here
   };
 
   return {
+    loaded:configLoaded,
     config,
     updateConfig,
     initConfig
