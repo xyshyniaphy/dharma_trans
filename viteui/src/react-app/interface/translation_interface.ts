@@ -7,5 +7,6 @@ export interface Translation {
     price: number;
     translateId: string; // Contains part of transBatchId
     modelId: string;
-    transBatchId: string; // Added field: ID to group translations from the same input
+    transBatchId: string; // ID to group translations from the same input
+    isThinkingExpanded?: boolean; // Optional: Tracks if the thinking section is expanded, defaults to false (collapsed)
 }

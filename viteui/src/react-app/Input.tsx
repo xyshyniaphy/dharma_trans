@@ -16,15 +16,18 @@ import { useTranslatorExe } from './hooks/translatorExeHook';
 import { Translation } from './interface/translation_interface';
 import { OpenRouterModel } from './hooks/filterModels'; // Import OpenRouterModel
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
-// Props interface for the Input component
+
+// Updated Props interface for the Input component
 interface InputProps {
     addTranslationToTopic: (translation: Translation) => Promise<void>;
     deleteTranslation: (translationId: string) => Promise<void>;
+    updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void; // Added prop
 }
 
 const Input: React.FC<InputProps> = ({
     addTranslationToTopic,
-    deleteTranslation
+    deleteTranslation,
+    updateTranslationExpansion // Destructure the new prop
 }) => {
     const { startTranslate } = useTranslatorExe({ addTranslationToTopic });
     const { config } = useDTConfig();
@@ -65,6 +68,7 @@ const Input: React.FC<InputProps> = ({
                 console.log('Starting translation for model:', modelToUse.name, 'ID:', modelToUse.id);
 
                 // Add transBatchId to the translation object
+                // isThinkingExpanded defaults to false via the interface/hook logic
                 await startTranslate({
                     input: textToTranslate, // Use the stored input text
                     output: '',
@@ -75,10 +79,18 @@ const Input: React.FC<InputProps> = ({
                     translateId: uniqueTranslateId, // Use the unique ID
                     modelId: modelToUse.id, // Use the current model's ID
                     transBatchId: transBatchId // Add the batch ID
+                    // isThinkingExpanded is implicitly false here
                 }, modelToUse); // Pass the modelId as the second argument
                 transNo++;
             }
-        }finally{
+        } catch (error) {
+            // Add robust error handling
+            console.error("Error during text processing:", error);
+            updateStatus({ isProcessing: false, status: '翻译出错' }); // Update status on error
+            // Optionally rethrow or display a user-friendly message
+            // throw error;
+        } finally {
+            // Correctly update status by passing a partial state object
             updateStatus({ isProcessing: false, status: '' });
         }
     }
@@ -100,7 +112,6 @@ const Input: React.FC<InputProps> = ({
             </Form.Group>
 
             {/* Processing button and ModelSelector */}
-            {/* Use d-flex for row layout, InputGroup might interfere with ModelSelector's dropdown */}
             <div className="d-flex gap-2">
                  <Button
                     variant="primary"
@@ -116,7 +127,11 @@ const Input: React.FC<InputProps> = ({
                     <ModelSelector />
                 </div>
             </div>
-            <TranslateItems deleteTranslation={deleteTranslation} />
+            {/* Pass the update function down to TranslateItems */}
+            <TranslateItems
+                deleteTranslation={deleteTranslation}
+                updateTranslationExpansion={updateTranslationExpansion}
+            />
         </Stack>
     );
 };

@@ -8,7 +8,7 @@ export interface DT_CONFIG {
   apiKey: string;
   // selectedModel: string; // Removed
   selectedModels: string[];
-  topicId: string;
+  topicId: string;// current seleccted topic id
 }
 
 const configAtom = atom<DT_CONFIG>({

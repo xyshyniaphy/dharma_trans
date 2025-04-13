@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { ListGroup, Button, Dropdown } from 'react-bootstrap';
 import styles from './ViewHistory.module.css'; // Import CSS module
 
-import { useCurrentTopicId } from './hooks/currentTopicHook';
+// Removed import for useCurrentTopicId
+// import { useCurrentTopicId } from './hooks/currentTopicHook'; 
+import { useDTConfig } from './hooks/configHook'; // Added import for useDTConfig
 import TopicEdit from './TopicEdit';
 import { Topic } from './interface/topic_interface';
 
@@ -20,7 +22,9 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
     updateTopic
 }) => {
 
-    const { setCurrentTopicId, currentTopicId } = useCurrentTopicId();
+    // Removed useCurrentTopicId hook call
+    // const { setCurrentTopicId, currentTopicId } = useCurrentTopicId(); 
+    const { config, updateConfig } = useDTConfig(); // Added useDTConfig hook call
 
     const [showRenameModal, setShowRenameModal] = useState(false);
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -29,6 +33,10 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
     const handleDeleteTopic = (topicId: string) => {
         if (window.confirm('确定要删除这个话题吗？\n删除后无法恢复')) {
             deleteTopic(topicId);
+            // If the deleted topic was the current one, reset current topic in config
+            if (config.topicId === topicId) {
+                updateConfig({ topicId: '' }); 
+            }
         }
     };
 
@@ -71,9 +79,9 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                 >
                     {/* ListGroup.Item now only contains the topic name and handles click */}
                     <ListGroup.Item
-                        action={item.topicId !== currentTopicId} // Renders as button if not current
-                        className={item.topicId === currentTopicId ? 'text-primary' : ''} // Removed flex classes
-                        onClick={() => setCurrentTopicId(item.topicId)}
+                        action={item.topicId !== config.topicId} // Renders as button if not current, using config.topicId
+                        className={item.topicId === config.topicId ? 'text-primary' : ''} // Removed flex classes, using config.topicId
+                        onClick={() => updateConfig({ topicId: item.topicId })} // Use updateConfig to set topicId
                     >
                         <span>{item.name.length > 10 ? `${item.name.slice(0, 10)}...` : item.name}</span>
                     </ListGroup.Item>

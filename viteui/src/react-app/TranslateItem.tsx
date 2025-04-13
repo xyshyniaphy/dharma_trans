@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import React, { useState } from 'react'; // Removed useRef
+import { Button, Form, Collapse } from 'react-bootstrap'; // Added Collapse
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Translation } from './interface/translation_interface';
-import { faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faCopy, faBrain, faEyeSlash } from '@fortawesome/free-solid-svg-icons'; // Added icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './TranslateItem.module.css';
-import { useTranslatorStatus } from './hooks/useTranslatorStatus'; // Import hook to get status
+// Removed useTranslatorStatus import
 
 // Updated Props interface
 type TranslateItemProps = {
@@ -14,46 +14,48 @@ type TranslateItemProps = {
   deleteTranslation?: (translateId: string) => Promise<void>;
   showInputCell: boolean; // Prop to control rendering of the input cell
   rowSpan: number; // Prop to set the rowSpan for the input cell
+  updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void; // Function to update expansion state
 };
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
   translation,
   deleteTranslation,
-  showInputCell, // Destructure new props
-  rowSpan,       // Destructure new props
+  showInputCell,
+  rowSpan,
+  updateTranslationExpansion, // Destructure the new prop
 }) => {
-  // Ref for auto-scrolling the thinking preformatted block
-  const preRef = useRef<HTMLPreElement>(null); // Changed type to HTMLPreElement
-  const [translatorStatus] = useTranslatorStatus(); // Get translator status
-  const { showThinking } = translatorStatus; // Destructure showThinking status
+  // Removed preRef and related useEffect/state
 
-  // this is used to show translation result
+  // Translation data or defaults
   const out = translation?.output || '';
   const think = translation?.thinking || '';
+  const translateId = translation?.translateId || '';
+  // Default to false if undefined
+  const isThinkingExpanded = translation?.isThinkingExpanded ?? false;
 
-  // Auto-scroll thinking text area when content changes
-  React.useEffect(() => {
-    // Only scroll if the thinking column is actually shown
-    if (showThinking && preRef.current) { // Use preRef here
-      preRef.current.scrollTop = preRef.current.scrollHeight; // Use preRef here
-    }
-  }, [think, showThinking]); // Add showThinking dependency
-
-  //click delete button on input
-  const removeFromHistory = () => {
-    if(!translation || !deleteTranslation) return;
-    // Use a safe way to delete, catch potential errors
+  // Handler to toggle thinking visibility
+  const handleToggleThinking = () => {
+    if (!translateId) return; // Need ID to update state
     try {
-        deleteTranslation(translation.translateId);
+        updateTranslationExpansion(translateId, !isThinkingExpanded);
+    } catch (error) {
+        console.error("Error toggling thinking expansion:", error);
+        // throw error; // Optionally rethrow
+    }
+  };
+
+  // Delete handler (remains mostly the same)
+  const removeFromHistory = () => {
+    if(!translateId || !deleteTranslation) return;
+    try {
+        deleteTranslation(translateId);
     } catch (error) {
         console.error("Error deleting translation:", error);
-        // Optionally rethrow or handle UI feedback here
-        // throw error; // Rethrow if the caller needs to handle it
+        // throw error;
     }
   };
 
   const confirmDeleteFromHistory = () => {
-    // Check if delete function is provided before confirming
     if (!deleteTranslation) return;
     const confirmed = window.confirm('确定要从历史记录中删除此项吗？');
     if (confirmed) {
@@ -61,28 +63,28 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
     }
   };
 
-  //get model name from translation
+  // Model name extraction (remains the same)
   const BaseModelName = (translation? translation.modelName : '').replace('(free)', '');
   const modelName = (BaseModelName&& BaseModelName.length > 0 && BaseModelName.includes(':'))
   ? BaseModelName.split(':')[1]: BaseModelName;
 
+  // Copy handler state and function (remains mostly the same)
   const [showCopied, setShowCopied] = useState(false);
-
   const handleCopy = () => {
-    // Use a safe way to copy, catch potential errors
     try {
         navigator.clipboard.writeText(out);
         setShowCopied(true);
         setTimeout(() => setShowCopied(false), 500);
     } catch (error) {
         console.error("Error copying text:", error);
-        // Optionally rethrow or handle UI feedback here
         // throw error;
     }
   };
 
+  // Determine if the thinking section should be available
+  const hasThinking = think && think.trim() !== '';
+
   return (
-    // Add a class for hover effects if needed, applied to the row
     <tr className={styles['translate-row']}>
       {/* Input Column - Conditionally rendered with rowSpan */}
       {showInputCell && (
@@ -91,14 +93,14 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
         </td>
       )}
 
-      {/* Translation Result Column */}
+      {/* Translation Result Column - Now includes collapsible thinking */}
       <td className="align-top p-2">
         <Form.Group>
           {/* Header section with model name and buttons */}
           <div className="d-flex justify-content-between align-items-center mb-1">
             {/* Left button group (Copy) */}
-            <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}> {/* Ensure space */}
-              {translation && ( // Only show copy if there's translation data
+            <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}>
+              {translation && (
                 <Button variant="link" className="p-1 rounded" disabled={showCopied} onClick={handleCopy} title="复制译文">
                   <FontAwesomeIcon icon={faCopy} size="sm"/>
                 </Button>
@@ -109,14 +111,40 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
             <Form.Label className="fw-bold mb-0 text-center flex-grow-1">{modelName}</Form.Label>
 
             {/* Right button group (Delete) */}
-            <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}> {/* Ensure space */}
-              {deleteTranslation && translation && ( // Only show delete if function and data exist
+            <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}>
+              {deleteTranslation && translation && (
                 <Button variant="link" className="p-1 rounded" onClick={confirmDeleteFromHistory} title="删除此项">
                   <FontAwesomeIcon icon={faTrash} size="sm"/>
                 </Button>
               )}
             </div>
           </div>
+
+          {/* Collapsible Thinking Section */}
+          {hasThinking && (
+            <div className="mb-2"> {/* Add margin below thinking section */}
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={handleToggleThinking}
+                aria-controls={`thinking-collapse-${translateId}`}
+                aria-expanded={isThinkingExpanded}
+                className="d-flex align-items-center gap-1" // Align icon and text
+              >
+                <FontAwesomeIcon icon={isThinkingExpanded ? faEyeSlash : faBrain} />
+                {isThinkingExpanded ? '隐藏思考' : '思考过程'}
+              </Button>
+              <Collapse in={isThinkingExpanded}>
+                <div id={`thinking-collapse-${translateId}`} className={`mt-2 p-2 border rounded ${styles['thinking-output-collapsible']}`}>
+                  {/* Use preformatted block for thinking */}
+                  <pre>
+                    {think}
+                  </pre>
+                </div>
+              </Collapse>
+            </div>
+          )}
+
           {/* Markdown rendered output */}
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {out}
@@ -124,15 +152,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
         </Form.Group>
       </td>
 
-      {/* Thinking Column - Conditionally rendered based on global state */}
-      {showThinking && (
-        <td className="align-top p-2">
-          {/* Use a preformatted block or textarea for thinking */}
-          <pre ref={preRef} className={styles['thinking-output']}> {/* Use preRef here */}
-            {think}
-          </pre>
-        </td>
-      )}
+      {/* Removed the separate Thinking Column <td> */}
     </tr>
   );
 };

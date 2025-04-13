@@ -1,19 +1,25 @@
-import { useEffect, useMemo } from "react"; // Import useEffect and useMemo
+import { useMemo } from "react"; // Removed useEffect
 import { TranslateItem } from "./TranslateItem";
 import { Translation } from "./interface/translation_interface";
 import { useCurrentTranslate } from "./hooks/currentTranslateHook";
 import { useTransHistory } from "./hooks/transHistoryHook";
 import { Table } from "react-bootstrap";
-import { useTranslatorStatus } from "./hooks/useTranslatorStatus";
+// Removed useTranslatorStatus import
 
 type TranslateItemsProps = {
   deleteTranslation: (translationId: string) => Promise<void>;
+  // Add prop for updating expansion state - implementation will be added later in the hook
+  updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void;
 };
 
-// Helper function to group translations by transBatchId
+// Helper function to group translations by transBatchId (remains the same)
 const groupTranslations = (translations: Translation[]) => {
   const grouped: { [key: string]: Translation[] } = {};
   translations.forEach((t) => {
+    // Initialize isThinkingExpanded if it's undefined
+    if (t.isThinkingExpanded === undefined) {
+        t.isThinkingExpanded = false;
+    }
     if (!grouped[t.transBatchId]) {
       grouped[t.transBatchId] = [];
     }
@@ -27,27 +33,17 @@ const groupTranslations = (translations: Translation[]) => {
 
 export const TranslateItems: React.FC<TranslateItemsProps> = ({
   deleteTranslation,
+  updateTranslationExpansion // Destructure the new prop
 }) => {
   const { transHistory } = useTransHistory();
   const [translate, _setTranslate] = useCurrentTranslate(); // Current translation in progress
-  const [translatorStatus, updateStatus] = useTranslatorStatus(); // Get translator status and update function
-  const { showThinking } = translatorStatus; // Destructure showThinking
-
-  // Effect to update showThinking based on transHistory
-  useEffect(() => {
-    const shouldShowThinking = transHistory.some(
-      (item) => item.thinking && item.thinking.trim() !== ""
-    );
-    // Only update if the status needs to change
-    if (shouldShowThinking !== showThinking) {
-      updateStatus({ showThinking: shouldShowThinking });
-    }
-  }, [transHistory, updateStatus, showThinking]); // Add dependencies
+  // Removed translatorStatus and related useEffect
 
   // Memoize the grouped translations to avoid re-calculation on every render
+  // The grouping function now initializes isThinkingExpanded if needed
   const groupedHistory = useMemo(() => groupTranslations(transHistory), [transHistory]);
 
-  // Render the current translation item if it exists (likely before grouping is relevant)
+  // Render the current translation item if it exists
   const currentTransItem = translate ? (
     <TranslateItem
       key={`current-${translate.timestamp}`} // Use a distinct key prefix
@@ -55,6 +51,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       deleteTranslation={undefined} // No delete for item in progress
       showInputCell={true} // Always show input for the current item
       rowSpan={1} // No row span for the current item
+      updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
     />
   ) : null;
 
@@ -62,10 +59,10 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
     <Table bordered responsive className="table-striped">
       <thead>
         <tr>
-          {/* Adjust column widths based on whether 'thinking' column is shown */}
-          <th style={{ width: showThinking ? "33.33%" : "50%" }}>原文</th>
-          <th style={{ width: showThinking ? "33.33%" : "50%" }}>翻译结果</th>
-          {showThinking && <th style={{ width: "33.33%" }}>思考</th>}
+          {/* Only two columns now */}
+          <th style={{ width: "50%" }}>原文</th>
+          <th style={{ width: "50%" }}>翻译结果</th>
+          {/* Removed Thinking header */}
         </tr>
       </thead>
       <tbody>
@@ -81,6 +78,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
               deleteTranslation={deleteTranslation}
               showInputCell={index === 0} // Only show input cell for the first item in the group
               rowSpan={index === 0 ? groupSize : 1} // Set rowSpan for the first item
+              updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
             />
           ));
         })}

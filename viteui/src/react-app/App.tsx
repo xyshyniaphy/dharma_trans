@@ -10,48 +10,54 @@ import { useDTConfig } from './hooks/configHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { ProgressOverlay } from './ProgressOverlay';
 import { useTopicsManager } from './hooks/topicsMgr';
+import { useTransHistory } from './hooks/transHistoryHook'; // Import useTransHistory
 
 const App: React.FC = () => {
     const [{ isProcessing, showLeftPanel }, updateStatus] = useTranslatorStatus();
     const { topics, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
+    const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
 
     const { config } = useDTConfig();
     const { loaded } = config;
 
     useEffect(() => {
         if(!loaded) return;
+        // Initialize topics when config is loaded
         initTopics();
-    }, [loaded]);
+    }, [loaded, initTopics]); // Added initTopics to dependency array
 
 
-    if(!loaded) return null;
+    if(!loaded) return null; // Don't render until config is loaded
 
     const progressOverlay = isProcessing ? <ProgressOverlay/> : null;
 
 
     return (
         <Container fluid className="vh-95">
-            <DNavBar 
+            <DNavBar
               showLeftPanel={showLeftPanel}
               setShowLeftPanel={(value) => updateStatus({ showLeftPanel: value })}
               setShowConfigModal={(value) => updateStatus({ showConfigModal: value })}
             />
             <hr />
             <Row className="h-90">
-                <Col md={3} className={`p-3 ${showLeftPanel ? 'd-block' : 'd-none'}`}>
-                    {/* Left Panel */}
-                    <ViewHistory 
-                        topics={topics}
-                        createTopic={createTopic}
-                        deleteTopic={deleteTopic}
-                        updateTopic={updateTopic}
-                    />
-                </Col>
+                {/* Left Panel - Conditional rendering */}
+                {showLeftPanel && (
+                    <Col md={3} className="p-3">
+                        <ViewHistory
+                            topics={topics}
+                            createTopic={createTopic}
+                            deleteTopic={deleteTopic}
+                            updateTopic={updateTopic}
+                        />
+                    </Col>
+                )}
+                {/* Main Panel - Adjust column size based on left panel visibility */}
                 <Col md={showLeftPanel ? 9 : 12} className="p-3">
-                    {/* Main Panel - Replaced with Input component */}
-                    <Input 
+                    <Input
                         addTranslationToTopic={addTranslationToTopic}
                         deleteTranslation={deleteTranslation}
+                        updateTranslationExpansion={updateTranslationExpansionState} // Pass down the update function
                     />
                 </Col>
             </Row>
