@@ -118,6 +118,11 @@ export function useTopics() {
             await store.clear();
             await loadTopics(); // Reload state after clearing
             updateConfig({ topicId: "" }); // Reset current topic ID
+            setTimeout(() => {
+                topicsInited = false;
+                initingTopic = false;
+                initTopics();
+            }, 200);
         } catch (error) {
             console.error("Error clearing topics:", error);
         }

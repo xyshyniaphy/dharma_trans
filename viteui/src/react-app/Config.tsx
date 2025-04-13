@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { Translation } from './interface/translation_interface';
 import DictViewer from './DictViewer'; // Import the new component
 import { fetchAndFilterModels } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
-import { useTransHistory } from './hooks/transHistoryHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import ModelSelector from './ModelSelector'; // Import the new component
 
@@ -44,46 +42,49 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
         updateStatus({ showConfigModal: false });
     };
 
-    const { transHistory } = useTransHistory();
+    // const { transHistory } = useTransHistory();
 
     const handleClearHistory = async () => {
-        try {
-            await clearTopics();
-        } catch (error) {
-            console.error("Error clearing history:", error);
+        // Confirm with the user before clearing history (in Chinese)
+        if (window.confirm("确定要清除历史记录吗？")) {
+            try {
+                await clearTopics();
+            } catch (error) {
+                console.error("Error clearing history:", error);
+            }
         }
     };
 
-    const handleExportHistory = () => {
-        const json = JSON.stringify(transHistory, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+    // const handleExportHistory = () => {
+    //     const json = JSON.stringify(transHistory, null, 2);
+    //     const blob = new Blob([json], { type: 'application/json' });
+    //     const url = URL.createObjectURL(blob);
         
-        if (window.confirm('Do you want to save the translation history as JSON?')) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'translation_history.json';
-            link.click();
-        }
+    //     if (window.confirm('Do you want to save the translation history as JSON?')) {
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.download = 'translation_history.json';
+    //         link.click();
+    //     }
         
-        URL.revokeObjectURL(url);
-    };
+    //     URL.revokeObjectURL(url);
+    // };
 
-    const handleImportHistory = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedHistory = JSON.parse(e.target?.result as string) as Translation[];
-                    console.log('Imported history:', importedHistory.length)
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                }
-            };
-            reader.readAsText(file);
-        }
-    };
+    // const handleImportHistory = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = event.target.files?.[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = (e) => {
+    //             try {
+    //                 const importedHistory = JSON.parse(e.target?.result as string) as Translation[];
+    //                 console.log('Imported history:', importedHistory.length)
+    //             } catch (error) {
+    //                 console.error('Error parsing JSON:', error);
+    //             }
+    //         };
+    //         reader.readAsText(file);
+    //     }
+    // };
 
   //do not add dependency to useEffect
     //assume user will paste api key
@@ -143,7 +144,7 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
                         {/* <br/> ... */}
                         <br/>
                         <Form.Text>
-                            推荐: DeepSeek V3 , Qwen:QWQ. 模型影响速度和质量。选择多个模型将在翻译时轮流使用。
+                            推荐: DeepSeek V3 模型影响速度和质量。选择多个模型将在翻译时依次使用。<br/>Openrouter每天有1000次免费调用额度。<br/>Xai每月有150美元免费额度，但Xai免费额度需要设置
                         </Form.Text>
                     </Form.Group>
                 </Form>
@@ -170,11 +171,11 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
             <Modal.Footer>
                 
                 <Button variant="outline-primary" onClick={handleClearHistory} className="me-2">清除历史</Button>
-                <Button variant="outline-primary" onClick={handleExportHistory} className="me-2">导出历史</Button>
-                <Button  variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
+                {/* <Button variant="outline-primary" onClick={handleExportHistory} className="me-2">导出历史</Button> */}
+                {/* <Button  variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
                     导入历史
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
-                </Button>
+                </Button> */}
                 <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
                 {/* Update save button disabled condition to check config.selectedModels */}
                 <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
