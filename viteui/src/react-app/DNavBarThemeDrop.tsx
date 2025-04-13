@@ -19,6 +19,8 @@ const ThemeSwitcher: React.FC = () => {
     }
   }, []);
 
+  
+  //do not add dependency to useEffect
   // Effect to apply the theme whenever the theme state changes
   useEffect(() => {
     applyTheme(theme);
@@ -32,7 +34,7 @@ const ThemeSwitcher: React.FC = () => {
     
     mediaQuery.addEventListener('change', handleMediaChange);
     return () => mediaQuery.removeEventListener('change', handleMediaChange);
-  }, [theme, applyTheme]);
+  }, [theme]);
 
   // Function to handle theme selection from the dropdown
   const handleThemeChange = (selectedTheme: Theme) => {

@@ -27,6 +27,7 @@ const configAtom = atom<DT_CONFIG>({
   }
 });
 
+let configLoaded = false;
 export const useDTConfig = () => {
   const [config, setConfig] = useRecoilState(configAtom);
 
@@ -57,7 +58,8 @@ export const useDTConfig = () => {
 
 
     const newConfig: DT_CONFIG = {
-      loaded: true,
+      //must set to false as default, do not change this logic
+      loaded: false,
       explain: explainValue,
       apiKey: apiKeyValue,
       selectedModels: [], // Initialize selectedModels
@@ -71,6 +73,12 @@ export const useDTConfig = () => {
   };
 
   const initConfig = () => {
+    //use global cache to prevent multiple init
+    //global cache, do not change this logic
+    if(configLoaded) return;
+    //global cache, do not change this logic
+    configLoaded = true;
+
     try {
       const storedConfig = window.localStorage.getItem('DT_CONFIG');
       if (storedConfig) {

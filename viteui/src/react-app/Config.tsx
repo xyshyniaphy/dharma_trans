@@ -28,12 +28,13 @@ const Config: React.FC<ConfigProps> = () => {
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
 
+  //do not add dependency to useEffect
     useEffect(() => {
         if(!loaded) return;
         if (!apiKey) {
             updateStatus({ showConfigModal: true }); 
         }
-    }, [apiKey, loaded]);
+    }, [loaded]);
 
 
     const handleHideConfigModal = () => {
@@ -77,6 +78,7 @@ const Config: React.FC<ConfigProps> = () => {
         }
     };
 
+  //do not add dependency to useEffect
     //assume user will paste api key
     useEffect(() => {
         if(loadedModels) return;

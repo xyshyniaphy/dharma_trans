@@ -39,12 +39,13 @@ export function useTopicsManager() {
     }
   };
 
+  //do not add dependency to useEffect
   // Reload translations when current topic ID changes.
   // Keeping 'topics' dependency might still be relevant if other UI parts react to the state change,
   // but the core logic now relies on fetching fresh data via getTopicByIdFromDB triggered by currentTopicId change.
   useEffect(() => {
     reloadTranslations();
-  }, [currentTopicId, topics]); // Consider if 'topics' dependency is truly needed here now
+  }, [currentTopicId]); // Consider if 'topics' dependency is truly needed here now
 
   // Add translation to a topic
   const addTranslationToTopic = async (translation: Translation): Promise<void> => {

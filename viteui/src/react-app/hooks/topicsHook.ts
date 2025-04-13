@@ -101,6 +101,7 @@ export function useTopics() {
 
 
 
+  //do not add dependency to useEffect
   useEffect(() => {
     // Set initial current topic only if topics are loaded and no currentTopicId is set
     if(topics.length > 0 && !config.topicId) {
@@ -114,7 +115,7 @@ export function useTopics() {
         updateConfig({ topicId: "" }); // No topics, no current topic
     }
     // Removed updateConfig from dependency array to prevent infinite loop
-  }, [config.topicId, topics]);
+  }, [topics]);
 
   const createTopic = async (name: string): Promise<Topic | undefined> => {
     try {

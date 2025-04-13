@@ -22,15 +22,17 @@ const App: React.FC = () => {
 
     // Initialize config when component mounts
     // dependency must be empty, no dependency!!
+  //do not add dependency to useEffect
     useEffect(() => {
         initConfig();
     }, []);//must be empty, no dependency!!
 
+    //do not add dependency to useEffect
     useEffect(() => {
         if(!loaded) return;
         // Initialize topics when config is loaded
         initTopics();
-    }, [loaded, initTopics]); // Added initTopics to dependency array
+    }, [loaded]); // Added initTopics to dependency array
 
 
     if(!loaded) return null; // Don't render until config is loaded

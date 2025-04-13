@@ -60,6 +60,7 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
     const apiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
     const csvUrl = apiUrl ? `${apiUrl}/access/dic.csv` : null;
 
+  //do not add dependency to useEffect
     useEffect(() => {
         if (show && csvUrl && data.length === 0) { // Fetch only when shown, URL exists, and data isn't loaded
             setLoading(true);
