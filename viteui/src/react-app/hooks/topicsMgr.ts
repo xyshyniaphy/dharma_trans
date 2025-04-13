@@ -2,6 +2,7 @@ import { useTopics, getTopicByIdFromDB } from './topicsHook'; // Import the new 
 import { useTransHistory } from './transHistoryHook';
 import { Translation } from '../interface/translation_interface';
 import { useEffect } from 'react';
+//import { clearTopics as clearTopicsFromHook } from './topicsHook';
 
 export function useTopicsManager() {
   const {
@@ -13,6 +14,7 @@ export function useTopicsManager() {
     createTopic,
     initTopics,
     topicsInited,
+    clearTopics
   } = useTopics();
 
   const { insertTransHistory, deleteTransHistory, getTranslations } = useTransHistory();
@@ -200,6 +202,7 @@ export function useTopicsManager() {
     deleteTranslation,
     createTopic, // Expose original hook functions
     updateTopic,
-    initTopics
+    initTopics,
+    clearTopics
   };
 }

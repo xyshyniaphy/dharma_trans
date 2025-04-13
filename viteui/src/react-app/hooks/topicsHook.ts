@@ -109,6 +109,19 @@ export function useTopics() {
     }
   };
 
+    const clearTopics = async (): Promise<void> => {
+        try {
+            const db = await openDB();
+            const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+            const store = transaction.objectStore(TOPIC_STORE);
+
+            await store.clear();
+            await loadTopics(); // Reload state after clearing
+            updateConfig({ topicId: "" }); // Reset current topic ID
+        } catch (error) {
+            console.error("Error clearing topics:", error);
+        }
+    };
 
 
   //do not add dependency to useEffect
@@ -192,19 +205,6 @@ export function useTopics() {
     }
   };
 
-  const clearTopics = async (): Promise<void> => {
-    try {
-      const db = await openDB();
-      const transaction = db.transaction(TOPIC_STORE, 'readwrite');
-      const store = transaction.objectStore(TOPIC_STORE);
-
-      await store.clear();
-      await loadTopics(); // Reload state after clearing
-      updateConfig({ topicId: "" }); // Reset current topic ID
-    } catch (error) {
-      console.error("Error clearing topics:", error);
-    }
-  };
 
   return {
     topicsInited,

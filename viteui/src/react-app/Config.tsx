@@ -13,12 +13,13 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import ModelSelector from './ModelSelector'; // Import the new component
 
 interface ConfigProps {
+    clearTopics: () => Promise<void>;
 }
 
 //models list is static, no need to reload
 let loadedModels = false;
 
-const Config: React.FC<ConfigProps> = () => {
+const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
 
     const { loaded,config, updateConfig } = useDTConfig();
     // Destructure selectedModels instead of selectedModel
@@ -45,8 +46,12 @@ const Config: React.FC<ConfigProps> = () => {
 
     const { transHistory } = useTransHistory();
 
-    const handleClearHistory = () => {
-        //setTransHistory([]);
+    const handleClearHistory = async () => {
+        try {
+            await clearTopics();
+        } catch (error) {
+            console.error("Error clearing history:", error);
+        }
     };
 
     const handleExportHistory = () => {
@@ -166,7 +171,7 @@ const Config: React.FC<ConfigProps> = () => {
                 
                 <Button variant="outline-primary" onClick={handleClearHistory} className="me-2">清除历史</Button>
                 <Button variant="outline-primary" onClick={handleExportHistory} className="me-2">导出历史</Button>
-                <Button variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
+                <Button  variant="outline-primary" as="label" htmlFor="import-history" className="me-2">
                     导入历史
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button>

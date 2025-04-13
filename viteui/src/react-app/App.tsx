@@ -11,14 +11,17 @@ import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { ProgressOverlay } from './ProgressOverlay';
 import { useTopicsManager } from './hooks/topicsMgr';
 import { useTransHistory } from './hooks/transHistoryHook'; // Import useTransHistory
+//import { useTopics } from './hooks/topicsHook'; // Import useTopics
+//import { clearTopics } from './hooks/topicsHook'; // Import clearTopics
 
 const App: React.FC = () => {
     // Get showLeftPanel from config, updateConfig from useDTConfig
     const { loaded, config, initConfig, updateConfig } = useDTConfig();
     // Remove showLeftPanel from useTranslatorStatus
     const [{ isProcessing }, updateStatus] = useTranslatorStatus();
-    const { topics, topicsInited, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
+    const { topics, topicsInited, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation, clearTopics } = useTopicsManager();
     const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
+    //const { clearTopics } = useTopics();
 
     //console.log('App config:', config);
     //console.log('App loaded:', loaded);
@@ -76,7 +79,7 @@ const App: React.FC = () => {
             </Row>
 
             {/* Config Modal */}
-            <Config/>
+            <Config clearTopics={clearTopics} />
 
             {/* Progress Overlay */}
             {progressOverlay}
