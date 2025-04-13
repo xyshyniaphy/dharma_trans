@@ -136,8 +136,9 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
               </Button>
               <Collapse in={isThinkingExpanded}>
                 <div id={`thinking-collapse-${translateId}`} className={`mt-2 p-2 border rounded ${styles['thinking-output-collapsible']}`}>
-                  {/* Use preformatted block for thinking */}
-                  <pre>
+                  {/* Use preformatted block for thinking with wrapping style */}
+                  {/* Added className={styles['thinking-pre']} */}
+                  <pre className={styles['thinking-pre']}>
                     {think}
                   </pre>
                 </div>

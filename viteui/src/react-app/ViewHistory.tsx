@@ -94,7 +94,7 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                     >
                         <Dropdown onClick={(e) => e.stopPropagation()}>
                             <Dropdown.Toggle
-                                variant="link"
+                                variant="none"
                                 className="p-0 text-decoration-none border-0" // Added border-0
                                 // Removed inline style, handled by CSS module now
                             >

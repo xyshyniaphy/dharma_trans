@@ -6,3 +6,10 @@
 td:hover .hover-buttons {
   opacity: 1 !important;
 }
+
+/* Style for the preformatted thinking text to allow wrapping */
+.thinking-pre {
+  white-space: pre-wrap; /* Allows wrapping */
+  word-wrap: break-word; /* Breaks long words */
+  overflow-wrap: break-word; /* Standard property for breaking words */
+}
