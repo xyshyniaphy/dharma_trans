@@ -109,24 +109,28 @@ export function useTopics() {
     }
   };
 
-    const clearTopics = async (): Promise<void> => {
-        try {
-            const db = await openDB();
-            const transaction = db.transaction(TOPIC_STORE, 'readwrite');
-            const store = transaction.objectStore(TOPIC_STORE);
+  const resetAgain =  () => {
+    setTimeout(() => {
+      topicsInited = false;
+      initingTopic = false;
+      initTopics();
+    }, 200);
+  };
 
-            await store.clear();
-            await loadTopics(); // Reload state after clearing
-            updateConfig({ topicId: "" }); // Reset current topic ID
-            setTimeout(() => {
-                topicsInited = false;
-                initingTopic = false;
-                initTopics();
-            }, 200);
-        } catch (error) {
-            console.error("Error clearing topics:", error);
-        }
-    };
+  const clearTopics = async (): Promise<void> => {
+      try {
+          const db = await openDB();
+          const transaction = db.transaction(TOPIC_STORE, 'readwrite');
+          const store = transaction.objectStore(TOPIC_STORE);
+
+          await store.clear();
+          await loadTopics(); // Reload state after clearing
+          updateConfig({ topicId: "" }); // Reset current topic ID
+          resetAgain();
+      } catch (error) {
+          console.error("Error clearing topics:", error);
+      }
+  };
 
 
   //do not add dependency to useEffect
@@ -179,6 +183,11 @@ export function useTopics() {
       // If the deleted topic was the current one, set current to null or the first remaining topic
       if(config.topicId === topicId) {
           updateConfig({ topicId: remainingTopics.length > 0 ? remainingTopics[0].topicId : "" });
+      }
+      
+      const willReset = remainingTopics.length === 0;
+      if(willReset) {
+        resetAgain();
       }
     } catch (error) {
       console.error(`Error deleting topic ${topicId}:`, error);
