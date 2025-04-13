@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ListGroup, Button, Dropdown } from 'react-bootstrap';
 import styles from './ViewHistory.module.css'; // Import CSS module
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
+import { faEllipsisV, faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; // Import specific icons
 
 // Removed import for useCurrentTopicId
 // import { useCurrentTopicId } from './hooks/currentTopicHook'; 
@@ -96,12 +98,17 @@ const ViewHistory: React.FC<ViewHistoryProps> = ({
                                 className="p-0 text-decoration-none border-0" // Added border-0
                                 // Removed inline style, handled by CSS module now
                             >
-                                <i className="bi bi-three-dots-vertical"></i>
+                                {/* Replaced Bootstrap icon with FontAwesome icon */}
+                                <FontAwesomeIcon icon={faEllipsisV} />
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => handleRenameTopic(item)}><i className="bi bi-pencil me-2"></i>重命名主题</Dropdown.Item>
+                                {/* Replaced Bootstrap icon with FontAwesome icon */}
+                                <Dropdown.Item onClick={() => handleRenameTopic(item)}>
+                                    <FontAwesomeIcon icon={faPencilAlt} className="me-2" />重命名主题
+                                </Dropdown.Item>
+                                {/* Replaced Bootstrap icon with FontAwesome icon */}
                                 <Dropdown.Item onClick={() => handleDeleteTopic(item.topicId)}>
-                                    <i className="bi bi-trash me-2"></i>删除
+                                    <FontAwesomeIcon icon={faTrashAlt} className="me-2" />删除
                                 </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

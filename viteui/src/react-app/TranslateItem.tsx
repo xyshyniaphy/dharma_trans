@@ -124,7 +124,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
           {hasThinking && (
             <div className="mb-2"> {/* Add margin below thinking section */}
               <Button
-                variant="outline-secondary"
+                variant="outline-primary"
                 size="sm"
                 onClick={handleToggleThinking}
                 aria-controls={`thinking-collapse-${translateId}`}
@@ -132,7 +132,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
                 className="d-flex align-items-center gap-1" // Align icon and text
               >
                 <FontAwesomeIcon icon={isThinkingExpanded ? faEyeSlash : faBrain} />
-                {isThinkingExpanded ? '隐藏思考' : '思考过程'}
+                {isThinkingExpanded ? '隐藏思考' : '显示思考'}
               </Button>
               <Collapse in={isThinkingExpanded}>
                 <div id={`thinking-collapse-${translateId}`} className={`mt-2 p-2 border rounded ${styles['thinking-output-collapsible']}`}>
