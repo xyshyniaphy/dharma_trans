@@ -62,20 +62,19 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   const handleCopyToExcel = async () => {
     try {
       // Find the table element
-      // do not change query selector, must use document.querySelector("table");
-      const tableElement = document.querySelector("table");
-      if (!tableElement) {
-        console.error("Table element not found");
-        return;
-      }
+      const excelData = cleanHtmlForExcel();
 
-      // Get the inner HTML and clean it
-      const htmlContent = tableElement.innerHTML;
-      const cleanedText = cleanHtmlForExcel(htmlContent);
+      // Create a link to download the Excel file
+      const link = document.createElement('a');
+      link.href = excelData;
+      link.download = 'translation.xlsx';
 
-      // Copy the cleaned text to the clipboard
-      await navigator.clipboard.writeText(cleanedText);
-      console.log("Text copied to clipboard:", cleanedText);
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      console.log("Excel file generated and download started");
+
     } catch (error) {
       console.error("Error copying to clipboard:", error);
     }
