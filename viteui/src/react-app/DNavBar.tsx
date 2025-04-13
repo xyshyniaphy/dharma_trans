@@ -15,14 +15,14 @@ export function DNavBar({ showLeftPanel, setShowLeftPanel, setShowConfigModal }:
   return (
     <Navbar expand="lg">
       {/* Add icon to History button */}
-      <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>
+      <Button variant="outline-primary" onClick={() => setShowLeftPanel(!showLeftPanel)}>
         <FontAwesomeIcon icon={faHistory} style={{ marginRight: '5px' }} />
         历史记录
       </Button>
       <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>智能翻译 - Darma Translate</Navbar.Brand>
       <DNavBarThemeDrop />
       {/* Add icon to Settings button */}
-      <Button onClick={() => setShowConfigModal(true)} style={{ marginLeft: '8px' }}>
+      <Button variant="outline-primary" onClick={() => setShowConfigModal(true)} style={{ marginLeft: '8px' }}>
         <FontAwesomeIcon icon={faCog} style={{ marginRight: '5px' }} />
         设置
       </Button>

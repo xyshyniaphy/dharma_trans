@@ -5,11 +5,12 @@
   "description": "Cloudflare Worker to convert HTML table to XLSX",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild index.js --bundle --platform=neutral --outfile=dist/worker.js",
+    "build": "esbuild index.js --bundle --platform=neutral --outfile=dist/worker.js --external:xlsx --external:parse-srcset --external:picocolors --external:is-mergeable-object --external:path",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
-    "exceljs": "^7.4.0"
+    "sanitize-html": "^2.13.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "esbuild": "^0.21.5",

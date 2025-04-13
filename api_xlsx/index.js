@@ -1,5 +1,6 @@
-// Cloudflare Worker to convert HTML table to XLSX
-import ExcelJS from 'exceljs';
+// Cloudflare Worker to convert sanitized HTML table to XLSX
+import { utils, write } from 'xlsx';
+import sanitizeHtml from 'sanitize-html';
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request));
@@ -13,57 +14,32 @@ async function handleRequest(request) {
 
   try {
     // Get the HTML table string from the request body
-    const htmlTableString = await request.text();
+    const htmlTable = await request.text();
 
-    if (!htmlTableString) {
+    if (!htmlTable) {
       return new Response('Missing HTML table', { status: 400 });
     }
 
-    // Attempt to parse the HTML using DOMParser (available in Workers)
-    // Note: DOMParser in Workers has limitations compared to browser/Node.js
-    // We need to extract the table element for xlsx
-    let tableElement;
-    try {
-      // Use Response object to leverage its HTML parsing capabilities
-      const response = new Response(htmlTableString, { headers: { 'Content-Type': 'text/html' } });
-      const doc = await response.text(); // Re-read as text to parse
-
-      // Basic check if it contains a table tag
-      if (!doc || !doc.toLowerCase().includes('<table')) {
-         throw new Error('Input does not appear to contain an HTML table.');
-      }
-
-      // Parse the HTML string to extract the table element
-      const parser = new DOMParser();
-      const docNode = parser.parseFromString(doc, 'text/html');
-      tableElement = docNode.querySelector('table');
-
-      if (!tableElement) {
-        throw new Error('No table element found in the HTML.');
-      }
-
-    } catch (parseError) {
-      console.error("Error parsing HTML:", parseError);
-      return new Response(`Error parsing HTML: ${parseError.message}`, { status: 400 });
-    }
-
-    // Create a new workbook and worksheet
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet1');
-
-    // Convert the table element to rows and columns
-    const rows = tableElement.querySelectorAll('tr');
-    rows.forEach((row, rowIndex) => {
-      const cells = row.querySelectorAll('td, th');
-      const rowData = [];
-      cells.forEach(cell => {
-        rowData.push(cell.textContent.trim());
-      });
-      worksheet.addRow(rowData);
+    // Sanitize the HTML input
+    const cleanHtml = sanitizeHtml(htmlTable, {
+      allowedTags: ['table', 'tr', 'th', 'td', 'tbody', 'thead', 'tfoot'],
+      allowedAttributes: {
+        '*': ['class', 'style'] // Allow basic styling if needed
+      },
+      disallowedTagsMode: 'discard'
     });
 
+    if (!cleanHtml.includes('<table')) {
+      return new Response('Invalid HTML table after sanitization', { status: 400 });
+    }
+
+    // Parse sanitized HTML table to worksheet
+    const workbook = utils.book_new();
+    const worksheet = utils.table_to_sheet(cleanHtml);
+    utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
     // Generate XLSX buffer
-    const xlsxBuffer = await workbook.xlsx.writeBuffer();
+    const xlsxBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
 
     // Return the XLSX file as a response
     return new Response(xlsxBuffer, {
@@ -75,7 +51,6 @@ async function handleRequest(request) {
       }
     });
   } catch (error) {
-    console.error("Worker error:", error); // Log the error server-side
     return new Response(`Error: ${error.message}`, { status: 500 });
   }
 }
