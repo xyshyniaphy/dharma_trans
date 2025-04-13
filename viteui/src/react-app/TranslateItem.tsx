@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Removed useRef
+import React, { useState, useRef } from 'react'; // Removed useRef
 import { Button, Form, Collapse } from 'react-bootstrap'; // Added Collapse
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -25,6 +25,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   updateTranslationExpansion, // Destructure the new prop
 }) => {
   // Removed preRef and related useEffect/state
+  const markdownRef = useRef(null);
 
   // Translation data or defaults
   const out = translation?.output || '';
@@ -147,9 +148,11 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
           )}
 
           {/* Markdown rendered output */}
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {out}
-          </ReactMarkdown>
+          <div ref={markdownRef} data-react-markdown="true">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {out}
+            </ReactMarkdown>
+          </div>
         </Form.Group>
       </td>
 

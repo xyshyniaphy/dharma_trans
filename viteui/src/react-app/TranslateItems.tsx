@@ -4,6 +4,9 @@ import { Translation } from "./interface/translation_interface";
 import { useCurrentTranslate } from "./hooks/currentTranslateHook";
 import { useTransHistory } from "./hooks/transHistoryHook";
 import { Table } from "react-bootstrap";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
+import { faCopy } from '@fortawesome/free-solid-svg-icons'; // Import the copy icon
+import { cleanHtmlForExcel } from "./excel_paste"; // Import the cleaning function
 // Removed useTranslatorStatus import
 
 type TranslateItemsProps = {
@@ -55,13 +58,43 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
     />
   ) : null;
 
+  // Function to handle copying the translation result
+  const handleCopyToExcel = async () => {
+    try {
+      // Find the table element
+      // do not change query selector, must use document.querySelector("table");
+      const tableElement = document.querySelector("table");
+      if (!tableElement) {
+        console.error("Table element not found");
+        return;
+      }
+
+      // Get the inner HTML and clean it
+      const htmlContent = tableElement.innerHTML;
+      const cleanedText = cleanHtmlForExcel(htmlContent);
+
+      // Copy the cleaned text to the clipboard
+      await navigator.clipboard.writeText(cleanedText);
+      console.log("Text copied to clipboard:", cleanedText);
+    } catch (error) {
+      console.error("Error copying to clipboard:", error);
+    }
+  };
+
   return (
     <Table bordered responsive className="table-striped">
       <thead>
         <tr>
           {/* Only two columns now */}
           <th style={{ width: "50%" }}>原文</th>
-          <th style={{ width: "50%" }}>翻译结果</th>
+          <th style={{ width: "50%" }}>
+            翻译结果
+            <FontAwesomeIcon
+              icon={faCopy}
+              style={{ marginLeft: "5px", cursor: "pointer" }}
+              onClick={handleCopyToExcel} // Attach the click handler
+            />
+          </th>
           {/* Removed Thinking header */}
         </tr>
       </thead>
