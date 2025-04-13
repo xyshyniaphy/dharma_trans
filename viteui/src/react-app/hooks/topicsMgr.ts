@@ -8,7 +8,7 @@ export function useTopicsManager() {
     topics, // Keep state for UI rendering if needed, but rely on DB fetch for critical ops
     updateTopic,
     deleteTopic: deleteTopicFromHook, // Rename to avoid conflict with the manager's delete function
-    // currentTopic, // Avoid using potentially stale state for modifications
+    //currentTopic, // Avoid using potentially stale state for modifications
     currentTopicId,
     createTopic,
     initTopics
@@ -164,7 +164,6 @@ export function useTopicsManager() {
 
   return {
     topics, // Export state for UI
-    currentTopicId,
     // Export the manager's composite delete function
     deleteTopic: deleteTopicAndTranslations,
     addTranslationToTopic,

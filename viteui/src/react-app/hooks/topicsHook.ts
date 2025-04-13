@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
 import { Topic } from '../interface/topic_interface';
 import { openDB } from '../utils/db_util';
-import { useCurrentTopicId } from './currentTopicHook';
+import { useDTConfig } from './configHook';
 
 const TOPIC_STORE = 'topics';
 
@@ -56,10 +56,12 @@ export const getAllTopicsFromDB = (): Promise<Topic[]> => {
 export function useTopics() {
   const [topics, setTopics] = useRecoilState(topicsState);
 
-  const { currentTopicId, setCurrentTopicId} = useCurrentTopicId();
+  const { config, updateConfig } = useDTConfig();
 
   // currentTopic derived from state is still useful for quick display purposes
-  const currentTopic = useMemo(() => topics.find(topic => topic.topicId === currentTopicId), [topics, currentTopicId]);
+  const currentTopic = useMemo(() => topics.find(topic => topic.topicId === config.topicId), [topics,config]);
+  const currentTopicId = useMemo(() => config.topicId, [config]);
+
 
 
   const initTopics = async () => {
@@ -70,13 +72,13 @@ export function useTopics() {
         // Create default topic and set it as current
         const defaultTopic = await createTopic('新话题'); // createTopic now returns the created topic
         if (defaultTopic) {
-          setCurrentTopicId(defaultTopic.topicId); // Set the new topic as current
+          updateConfig({ topicId: defaultTopic.topicId }); // Set the new topic as current
         }
       } else {
         setTopics(existingTopics);
         // Ensure a current topic is set if none exists
-        if (!currentTopicId && existingTopics.length > 0) {
-           setCurrentTopicId(existingTopics[0].topicId);
+        if (!config.topicId && existingTopics.length > 0) {
+           updateConfig({ topicId: existingTopics[0].topicId });
         }
       }
     } catch (error) {
@@ -101,17 +103,17 @@ export function useTopics() {
 
   useEffect(() => {
     // Set initial current topic only if topics are loaded and no currentTopicId is set
-    if(topics.length > 0 && !currentTopicId) {
+    if(topics.length > 0 && !config.topicId) {
         //console.log('Setting first topic as current:', topics[0]);
-        setCurrentTopicId(topics[0].topicId);
+        updateConfig({ topicId: topics[0].topicId });
     }
     // If currentTopicId exists but the topic is no longer in the list (e.g., deleted), reset it
-    else if (currentTopicId && !topics.some(t => t.topicId === currentTopicId) && topics.length > 0) {
-        setCurrentTopicId(topics[0].topicId); // Set to first available topic
+    else if (config.topicId && !topics.some(t => t.topicId === config.topicId) && topics.length > 0) {
+        updateConfig({ topicId: topics[0].topicId }); // Set to first available topic
     } else if (topics.length === 0) {
-        setCurrentTopicId(null); // No topics, no current topic
+        updateConfig({ topicId: "" }); // No topics, no current topic
     }
-  }, [currentTopicId, topics, setCurrentTopicId]); // Added setCurrentTopicId dependency
+  }, [config.topicId, topics, updateConfig]); // Added setCurrentTopicId dependency
 
   const createTopic = async (name: string): Promise<Topic | undefined> => {
     try {
@@ -145,8 +147,8 @@ export function useTopics() {
       const remainingTopics = await loadTopics(); // Reload state after deleting
 
       // If the deleted topic was the current one, set current to null or the first remaining topic
-      if(currentTopicId === topicId) {
-          setCurrentTopicId(remainingTopics.length > 0 ? remainingTopics[0].topicId : null);
+      if(config.topicId === topicId) {
+          updateConfig({ topicId: remainingTopics.length > 0 ? remainingTopics[0].topicId : "" });
       }
     } catch (error) {
       console.error(`Error deleting topic ${topicId}:`, error);
@@ -186,7 +188,7 @@ export function useTopics() {
 
       await store.clear();
       await loadTopics(); // Reload state after clearing
-      setCurrentTopicId(null); // Reset current topic ID
+      updateConfig({ topicId: "" }); // Reset current topic ID
     } catch (error) {
       console.error("Error clearing topics:", error);
     }
