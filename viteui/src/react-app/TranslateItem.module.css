@@ -1,15 +1,22 @@
-/* Hover effect for action buttons */
-.hover-buttons:hover {
-  opacity: 1 !important;
+/* TranslateItem.module.css */
+
+.translate-row td:hover .hover-buttons button {
+  visibility: visible;
 }
 
-td:hover .hover-buttons {
-  opacity: 1 !important;
+.translate-row td:hover .mb-2 > button {
+  visibility: visible;
 }
 
-/* Style for the preformatted thinking text to allow wrapping */
+.hover-buttons button {
+  visibility: hidden;
+}
+
+.mb-2 > button {
+  visibility: hidden;
+}
+
 .thinking-pre {
-  white-space: pre-wrap; /* Allows wrapping */
-  word-wrap: break-word; /* Breaks long words */
-  overflow-wrap: break-word; /* Standard property for breaking words */
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
