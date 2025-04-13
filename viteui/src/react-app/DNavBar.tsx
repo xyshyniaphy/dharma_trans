@@ -1,6 +1,9 @@
 import { Button } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import DNavBarThemeDrop from './DNavBarThemeDrop';
+// Import FontAwesomeIcon and necessary icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHistory, faCog } from '@fortawesome/free-solid-svg-icons';
 
 interface DNavBarProps {
   showLeftPanel: boolean;
@@ -11,10 +14,18 @@ interface DNavBarProps {
 export function DNavBar({ showLeftPanel, setShowLeftPanel, setShowConfigModal }: DNavBarProps) {
   return (
     <Navbar expand="lg">
-      <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>历史记录</Button>
+      {/* Add icon to History button */}
+      <Button onClick={() => setShowLeftPanel(!showLeftPanel)}>
+        <FontAwesomeIcon icon={faHistory} style={{ marginRight: '5px' }} />
+        历史记录
+      </Button>
       <Navbar.Brand style={{ flex: 1, textAlign: 'center' }}>智能翻译 - Darma Translate</Navbar.Brand>
       <DNavBarThemeDrop />
-      <Button onClick={() => setShowConfigModal(true)} style={{ marginLeft: '8px' }}>设置</Button>
+      {/* Add icon to Settings button */}
+      <Button onClick={() => setShowConfigModal(true)} style={{ marginLeft: '8px' }}>
+        <FontAwesomeIcon icon={faCog} style={{ marginRight: '5px' }} />
+        设置
+      </Button>
     </Navbar>
   );
 }
