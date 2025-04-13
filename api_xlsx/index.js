@@ -1,6 +1,5 @@
 // Cloudflare Worker to convert HTML table to XLSX
-import { utils, write } from 'xlsx';
-// import sanitizeHtml from 'sanitize-html'; // Removed sanitize-html
+import ExcelJS from 'exceljs';
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request));
@@ -34,26 +33,37 @@ async function handleRequest(request) {
          throw new Error('Input does not appear to contain an HTML table.');
       }
 
-      // NOTE: Directly passing the string to table_to_sheet might work for simple tables
-      // but using a parsed element is generally more robust if the library expects it.
-      // However, full DOM manipulation is limited in Workers.
-      // Let's try passing the string directly first, as xlsx might handle it.
-      // If this fails, we might need a more robust HTML parsing approach compatible with Workers.
+      // Parse the HTML string to extract the table element
+      const parser = new DOMParser();
+      const docNode = parser.parseFromString(doc, 'text/html');
+      tableElement = docNode.querySelector('table');
+
+      if (!tableElement) {
+        throw new Error('No table element found in the HTML.');
+      }
 
     } catch (parseError) {
       console.error("Error parsing HTML:", parseError);
       return new Response(`Error parsing HTML: ${parseError.message}`, { status: 400 });
     }
 
-    // Parse HTML table string directly to worksheet
-    // xlsx library might be able to handle a raw HTML string containing a table
-    const workbook = utils.book_new();
-    // Pass the original HTML string directly
-    const worksheet = utils.table_to_sheet(htmlTableString); // Use the raw string
-    utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    // Create a new workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+
+    // Convert the table element to rows and columns
+    const rows = tableElement.querySelectorAll('tr');
+    rows.forEach((row, rowIndex) => {
+      const cells = row.querySelectorAll('td, th');
+      const rowData = [];
+      cells.forEach(cell => {
+        rowData.push(cell.textContent.trim());
+      });
+      worksheet.addRow(rowData);
+    });
 
     // Generate XLSX buffer
-    const xlsxBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
+    const xlsxBuffer = await workbook.xlsx.writeBuffer();
 
     // Return the XLSX file as a response
     return new Response(xlsxBuffer, {
