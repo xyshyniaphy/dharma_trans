@@ -57,6 +57,8 @@ const m_processText = async (
   let outputText = '';
   let thinkingText = '';
   let price = 0;
+  let expandThinking = false;
+
   
   try {
     const prompt = await fetchPrompt(trans.input, explain);
@@ -108,13 +110,15 @@ const m_processText = async (
             if (delta) {
               if (delta.reasoning && delta.reasoning !== '\n') {
                 thinkingText += String(delta.reasoning);
-                setTranslate({ ...trans, thinking: thinkingText });
+                expandThinking = true;
+
+                setTranslate({ ...trans, thinking: thinkingText, isThinkingExpanded: expandThinking });
               }
               if (delta.content) {
                 const content = String(delta.content);
                 if(content && content.length > 0 ){
                   outputText += content;
-                  setTranslate({ ...trans, output: outputText });
+                  setTranslate({ ...trans, output: outputText, isThinkingExpanded: expandThinking });
                 }
               }
             } 
@@ -147,7 +151,8 @@ const m_processText = async (
     ...trans, 
     output: outputText, 
     thinking: thinkingText,
-    price: price 
+    price: price,
+    isThinkingExpanded: expandThinking 
   };
 };
 
