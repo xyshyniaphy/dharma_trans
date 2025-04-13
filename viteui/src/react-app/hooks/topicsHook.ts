@@ -113,7 +113,8 @@ export function useTopics() {
     } else if (topics.length === 0) {
         updateConfig({ topicId: "" }); // No topics, no current topic
     }
-  }, [config.topicId, topics, updateConfig]); // Added setCurrentTopicId dependency
+    // Removed updateConfig from dependency array to prevent infinite loop
+  }, [config.topicId, topics]);
 
   const createTopic = async (name: string): Promise<Topic | undefined> => {
     try {

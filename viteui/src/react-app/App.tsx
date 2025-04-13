@@ -17,8 +17,14 @@ const App: React.FC = () => {
     const { topics, initTopics, createTopic, deleteTopic, updateTopic, addTranslationToTopic, deleteTranslation } = useTopicsManager();
     const { updateTranslationExpansionState } = useTransHistory(); // Get the update function
 
-    const { config } = useDTConfig();
+    const { config, initConfig } = useDTConfig();
     const { loaded } = config;
+
+    // Initialize config when component mounts
+    // dependency must be empty, no dependency!!
+    useEffect(() => {
+        initConfig();
+    }, []);//must be empty, no dependency!!
 
     useEffect(() => {
         if(!loaded) return;
