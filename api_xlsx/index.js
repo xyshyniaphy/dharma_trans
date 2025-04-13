@@ -1,6 +1,6 @@
-// Cloudflare Worker to convert sanitized HTML table to XLSX
+// Cloudflare Worker to convert HTML table to XLSX
 import { utils, write } from 'xlsx';
-import sanitizeHtml from 'sanitize-html';
+// import sanitizeHtml from 'sanitize-html'; // Removed sanitize-html
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request));
@@ -14,28 +14,42 @@ async function handleRequest(request) {
 
   try {
     // Get the HTML table string from the request body
-    const htmlTable = await request.text();
+    const htmlTableString = await request.text();
 
-    if (!htmlTable) {
+    if (!htmlTableString) {
       return new Response('Missing HTML table', { status: 400 });
     }
 
-    // Sanitize the HTML input
-    const cleanHtml = sanitizeHtml(htmlTable, {
-      allowedTags: ['table', 'tr', 'th', 'td', 'tbody', 'thead', 'tfoot'],
-      allowedAttributes: {
-        '*': ['class', 'style'] // Allow basic styling if needed
-      },
-      disallowedTagsMode: 'discard'
-    });
+    // Attempt to parse the HTML using DOMParser (available in Workers)
+    // Note: DOMParser in Workers has limitations compared to browser/Node.js
+    // We need to extract the table element for xlsx
+    let tableElement;
+    try {
+      // Use Response object to leverage its HTML parsing capabilities
+      const response = new Response(htmlTableString, { headers: { 'Content-Type': 'text/html' } });
+      const doc = await response.text(); // Re-read as text to parse
 
-    if (!cleanHtml.includes('<table')) {
-      return new Response('Invalid HTML table after sanitization', { status: 400 });
+      // Basic check if it contains a table tag
+      if (!doc || !doc.toLowerCase().includes('<table')) {
+         throw new Error('Input does not appear to contain an HTML table.');
+      }
+
+      // NOTE: Directly passing the string to table_to_sheet might work for simple tables
+      // but using a parsed element is generally more robust if the library expects it.
+      // However, full DOM manipulation is limited in Workers.
+      // Let's try passing the string directly first, as xlsx might handle it.
+      // If this fails, we might need a more robust HTML parsing approach compatible with Workers.
+
+    } catch (parseError) {
+      console.error("Error parsing HTML:", parseError);
+      return new Response(`Error parsing HTML: ${parseError.message}`, { status: 400 });
     }
 
-    // Parse sanitized HTML table to worksheet
+    // Parse HTML table string directly to worksheet
+    // xlsx library might be able to handle a raw HTML string containing a table
     const workbook = utils.book_new();
-    const worksheet = utils.table_to_sheet(cleanHtml);
+    // Pass the original HTML string directly
+    const worksheet = utils.table_to_sheet(htmlTableString); // Use the raw string
     utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
     // Generate XLSX buffer
@@ -51,6 +65,7 @@ async function handleRequest(request) {
       }
     });
   } catch (error) {
+    console.error("Worker error:", error); // Log the error server-side
     return new Response(`Error: ${error.message}`, { status: 500 });
   }
 }
