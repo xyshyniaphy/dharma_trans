@@ -155,8 +155,6 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
           </div>
         </Form.Group>
       </td>
-
-      {/* Removed the separate Thinking Column <td> */}
     </tr>
   );
 };
