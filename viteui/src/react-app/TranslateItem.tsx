@@ -94,10 +94,10 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
         </td>
       )}
 
-      {/* Translation Result Column - Now includes collapsible thinking */}
+      {/* Translation Result Column */}
       <td className="align-top p-2">
         <Form.Group>
-          {/* Header section with model name and buttons */}
+          {/* Header section with model name and buttons (excluding thinking toggle) */}
           <div className="d-flex justify-content-between align-items-center mb-1">
             {/* Left button group (Copy) */}
             <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}>
@@ -121,11 +121,26 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
             </div>
           </div>
 
-          {/* Collapsible Thinking Section */}
-          {hasThinking && (
-            <div className="mb-2"> {/* Add margin below thinking section */}
+          {/* Markdown rendered output */}
+          {/* Moved Markdown rendering before the thinking section was previously */}
+          <div ref={markdownRef} data-react-markdown="true">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {out}
+            </ReactMarkdown>
+          </div>
+        </Form.Group>
+      </td>
+
+      {/* Thinking Column - New separate cell for thinking */}
+      {/* Add comments for changes */}
+      <td className="align-top p-2"> {/* New TD for thinking */}
+        {hasThinking && (
+          <Form.Group> {/* Wrap thinking content in Form.Group for consistency */}
+            <div className="mb-2"> {/* Keep margin for spacing */}
+              {/* Thinking Toggle Button */}
               <Button
                 variant="outline-primary"
+                // Add comments for changes
                 size="sm"
                 onClick={handleToggleThinking}
                 aria-controls={`thinking-collapse-${translateId}`}
@@ -135,9 +150,10 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
                 <FontAwesomeIcon icon={isThinkingExpanded ? faEyeSlash : faBrain} />
                 {isThinkingExpanded ? '隐藏思考' : '显示思考'}
               </Button>
+              {/* Collapsible Content */}
               <Collapse in={isThinkingExpanded}>
                 <div id={`thinking-collapse-${translateId}`} className={`mt-2 p-2 border rounded ${styles['thinking-output-collapsible']}`}>
-                  {/* Use preformatted block for thinking with wrapping style */}
+                  {/* Use preformatted block for thinking */}
                   {/* Added className={styles['thinking-pre']} */}
                   <pre className={styles['thinking-pre']}>
                     {think}
@@ -145,15 +161,8 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
                 </div>
               </Collapse>
             </div>
-          )}
-
-          {/* Markdown rendered output */}
-          <div ref={markdownRef} data-react-markdown="true">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {out}
-            </ReactMarkdown>
-          </div>
-        </Form.Group>
+          </Form.Group>
+        )}
       </td>
     </tr>
   );

@@ -7,17 +7,45 @@
 // will ignore the typescript errors in this file
 // because we are using window instead of globalThis
 
+// Declare DOMPurify for TypeScript, assuming it's loaded globally via script tag
+declare const DOMPurify: any;
+
 export const cleanHtmlForExcel = (): string => {
   try {
+    // Find the table element
+    const tableElement = document.querySelector('table');
+    if (!tableElement) {
+      throw new Error("Table element not found");
+    }
+
+    // Clone the table to avoid modifying the original DOM directly
+    const clonedTable = tableElement.cloneNode(true) as HTMLTableElement;
+
+    // Sanitize the HTML content of the cloned table
+    // Iterate through cells if more granular control is needed,
+    // but sanitizing the whole outerHTML is simpler here.
+    // Note: DOMPurify might alter structure slightly if it removes harmful elements.
+    const cleanHtml = DOMPurify.sanitize(clonedTable.outerHTML);
+
+    // Create a temporary div to parse the cleaned HTML back into an element
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = cleanHtml;
+    const cleanTableElement = tempDiv.querySelector('table');
+
+    if (!cleanTableElement) {
+        throw new Error("Failed to parse sanitized table HTML");
+    }
+
     // @ts-ignore
     const wb = (window as any).XLSX.utils.book_new();
 
-    // Parse the HTML table into a worksheet
+    // Parse the *cleaned* HTML table into a worksheet
     // @ts-ignore
-    const ws = (window as any).XLSX.utils.table_to_sheet(document.querySelector('table'));
+    const ws = (window as any).XLSX.utils.table_to_sheet(cleanTableElement);
 
     // Set column width for all columns
-    ws['!cols'] = [
+    // Add comments for changes
+    ws['!cols'] = [ // Set column widths
       { wch: 80 }, // Column A width
       { wch: 80 }, // Column B width
     ];
