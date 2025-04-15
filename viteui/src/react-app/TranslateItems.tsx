@@ -58,33 +58,46 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
     />
   ) : null;
 
-  // Function to handle copying the translation result
+  // Function to handle copying the translation result to Excel file with file dialog
   const handleCopyToExcel = async () => {
     try {
-      // Find the table element
+      // Get the cleaned excel data (assuming cleanHtmlForExcel returns data in XLSX format)
       const excelData = cleanHtmlForExcel();
 
-      // Create a link to download the Excel file
-      const link = document.createElement('a');
-      link.href = excelData;
+      // Convert excelData to Blob for file download, specifying MIME type for Excel
+      const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-      // Get the current date in yy_mm_dd format
+      // Create a URL for the Blob, which allows downloading the Blob as a file
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary link element to trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Set default filename for the downloaded file
       const now = new Date();
       const year = now.getFullYear().toString().slice(2);
       const month = (now.getMonth() + 1).toString().padStart(2, '0');
       const day = now.getDate().toString().padStart(2, '0');
       const filename = `translation_${year}_${month}_${day}.xlsx`;
+      link.download = filename; // Specify the filename for the download
 
-      link.download = filename;
-
-      // Append the link to the document and trigger the download
+      // Append the link to the document body (it doesn't need to be visible)
       document.body.appendChild(link);
+
+      // Programmatically click the link to trigger the file download dialog
       link.click();
+
+      // Remove the link from the document body after download is triggered
       document.body.removeChild(link);
-      console.log("Excel file generated and download started");
+
+      // Clean up the URL object to release resources and prevent memory leaks
+      URL.revokeObjectURL(url);
+
+      console.log("Excel file download dialog should be shown"); // Log to confirm download process
 
     } catch (error) {
-      console.error("Error copying to clipboard:", error);
+      console.error("Error generating or downloading Excel file:", error); // Log any errors during the process
     }
   };
 
