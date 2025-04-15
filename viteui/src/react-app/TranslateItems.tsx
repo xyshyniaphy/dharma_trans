@@ -61,11 +61,21 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   // Function to handle copying the translation result to Excel file with file dialog
   const handleCopyToExcel = async () => {
     try {
-      // Get the cleaned excel data (assuming cleanHtmlForExcel returns data in XLSX format)
-      const excelData = cleanHtmlForExcel();
+      // Get the cleaned excel data in base64 format
+      const excelBase64Data = cleanHtmlForExcel();
 
-      // Convert excelData to Blob for file download, specifying MIME type for Excel
-      const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      // Decode base64 to binary array
+      const binaryExcelData = atob(excelBase64Data);
+
+
+      // Convert binary array to Uint8Array
+      const uint8Array = new Uint8Array(binaryExcelData.length);
+      for (let i = 0; i < binaryExcelData.length; i++) {
+        uint8Array[i] = binaryExcelData.charCodeAt(i);
+      }
+
+      // Create a Blob from the Uint8Array, specifying MIME type for Excel
+      const blob = new Blob([uint8Array], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
       // Create a URL for the Blob, which allows downloading the Blob as a file
       const url = URL.createObjectURL(blob);

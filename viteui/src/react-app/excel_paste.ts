@@ -69,9 +69,8 @@ export const cleanHtmlForExcel = (): string => {
     // @ts-ignore
     const wbout = (window as any).XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
 
-    // Convert the base64 string to a data URL
-    const dataUrl = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${wbout}`;
-    return dataUrl;
+    // Return the base64 string of the excel file
+    return wbout;
   } catch (error) {
     console.error("Error in cleanHtmlForExcel:", error);
     throw error;
