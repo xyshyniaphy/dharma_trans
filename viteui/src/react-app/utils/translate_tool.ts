@@ -14,6 +14,16 @@ const fetchText = async (filename: string): Promise<string> => {
 };
 
 const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
+  // detect if "text: string" is mostly in alphabet (larger than 50 percent).
+  const alphabetRegex = /[a-zA-Z]/g;
+  const alphabetMatch = text.match(alphabetRegex);
+  const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / text.length) * 100 : 0;
+  let isAlphabet = alphabetPercentage > 50;
+
+
+
+
+  
     const response = await fetch(promptApiUrl + '/get_prompt', {
         method: 'POST',
         headers: {
@@ -22,8 +32,11 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
         body: JSON.stringify({ text })
     });
     const data = await response.json();
-    const prompt = (data as {prompt: string}).prompt;
+    let prompt = (data as {prompt: string}).prompt;
     //console.log("dict prompt is " + prompt);
+    if(isAlphabet){
+      prompt = prompt.replace("'''English'''", "'''Chinese'''"); // replace '''English'''  into '''Chinese''' for just once
+    }
     if(explain){
         const simple_prompt = await fetchText('detail_prompt.txt');
         return simple_prompt + '\n' + prompt;
