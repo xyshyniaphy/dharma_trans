@@ -178,7 +178,7 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
                 </Button> */}
                 <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
                 {/* Update save button disabled condition to check config.selectedModels */}
-                <Button variant="outline-success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
+                <Button variant="success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
 
             </Modal.Footer>
 
