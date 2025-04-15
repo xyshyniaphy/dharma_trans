@@ -1,36 +1,31 @@
-const puppeteer = require('puppeteer');
+const axios = require('axios');
+const { parse } = require('node-html-parser');
 const TurndownService = require('turndown');
 const fs = require('fs');
 
-async function scrapeLotsawa() {
+async function scrapeAndConvert() {
   try {
-    const browser = await puppeteer.launch({ headless: 'new' });
-    const page = await browser.newPage();
-    await page.goto('https://www.lotsawahouse.org/zh/tibetan-masters/mipham/verses-eight-noble-auspicious-ones');
+    const response = await axios.get('https://www.lotsawahouse.org/zh/tibetan-masters/mipham/');
+    const html = response.data;
 
-    const htmlContent = await page.evaluate(() => {
-      const contentElement = document.querySelector('div#content');
-      if (contentElement) {
-        return contentElement.innerHTML;
-      }
-      return null;
-    });
+    const root = parse(html);
+    const contentDiv = root.querySelector('div#content');
 
-    if (htmlContent) {
-      const turndownService = new TurndownService();
-      const markdown = turndownService.turndown(htmlContent);
+    if (!contentDiv) {
+      console.error('Could not find div#content');
+      return;
+    }
 
-      fs.writeFileSync('out.md', markdown);
-      console.log('Content saved to out.md');
-    } else {
-      console.log('Content not found');
-      }
+    const htmlContent = contentDiv.innerHTML;
+    
+    const turndownService = new TurndownService();
+    const markdown = turndownService.turndown(htmlContent);
 
-    await browser.close();
-    return;
+    fs.writeFileSync('out.md', markdown);
+    console.log('Content saved to out.md');
   } catch (error) {
-      console.error('Error:', error);
+    console.error('Error:', error);
   }
 }
 
-scrapeLotsawa();
+scrapeAndConvert();
