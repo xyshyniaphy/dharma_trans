@@ -23,7 +23,7 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
     });
     const data = await response.json();
     const prompt = (data as {prompt: string}).prompt;
-    console.log("dict prompt is " + prompt);
+    //console.log("dict prompt is " + prompt);
     if(explain){
         const simple_prompt = await fetchText('detail_prompt.txt');
         return simple_prompt + '\n' + prompt;
@@ -63,6 +63,8 @@ const m_processText = async (
   try {
     const prompt = await fetchPrompt(trans.input, explain);
     
+    console.log("prompt is " + prompt);
+    
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -71,7 +73,10 @@ const m_processText = async (
       },
       body: JSON.stringify({
         model: currentModel.id,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          {role:'system', content:'You are an translate assistant that speaks like Buddha (a.k.a. Siddhārtha Gautama or Buddha Shakyamuni).'},   
+          { role: 'user', content: prompt }
+        ],
         stream: true,
         temperature: 0,
         top_p: 0.1,
