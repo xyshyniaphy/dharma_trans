@@ -29,10 +29,6 @@ const fetchTransData = async (): Promise<TransData> => {
 };
 
 const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
-  const alphabetRegex = /[a-zA-Z]/g;
-  const alphabetMatch = text.match(alphabetRegex);
-  const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / text.length) * 100 : 0;
-  let isAlphabet = alphabetPercentage > 50;
 
   const transData = await fetchTransData();
 
@@ -46,11 +42,7 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
     prompt = prompt + '\n\n' + transData.simple_prompt;
   }
 
-  if(isAlphabet){
-    prompt = prompt + "'''Chinese'''";
-  }else{
-    prompt = prompt + "'''English'''";
-  }
+
   return prompt;
 };
 
@@ -82,11 +74,26 @@ const m_processText = async (
 
   
   try {
+    const transData = await fetchTransData();
+
     const prompt = await fetchPrompt(trans.input, explain);
     
     console.log("prompt is " + prompt);
+    const delimiter: string = '####'
+
+    const alphabetRegex = /[a-zA-Z]/g;
+    const alphabetMatch = trans.input.match(alphabetRegex);
+    const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / trans.input.length) * 100 : 0;
+    let isAlphabet = alphabetPercentage > 50;
+    let translatePrompt = "Translate following text into "
+  
+    if(isAlphabet){
+      translatePrompt = translatePrompt + "'''Chinese''' ";
+    }else{
+      translatePrompt = translatePrompt + "'''English''' ";
+    }
     
-    const fewShotExamples = await getFewShotExamples(trans.input);
+    const fewShotExamples = getFewShotExamples(trans.input, transData.one_shot);
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -96,9 +103,9 @@ const m_processText = async (
       body: JSON.stringify({
         model: currentModel.id,
         messages: [
-          {role:'system', content: prompt},   
+          {role:'system', content: prompt},
           ...fewShotExamples,
-          { role: 'user', content: trans.input }
+          { role: 'user', content: translatePrompt + delimiter + trans.input + delimiter }
         ],
         stream: true,
         temperature: 0,
