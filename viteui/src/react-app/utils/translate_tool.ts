@@ -38,21 +38,20 @@ const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
 
   const filteredDictionaryString = getFilteredDictionaryEntries(text, transData.dict);
 
-  let dictPrompt = `Please translate the following text, using the provided dictionary entries if applicable:\n\nDictionary:\n${filteredDictionaryString}\n\nText to translate:\n${text}\n\nTranslation:\n`;
-
-  if(isAlphabet){
-    dictPrompt = dictPrompt + "'''English'''";
-  }else{
-    dictPrompt = dictPrompt + "'''Chinese'''";
-  }
+  let prompt = transData.base_prompt + '\n\n' + filteredDictionaryString;
 
   if(explain){
-      const detail_prompt = transData.detail_prompt;
-      return detail_prompt + '\n' + dictPrompt;
+    prompt = prompt + '\n\n'  + transData.detail_prompt;
   }else{
-      const simple_prompt = transData.simple_prompt;
-      return simple_prompt + '\n' + dictPrompt;
+    prompt = prompt + '\n\n' + transData.simple_prompt;
   }
+
+  if(isAlphabet){
+    prompt = prompt + "'''Chinese'''";
+  }else{
+    prompt = prompt + "'''English'''";
+  }
+  return prompt;
 };
 
 const m_processText = async (
@@ -97,9 +96,9 @@ const m_processText = async (
       body: JSON.stringify({
         model: currentModel.id,
         messages: [
-          {role:'system', content:'You are an translate assistant that speaks like Buddha (a.k.a. Siddhārtha Gautama or Buddha Shakyamuni).'},   
+          {role:'system', content: prompt},   
           ...fewShotExamples,
-          { role: 'user', content: prompt }
+          { role: 'user', content: trans.input }
         ],
         stream: true,
         temperature: 0,
