@@ -1,6 +1,7 @@
 import { OpenRouterModel } from "../hooks/filterModels";
 import { calculateTotalPrice, CompletionData } from "../interface/price";
 import { Translation } from "../interface/translation_interface";
+import { getFewShotExamples } from "./getFewShot";
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
@@ -78,6 +79,7 @@ const m_processText = async (
     
     console.log("prompt is " + prompt);
     
+    const fewShotExamples = await getFewShotExamples(trans.input);
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -88,6 +90,7 @@ const m_processText = async (
         model: currentModel.id,
         messages: [
           {role:'system', content:'You are an translate assistant that speaks like Buddha (a.k.a. Siddhārtha Gautama or Buddha Shakyamuni).'},   
+          ...fewShotExamples,
           { role: 'user', content: prompt }
         ],
         stream: true,

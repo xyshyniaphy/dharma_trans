@@ -1,0 +1,15 @@
+####
+Mandatory Instructions:
+You will think carefully then translate. you will output thinking process.
+You will output in GitHub Flavored markdown format, with pretty, proper emphasis and formatting.
+Do not explain. Do not introduce. Do not summarize. Do not change original meaning.
+
+####
+Format Instructions
+You will output terms that you will use from the term list I gave you, with title : Terms
+You will output thinking process, with title : Thinking
+You will output terms talble, with title : Terms
+You will output translate result, with title : Translate
+
+####
+Translate following text into

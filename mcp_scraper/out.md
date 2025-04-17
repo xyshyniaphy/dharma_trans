@@ -1,184 +1,104 @@
-聖八吉祥之文句
-=======
+Mipham Rinpoche
+===============
 
-[Auspiciousness](/zh/topics/auspiciousness/) [Nyingma Mönlam](/zh/topics/nyingma-monlam/) [Tibetan Masters](/tibetan-masters/) [Mipham Rinpoche](/zh/tibetan-masters/mipham/)
+[Tibetan Masters](/tibetan-masters/) [Mipham Rinpoche](/zh/tibetan-masters/mipham/)
 
-[English](/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [Deutsch](/de/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [Español](/es/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [Français](/fr/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [Português](/pt/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [中文](/zh/tibetan-masters/mipham/verses-eight-noble-auspicious-ones) | [བོད་ཡིག](/bo/tibetan-masters/mipham/verses-eight-noble-auspicious-ones)
+[English](/tibetan-masters/mipham/) (131) | [Deutsch](/de/tibetan-masters/mipham/) (17) | [Español](/es/tibetan-masters/mipham/) (24) | [Français](/fr/tibetan-masters/mipham/) (58) | [Italiano](/it/tibetan-masters/mipham/) (9) | [Nederlands](/nl/tibetan-masters/mipham/) (4) | [Português](/pt/tibetan-masters/mipham/) (20) | [中文](/zh/tibetan-masters/mipham/) (27) | [བོད་ཡིག](/bo/tibetan-masters/mipham/) (131)
 
-༄༅། །འཕགས་པ་བཀྲ་ཤིས་བརྒྱད་པའི་ཚིགས་སུ་བཅད་པ།
+Texts by and about the great Nyingma polymath Jamgön Mipham Namgyal Gyatso _(mi pham rnam rgyal rgya mtsho_, 1846-1912), arguably the most influential Tibetan scholar of recent times:
 
-聖八吉祥之文句
+#### Advice
 
-ལས་གང་ཞིག་རྩོམ་པ་ན་ཐོག་མར་འདི་ཚར་གཅིག་བརྗོད་ན་གྲུབ་པ་བདེ་བ་ཡིད་བཞིན་དུ་བྱེད་པར་འགྱུར་བས་ཅི་ནས་ཡིད་ལ་བྱའོ། །
+[八萬四千法門之宗義](/zh/tibetan-masters/mipham/essence-of-84000)
 
-於開始一切所作之前念誦此甚為要緊，凡所作皆當如願成辦也。
+[大手印止、动、觉修法](/zh/tibetan-masters/mipham/stillness-movement-awareness)
 
-ཨོཾ། སྣང་སྲིད་རྣམ་དག་རང་བཞིན་ལྷུན་གྲུབ་པའི། །
+[寂⽌的甚深教⾔](/zh/tibetan-masters/mipham/profound-shamatha-instruction)
 
-嗡，顯有清淨自性任成之，
+[對初學者的教誡](/zh/tibetan-masters/mipham/advice-for-beginners)
 
-བཀྲ་ཤིས་ཕྱོགས་བཅུའི་ཞིང་ན་བཞུགས་པ་ཡི། །
+[禅修法](/zh/tibetan-masters/mipham/how-to-cultivate-concentration)
 
-十方吉祥剎土中安住，
+#### Aspiration Prayers
 
-སངས་རྒྱས་ཆོས་དང་དགེ་འདུན་འཕགས་པའི་ཚོགས། །
+[聖八吉祥之文句](/zh/tibetan-masters/mipham/verses-eight-noble-auspicious-ones)
 
-佛陀正法僧伽聖者眾，
+[麦彭仁波切极乐愿文](/zh/tibetan-masters/mipham/sukhavati-aspiration)
 
-ཀུན་ལ་ཕྱག་འཚལ་བདག་ཅག་བཀྲ་ཤིས་ཤོག །
+#### Buddhist Philosophy
 
-普皆頂禮願我等吉祥，
+[解义慧剑](/zh/tibetan-masters/mipham/sword-of-wisdom)
 
-སྒྲོན་མེའི་རྒྱལ་པོ་རྩལ་བརྟན་དོན་གྲུབ་དགོངས། །
+#### Dzogchen
 
-燈王佛力堅義成意佛，
+[三句击要之窍诀](/zh/tibetan-masters/mipham/instruction-on-three-crucial-points)
 
-བྱམས་པའི་རྒྱན་དཔལ་དགེ་གྲགས་དཔལ་དམ་པ། །
+19 May 2022
 
-慈嚴祥佛善稱祥教佛，
+[彻却关要](/zh/tibetan-masters/mipham/key-points-of-trekcho)
 
-ཀུན་ལ་དགོངས་པ་རྒྱ་ཆེར་གྲགས་པ་ཅན། །
+[心的本体](/zh/tibetan-masters/mipham/essence-of-mind)
 
-普遍密意具稱廣聞佛，
+[心的本性](/zh/tibetan-masters/mipham/nature-of-mind)
 
-ལྷུན་པོ་ལྟར་འཕགས་རྩལ་གྲགས་དཔལ་དང་ནི། །
+[文殊大圆满基道果无别发愿文](/zh/tibetan-masters/mipham/great-perfection-manjushri)
 
-須彌能勝力稱祥德佛，
+[智慧的本体：如何保任本觉的本面](/zh/tibetan-masters/mipham/essence-of-wisdom)
 
-སེམས་ཅན་ཐམས་ཅད་ལ་དགོངས་གྲགས་པའི་དཔལ། །
+#### Gesar
 
-憫一切有情名稱祥佛，
+[格薩爾祈請文](/zh/tibetan-masters/mipham/prayer-to-gesar)
 
-ཡིད་ཚིམ་མཛད་པ་རྩལ་རབ་གྲགས་དཔལ་ཏེ། །
+#### Guru Yoga
 
-心願令滿大力稱祥佛，
+[智慧雨降：噶绕多杰上师瑜伽](/zh/tibetan-masters/mipham/garab-dorje-guru-yoga)
 
-མཚན་ཙམ་ཐོས་པས་བཀྲ་ཤིས་དཔལ་འཕེལ་བ། །
+5 Apr 2022
 
-僅聞彼名吉祥善德增，
+[蓮師七句祈請文相屬之上師修法- 降加持雨](/zh/tibetan-masters/shakya-shri/shower-of-blessings-addendum)
 
-བདེ་བར་གཤེགས་པ་བརྒྱད་ལ་ཕྱག་འཚལ་ལོ། །
+by [Shakya Shri](/zh/tibetan-masters/shakya-shri/)
 
-於八善逝佛前我頂禮。
+#### Mantras
 
-འཇམ་དཔལ་གཞོན་ནུ་དཔལ་ལྡན་རྡོ་རྗེ་འཛིན། །
+[除疫莲师观修法](/zh/tibetan-masters/mipham/wrathful-guru-mantra-visualization)
 
-文殊童子具德持金剛，
+Restricted
 
-སྤྱན་རས་གཟིགས་དབང་མགོན་པོ་བྱམས་པའི་དཔལ། །
+#### Praise
 
-觀世自在怙主慈氏祥，
+[莲师三身赞](/zh/tibetan-masters/mipham/three-kayas-praise-padmasambhava)
 
-ས་ཡི་སྙིང་པོ་སྒྲིབ་པ་རྣམ་པར་སེལ། །
+10 Feb 2025
 
-地藏以及普除蓋障尊，
+#### Prayers
 
-ནམ་མཁའི་སྙིང་པོ་འཕགས་མཆོག་ཀུན་ཏུ་བཟང་། །
+[懷 攝顯有祈請文 名 曰加持大雲](/zh/tibetan-masters/mipham/great-cloud-blessings)
 
-虛空藏與聖者普賢尊，
+[祈禱無垢光尊者（改編自米龐仁波切之法語）](/zh/tibetan-masters/dilgo-khyentse/longchenpa-prayer-by-mipham-adapted)
 
-ཨུཏྤལ་རྡོ་རྗེ་པད་དཀར་ཀླུ་ཤིང་དང་། །
+by [Dilgo Khyentse Rinpoche](/zh/tibetan-masters/dilgo-khyentse/)
 
-烏巴拉、杵、白蓮、龍樹，
+#### Prayers to Guru Rinpoche
 
-ནོར་བུ་ཟླ་བ་རལ་གྲི་ཉི་མ་ཡི། །
+[憶念初十行誼](/zh/tibetan-masters/mipham/recollecting-the-deeds-of-the-tenth-day)
 
-寶珠、月輪、利劍與日輪，
+#### Prayers to Mañjuśrī
 
-ཕྱག་མཚན་ལེགས་བསྣམས་བཀྲ་ཤིས་དཔལ་གྱི་མཆོག །
+[妙吉祥禮讚文·智慧增勝](/zh/tibetan-masters/mipham/increasing-intelligence)
 
-持善手幟吉祥勝具德，
+#### Preliminary Practice
 
-བྱང་ཆུབ་སེམས་དཔའ་བརྒྱད་ལ་ཕྱག་འཚལ་ལོ། །
+[前行念诵仪轨·开显解脱道](/zh/tibetan-masters/mipham/illuminating-path-to-liberation)
 
-於八菩提薩埵前頂禮。
+#### Songs
 
-རིན་ཆེན་གདུགས་མཆོག་བཀྲ་ཤིས་གསེར་གྱི་ཉ། །
+[证悟瑜伽朵哈五道歌](/zh/tibetan-masters/mipham/five-verse-doha)
 
-殊勝寶傘吉祥黃金魚，
+#### Topical Outlines
 
-འདོད་འབྱུང་བུམ་བཟང་ཡིད་འོང་ཀ་མ་ལ། །
+[國王十經索引](/zh/tibetan-masters/mipham/ten-royal-sutras-outline)
 
-滿欲賢瓶悅意青蓮花，
+#### Tsok
 
-སྙན་གྲགས་དུང་དང་ཕུན་ཚོགས་དཔལ་བེའུ། །
-
-名聞海螺圓滿吉祥結，
-
-མི་ནུབ་རྒྱལ་མཚན་དབང་བསྒྱུར་འཁོར་ལོ་སྟེ། །
-
-勝利寶幢權攝之輪寶，
-
-རིན་ཆེན་རྟགས་མཆོག་བརྒྱད་ཀྱི་ཕྱག་མཚན་ཅན། །
-
-殊勝八珍寶徽手幟具，
-
-ཕྱོགས་དུས་རྒྱལ་བ་མཆོད་ཅིང་དགྱེས་བསྐྱེད་མ། །
-
-供令十方三時佛喜女，
-
-སྒེག་སོགས་ངོ་བོ་དྲན་པས་དཔལ་སྤེལ་བའི། །
-
-嬉等本性憶念增善德，
-
-བཀྲ་ཤིས་ལྷ་མོ་བརྒྱད་ལ་ཕྱག་འཚལ་ལོ། །
-
-於八吉祥天女前頂禮。
-
-ཚངས་པ་ཆེན་པོ་བདེ་འབྱུང་སྲེད་མེད་བུ། །
-
-大梵天大自在遍入天，
-
-མིག་སྟོང་ལྡན་དང་རྒྱལ་པོ་ཡུལ་འཁོར་སྲུང་། །
-
-釋提桓因以及持國天，
-
-འཕགས་སྐྱེས་པོ་དང་ཀླུ་དབང་མིག་མི་བཟང་། །
-
-增長天與龍王廣目天，
-
-རྣམ་ཐོས་སྲས་ཏེ་ལྷ་རྫས་འཁོར་ལོ་དང་། །
-
-多聞天子等持天物輪，
-
-ཏྲི་ཤཱུ་ལ་དང་མདུང་ཐུང་རྡོ་རྗེ་ཅན། །
-
-三叉杖與短矛金剛杵，
-
-པི་ཝཾ་རལ་གྲི་མཆོད་རྟེན་རྒྱལ་མཚན་འཛིན། །
-
-琵琶利劍塔與勝幢持，
-
-ས་གསུམ་གནས་སུ་དགེ་ལེགས་བཀྲ་ཤིས་སྤེལ། །
-
-於三地中增善妙吉祥，
-
-འཇིག་རྟེན་སྐྱོང་བ་བརྒྱད་ལ་ཕྱག་འཚལ་ལོ། །
-
-於八世間護神前頂禮。
-
-བདག་ཅག་དེང་འདིར་བྱ་བ་རྩོམ་པ་ལ། །
-
-我等如今所作之諸行，
-
-གེགས་དང་ཉེ་བར་འཚེ་བ་ཀུན་ཞི་ནས། །
-
-一切障患惱害皆平息，
-
-འདོད་དོན་དཔལ་འཕེལ་བསམ་དོན་ཡིད་བཞིན་འགྲུབ། །
-
-增所欲德隨心所願成，
-
-བཀྲ་ཤིས་བདེ་ལེགས་ཕུན་སུམ་ཚོགས་པར་ཤོག །
-
-吉祥如意願悉皆圓滿。
-
-ལྡང་ཚེ་བརྗོད་ན་དེ་ཉིན་དོན་ཀུན་འགྲུབ། །ཉལ་ཚེ་བརྗོད་ན་རྨི་ལམ་བཟང་པོ་མཐོང༌། །གཡུལ་དུ་འཇུག་ཚེ་བརྗོད་ན་ཕྱོགས་ལས་རྒྱལ། །བྱ་བ་རྩོམ་དུས་བརྗོད་ན་འདོད་དོན་འཕེལ། །རྒྱུན་དུ་བརྗོད་ན་ཚེ་དཔལ་གྲགས་འབྱོར་ཤིས། །བདེ་ལེགས་ཕུན་ཚོགས་བསམ་དོན་ཡིད་བཞིན་འགྲུབ། །སྡིག་སྒྲིབ་ཀུན་བྱང་མངོན་མཐོ་ངེས་ལེགས་ཀྱི། །དོན་ཀུན་འགྲུབ་པ་རྒྱལ་བ་མཆོག་གིས་གསུངས། །
-
-白晝念誦義利皆成就，夜間念誦夢見賢善夢，鬥戰時誦此方得勝利，作業時念誦所欲利增，恆常念誦壽祥名福增，樂善圓滿隨心所欲成，業障皆消投生上趣之，諸利成就如佛勝宣說。
-
-རབ་ཚེས་མེ་སྤྲེལ་ཟླ་བ་གསུམ་པའི་ཚེས་གསུམ་གཟའ་ཉི་མ་དང་རྒྱུ་སྐར་རྒྱལ་གྱི་དུས་བཟང་པོའི་ཆ་ལ་འཇམ་དཔལ་དགྱེས་པའི་རྡོ་རྗེའི་ཡིད་མཚོ་ལས་བྱུང་བའི་ནོར་བུའི་དོ་ཤལ་ཆེན་པོའོ། །
-
-火猴年三月初三日曜星宿會合吉祥日，文殊歡喜金剛心海浮現之摩尼明鏡也。
-
-敦噶嘉波敬譯。
+[简 供](/zh/tibetan-masters/mipham/concise-tsok-feast)
