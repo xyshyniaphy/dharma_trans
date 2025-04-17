@@ -2,7 +2,7 @@ import { OpenRouterModel } from "../hooks/filterModels";
 import { calculateTotalPrice, CompletionData } from "../interface/price";
 import { Translation } from "../interface/translation_interface";
 import { getFewShotExamples } from "./getFewShot";
-import { TransData, DictEntry } from "../interface/trans_data";
+import { TransData } from "../interface/trans_data";
 import { getFilteredDictionaryEntries } from './get_dict';
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
