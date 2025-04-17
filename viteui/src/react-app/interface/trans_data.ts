@@ -1,11 +1,11 @@
 // Define the structure for the dictionary entries read from dic.csv
-interface DictEntry {
+export interface DictEntry {
     cn: string; // Chinese term
     en: string; // English translation
 }
 
 // Define the structure for the one-shot translation examples
-interface OneShotEntry {
+export interface OneShotEntry {
     cn: string; // Chinese sentence
     en: string; // English translation
 }

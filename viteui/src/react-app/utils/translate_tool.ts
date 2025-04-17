@@ -2,10 +2,14 @@ import { OpenRouterModel } from "../hooks/filterModels";
 import { calculateTotalPrice, CompletionData } from "../interface/price";
 import { Translation } from "../interface/translation_interface";
 import { getFewShotExamples } from "./getFewShot";
+import { TransData, DictEntry } from "../interface/trans_data";
+import { getFilteredDictionaryEntries } from './get_dict';
 
 const promptApiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
 
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
+
+let cachedTransData: TransData | null = null;
 
 const fetchText = async (filename: string): Promise<string> => {
     const response = await fetch(promptApiUrl + '/access/' + filename, {
@@ -14,37 +18,41 @@ const fetchText = async (filename: string): Promise<string> => {
     return await response.text();
 };
 
+const fetchTransData = async (): Promise<TransData> => {
+    if (cachedTransData) {
+        return cachedTransData;
+    }
+    const responseText = await fetchText('data.json');
+    const data = JSON.parse(responseText) as TransData;
+    cachedTransData = data;
+    return data;
+};
+
 const fetchPrompt = async (text: string, explain:boolean): Promise<string> => {
-  // detect if "text: string" is mostly in alphabet (larger than 50 percent).
   const alphabetRegex = /[a-zA-Z]/g;
   const alphabetMatch = text.match(alphabetRegex);
   const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / text.length) * 100 : 0;
   let isAlphabet = alphabetPercentage > 50;
 
+  const transData = await fetchTransData();
 
+  const filteredDictionaryString = getFilteredDictionaryEntries(text, transData.dict);
 
+  let dictPrompt = `Please translate the following text, using the provided dictionary entries if applicable:\n\nDictionary:\n${filteredDictionaryString}\n\nText to translate:\n${text}\n\nTranslation:\n`;
 
-  
-    const response = await fetch(promptApiUrl + '/get_prompt', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text })
-    });
-    const data = await response.json();
-    let prompt = (data as {prompt: string}).prompt;
-    //console.log("dict prompt is " + prompt);
-    if(isAlphabet){
-      prompt = prompt.replace("'''English'''", "'''Chinese'''"); // replace '''English'''  into '''Chinese''' for just once
-    }
-    if(explain){
-        const simple_prompt = await fetchText('detail_prompt.txt');
-        return simple_prompt + '\n' + prompt;
-    }else{
-        const detail_prompt = await fetchText('simple_prompt.txt');
-        return detail_prompt + '\n' + prompt;
-    }
+  if(isAlphabet){
+    dictPrompt = dictPrompt + "'''English'''";
+  }else{
+    dictPrompt = dictPrompt + "'''Chinese'''";
+  }
+
+  if(explain){
+      const detail_prompt = transData.detail_prompt;
+      return detail_prompt + '\n' + dictPrompt;
+  }else{
+      const simple_prompt = transData.simple_prompt;
+      return simple_prompt + '\n' + dictPrompt;
+  }
 };
 
 const m_processText = async (
