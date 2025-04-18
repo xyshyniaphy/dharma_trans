@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Table, Form, Button } from 'react-bootstrap';
-import Papa from 'papaparse';
+import { fetchTransData } from './utils/translate_tool'; // 使用 fetchTransData 获取字典
 // Import necessary types and hooks from react-table
 import {
     useTable, 
@@ -10,13 +10,9 @@ import {
     FilterProps
 } from 'react-table';
 import { useDebouncedCallback } from './hooks/useDebounce'; // Import custom hook
+import type { DictEntry } from './interface/trans_data'; // 直接使用原始 DictEntry 类型
 
 // Type augmentation moved to src/react-table-config.d.ts
-
-interface DictEntry {
-    chinese: string;
-    english: string;
-}
 
 interface DictViewerProps {
     show: boolean;
@@ -57,63 +53,36 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const apiUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
-    const csvUrl = apiUrl ? `${apiUrl}/access/dic.csv` : null;
-
   //do not add dependency to useEffect
     useEffect(() => {
-        if (show && csvUrl && data.length === 0) { // Fetch only when shown, URL exists, and data isn't loaded
+        // 当组件显示且尚未加载数据时，使用 fetchTransData 获取字典数据
+        if (show && data.length === 0) {
             setLoading(true);
             setError(null);
-            fetch(csvUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(csvText => {
-                    Papa.parse<string[]>(csvText, {
-                        header: false, // No header row
-                        skipEmptyLines: true,
-                        complete: (results) => {
-                            const parsedData: DictEntry[] = results.data.map(row => ({
-                                chinese: row[0] || '', // Handle potential undefined
-                                english: row[1] || ''  // Handle potential undefined
-                            }));
-                            setData(parsedData);
-                            setLoading(false);
-                        },
-                        error: (err: Error) => {
-                            console.error("CSV parsing error:", err);
-                            setError(`解析CSV失败: ${err.message}`); // Translate error
-                            setLoading(false);
-                        }
-                    });
+            fetchTransData()
+                .then(transData => {
+                    setData(transData.dict); // 直接使用原始 dict，无需 map
                 })
                 .catch(err => {
-                    console.error("Failed to fetch dictionary:", err);
-                    setError(`加载词典失败: ${err.message}`); // Translate error
+                    console.error('获取字典失败:', err);
+                    setError(`加载词典失败: ${err.message}`);
+                })
+                .finally(() => {
                     setLoading(false);
                 });
-        } else if (!csvUrl && show) {
-             setError("API URL (VITE_DHARMA_PROMPT_API_URL) 未配置。"); // Translate error
-             setLoading(false);
         }
-    }, [show, csvUrl, data.length]); // Rerun effect if show, csvUrl, or data.length changes
+    }, [show, data.length]); // Rerun effect if show, csvUrl, or data.length changes
 
     const columns = useMemo<Column<DictEntry>[]>(() => [
         {
             Header: '中文', // Translate Header
-            accessor: 'chinese',
-            // Filter: DefaultColumnFilter, // Filter UI is now handled by defaultColumn
-            filter: 'text', // Use the default text filter logic
+            accessor: 'cn',
+            filter: 'text',
         },
         {
             Header: '英文', // Translate Header
-            accessor: 'english',
-            // Filter: DefaultColumnFilter, // Filter UI is now handled by defaultColumn
-            filter: 'text', // Use the default text filter logic
+            accessor: 'en',
+            filter: 'text',
         },
     ], []);
 
@@ -151,7 +120,7 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
             <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                 {loading && <p>正在加载词典...</p>}
                 {error && <p className="text-danger">{error}</p>}
-                {!loading && !error && csvUrl && (
+                {!loading && !error && (
                      <Table striped bordered hover responsive {...getTableProps()} size="sm">
                         <thead>
                             {headerGroups.map(headerGroup => (
@@ -183,7 +152,6 @@ const DictViewer: React.FC<DictViewerProps> = ({ show, onHide }) => {
                         </tbody>
                     </Table>
                 )}
-                 {!csvUrl && <p className="text-warning">无法确定词典URL。请检查 VITE_DHARMA_PROMPT_API_URL 环境变量。</p>}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>

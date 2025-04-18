@@ -18,7 +18,7 @@ const fetchText = async (filename: string): Promise<string> => {
     return await response.text();
 };
 
-const fetchTransData = async (): Promise<TransData> => {
+export const fetchTransData = async (): Promise<TransData> => {
     if (cachedTransData) {
         return cachedTransData;
     }
