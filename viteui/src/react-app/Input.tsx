@@ -16,6 +16,7 @@ import { useTranslatorExe } from './hooks/translatorExeHook';
 import { Translation } from './interface/translation_interface';
 import { OpenRouterModel } from './hooks/filterModels'; // Import OpenRouterModel
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
+import { fetchTransData } from './utils/translate_tool'; // Import fetchTransData
 
 // Updated Props interface for the Input component
 interface InputProps {
@@ -53,6 +54,8 @@ const Input: React.FC<InputProps> = ({
         try {
             let transNo=0;
             const transBatchId = `${Date.now()}_${(Math.random() * 1000).toFixed(0)}`;
+            // Fetch transData before the loop to avoid multiple calls
+            const transData = await fetchTransData();
             // Loop through all selected models from the global config
             for (let i = 0; i < config.selectedModels.length; i++) {
                 const modelIdToUse = config.selectedModels[i];
@@ -80,7 +83,7 @@ const Input: React.FC<InputProps> = ({
                     modelId: modelToUse.id, // Use the current model's ID
                     transBatchId: transBatchId // Add the batch ID
                     // isThinkingExpanded is implicitly false here
-                }, modelToUse); // Pass the modelId as the second argument
+                }, modelToUse, transData); // Pass the modelId as the second argument and transData as the third
                 transNo++;
             }
         } catch (error) {

@@ -1,7 +1,6 @@
 import { OpenRouterModel } from "../hooks/filterModels";
 import { calculateTotalPrice, CompletionData } from "../interface/price";
 import { Translation } from "../interface/translation_interface";
-import { getFewShotExamples } from "./getFewShot";
 import { TransData } from "../interface/trans_data";
 import { getFilteredDictionaryEntries } from './get_dict';
 
@@ -52,7 +51,10 @@ const m_processText = async (
   trans: Translation,
   updateStatus: (status: { showConfigModal?: boolean, isProcessing?: boolean, status?: string }) => void,
   setTranslate: (trans: Translation | undefined) => void,
-  currentModel: OpenRouterModel | undefined
+  currentModel: OpenRouterModel | undefined,
+  fewShotExamples: any[],
+  translatePrompt: string,
+  // transData: TransData // Removed unused parameter
 ): Promise<Translation> => {
   if (!apiKey) {
     updateStatus({ showConfigModal: true, isProcessing: false, status: '请先配置API Key' });
@@ -74,26 +76,26 @@ const m_processText = async (
 
   
   try {
-    const transData = await fetchTransData();
+    // const transData = await fetchTransData(); // Removed
 
     const prompt = await fetchPrompt(trans.input, explain);
     
     console.log("prompt is " + prompt);
     const delimiter: string = '####'
 
-    const alphabetRegex = /[a-zA-Z]/g;
-    const alphabetMatch = trans.input.match(alphabetRegex);
-    const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / trans.input.length) * 100 : 0;
-    let isAlphabet = alphabetPercentage > 50;
-    let translatePrompt = "Translate following text into "
+    // const alphabetRegex = /[a-zA-Z]/g; // Removed
+    // const alphabetMatch = trans.input.match(alphabetRegex); // Removed
+    // const alphabetPercentage = alphabetMatch ? (alphabetMatch.length / trans.input.length) * 100 : 0; // Removed
+    // let isAlphabet = alphabetPercentage > 50; // Removed
+    // let translatePrompt = "Translate following text into " // Removed
   
-    if(isAlphabet){
-      translatePrompt = translatePrompt + "Chinese ";
-    }else{
-      translatePrompt = translatePrompt + "English ";
-    }
+    // if(isAlphabet){ // Removed
+    //   translatePrompt = translatePrompt + "Chinese "; // Removed
+    // }else{ // Removed
+    //   translatePrompt = translatePrompt + "English "; // Removed
+    // }
     
-    const fewShotExamples = await getFewShotExamples(trans.input, transData.one_shot, translatePrompt);
+    // const fewShotExamples = await getFewShotExamples(trans.input, transData.one_shot, translatePrompt); // Removed
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
