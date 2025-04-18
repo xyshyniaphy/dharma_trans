@@ -1,6 +1,6 @@
 ####
 Mandatory Instructions:
-You will only output the translation result in english.
-Do not explain. Do not introduce. Do not summarize. Do not change original meaning.
-IMPORTANT: Your response must ONLY contain the translated English text. Do not include any explanations, introductions, or commentary. 
+You will only output the translation result.
+Do not add any Note
 Provide ONLY the translated text itself.
+
