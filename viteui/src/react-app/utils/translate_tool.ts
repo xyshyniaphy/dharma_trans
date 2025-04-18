@@ -93,7 +93,7 @@ const m_processText = async (
       translatePrompt = translatePrompt + "'''English''' ";
     }
     
-    const fewShotExamples = getFewShotExamples(trans.input, transData.one_shot, translatePrompt);
+    const fewShotExamples = await getFewShotExamples(trans.input, transData.one_shot, translatePrompt);
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
