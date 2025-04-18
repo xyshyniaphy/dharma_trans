@@ -1,6 +1,7 @@
 const apiUrl = import.meta.env.VITE_OPENAI_URL;
 
-const dharmaPromptUrl = import.meta.env.VITE_DHARMA_PROMPT_API_URL;
+
+import { fetchTransData } from '../utils/translate_tool';
 
 interface OpenRouterModel {
     id: string;
@@ -37,16 +38,16 @@ interface OpenRouterModel {
 //models are static, just load for once
 const fetchAndFilterModels = async () => {
     try {
-        
-        const modelList = await fetch(dharmaPromptUrl + '/access/model_list.txt');
-        const modelListData = (await modelList.text()).split('\n');
-        // console.log(modelListData);
+        const transData = await fetchTransData();
+        // 直接使用 transData.model_list，不做 map 操作
+        const myCustomizedModelNames = transData.model_list; // 保持原始格式，避免 map
 
+        //this is openrouter api, fetch all models from openrouter
         const response = await fetch(apiUrl + '/models');
-        const data: {data: OpenRouterModel[]} = await response.json();
-        const modelNames = modelListData.map(name => name.trim().toLowerCase());
-        const filteredModels = data.data.filter((model: OpenRouterModel) => {
-          return modelNames.some(name => model.id.toLowerCase() === name);
+        const openRouterModels: {data: OpenRouterModel[]} = await response.json();
+        // 用 modelNames 过滤模型
+        const filteredModels = openRouterModels.data.filter((model: OpenRouterModel) => {
+          return myCustomizedModelNames.some(name => model.id.toLowerCase() === name.toLowerCase()); // 保证不区分大小写
         });
         return filteredModels;
     } catch (error) {
