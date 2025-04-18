@@ -81,9 +81,9 @@ function jaccardSimilarity(setA: Set<string>, setB: Set<string>): number {
 
 // Main function to get few-shot examples based on similarity
 export function getFewShotExamples(
-  // Add input text back as parameter
   input: string,
   oneShotData: OneShotEntry[],
+  translatePrompt: string,
   k: number = 3,
   delimiter: string = '####'
 ): Message[] {
@@ -137,8 +137,8 @@ export function getFewShotExamples(
   const examples: Message[] = [];
   for (const index of topKIndices) {
     const entry = oneShotData[index];
-    // The user content should be the Chinese part
-    const userContent = `${delimiter}${entry.cn}${delimiter}`;
+    // Prepend translatePrompt to the user content
+    const userContent = `${translatePrompt} ${delimiter}${entry.cn}${delimiter}`;
     // The assistant content should be the English part
     const assistantContent = entry.en;
     // Add the formatted pair to the examples array

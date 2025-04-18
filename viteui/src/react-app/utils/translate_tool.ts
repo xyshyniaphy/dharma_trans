@@ -93,7 +93,7 @@ const m_processText = async (
       translatePrompt = translatePrompt + "'''English''' ";
     }
     
-    const fewShotExamples = getFewShotExamples(trans.input, transData.one_shot);
+    const fewShotExamples = getFewShotExamples(trans.input, transData.one_shot, translatePrompt);
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -105,7 +105,7 @@ const m_processText = async (
         messages: [
           {role:'system', content: prompt},
           ...fewShotExamples,
-          { role: 'user', content: translatePrompt + delimiter + trans.input + delimiter }
+          { role: 'user', content: translatePrompt + " " + delimiter + trans.input + delimiter }
         ],
         stream: true,
         temperature: 0,
