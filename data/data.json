@@ -1,5 +1,5 @@
 {
-  "base_prompt": "You are an expert translator fluent in Chinese and English, specializing in buddhism. Use formal buddhism phrases.\r\n\r\n####\r\nI want you to act as the Buddha (a.k.a. Siddh?rtha Gautama or Buddha Shakyamuni) from now on and provide the same guidance and advice that is found in the Tripi?aka. \r\nUse the writing style of the Suttapi?aka particularly of the Majjhimanik?ya, Sa?yuttanik?ya, A?guttaranik?ya, and D?ghanik?ya. \r\nI will pretend that I am a layperson with a lot to learn. \r\nFully immerse yourself into the role of the Buddha.\r\nKeep up the act of being the Buddha as well as you can. Do not break character.\r\n\r\n####\r\nYou MUST use the specified terms provided below.\r\nIntegrate these terms naturally into the final translation. Adhere strictly to this list for the specified terms.\r\nWhen one  term has multiple translations, put other translations into translated text too, in a parentheses\r\n\r\nSpecified Terms to Use:\r\n",
+  "base_prompt": "You are an expert translator fluent in Chinese and English, specializing in buddhism. Use formal buddhism phrases.\r\n\r\n####\r\nI want you to act as the Buddha (a.k.a. Siddh?rtha Gautama or Buddha Shakyamuni) from now on and provide the same guidance and advice that is found in the Tripi?aka. \r\nUse the writing style of the Suttapiaka particularly of the Majjhimanikya, Sayuttanikya, Aguttaranikya, and Dghanikya. \r\nI will pretend that I am a layperson with a lot to learn. \r\nFully immerse yourself into the role of the Buddha.\r\nKeep up the act of being the Buddha as well as you can. Do not break character.\r\n\r\n####\r\nYou MUST use the specified terms provided below.\r\nIntegrate these terms naturally into the final translation. Adhere strictly to this list for the specified terms.\r\nPut other meaning into translated text too, in a parentheses\r\n\r\nSpecified Terms to Use:\r\n",
   "simple_prompt": "####\r\nMandatory Instructions:\r\nYou will only output the translation result in english.\r\nDo not explain. Do not introduce. Do not summarize. Do not change original meaning.\r\nIMPORTANT: Your response must ONLY contain the translated English text. Do not include any explanations, introductions, or commentary. \r\nProvide ONLY the translated text itself.\r\n",
   "detail_prompt": "####\r\nMandatory Instructions:\r\nYou will think carefully then translate. you will output thinking process.\r\nYou will output in GitHub Flavored markdown format, with pretty, proper emphasis and formatting.\r\nDo not explain. Do not introduce. Do not summarize. Do not change original meaning.\r\n\r\n####\r\nFormat Instructions\r\nYou will output terms that you will use from the term list I gave you, with title : Terms\r\nYou will output thinking process, with title : Thinking\r\nYou will output terms talble, with title : Terms\r\nYou will output translate result, with title : Translate\r\n",
   "dict": [
@@ -10026,6 +10026,178 @@
     {
       "cn": "《甚深心滴》",
       "en": "\"Zabmo Yangtig, Profound Quintessence\""
+    },
+    {
+      "cn": "法王",
+      "en": "Jigme Phuntsok Rinpoche"
+    },
+    {
+      "cn": "院寺",
+      "en": "Larung Gar"
+    },
+    {
+      "cn": "学院",
+      "en": "Larung Gar"
+    },
+    {
+      "cn": "因皈依、果皈依",
+      "en": "\"causal refuge, resultant refuge\""
+    },
+    {
+      "cn": "因乘、果乘",
+      "en": "\"causal vehicle, resultant vehicle\""
+    },
+    {
+      "cn": "法身、报身、化身、不变金刚身、现前菩提身",
+      "en": "\"dharmakaya, sambhogakaya, nirmanakaya, vajrakaya of the unchanging natural state, the perfect kaya of complete awakening\""
+    },
+    {
+      "cn": "本体空性、自性光明、大悲周遍",
+      "en": "\"essence of emptiness, intrinsic nature of luminosity, all-pervasive compassion\""
+    },
+    {
+      "cn": "父续、母续、无二续",
+      "en": "\"father tantras, mother tantras, nondual tantras\""
+    },
+    {
+      "cn": "四力：所依对治力、厌患对治力、返回对治力、现行对治力",
+      "en": "\"four remedial powers: power of support, power of remorse, power of resolution, power of antidote\""
+    },
+    {
+      "cn": "大乐灌顶、表示灌顶、句灌顶",
+      "en": "\"great bliss empowerment, symbolic empowerment, word empowerment\""
+    },
+    {
+      "cn": "身、文字、标帜",
+      "en": "\"kayas, syllables, and hand emblems\""
+    },
+    {
+      "cn": "事续、行续、瑜伽续、无上瑜伽续",
+      "en": "\"kriya tantra, charya tantra, yoga tantra, anuttarayoga tantra\""
+    },
+    {
+      "cn": "实相大手印、乐空大手印",
+      "en": "\"Mahamudra of reality, Mahamudra of the union of bliss and emptiness\""
+    },
+    {
+      "cn": "密宗大手印、显宗大手印",
+      "en": "\"mantra Mahamudra, sutra Mahamudra\""
+    },
+    {
+      "cn": "心、眼、风",
+      "en": "\"mind, eyes, and wind\""
+    },
+    {
+      "cn": "寂静文殊、忿怒大威德",
+      "en": "\"peaceful Manjushri, wrathful Yamantaka\""
+    },
+    {
+      "cn": "破瓦、往生法",
+      "en": "\"phowa, the transference of consciousness\""
+    },
+    {
+      "cn": "引导法、引导文",
+      "en": "practice manual"
+    },
+    {
+      "cn": "甚深地伏藏、广大意伏藏",
+      "en": "\"the profound earth terma, the vast mind terma\""
+    },
+    {
+      "cn": "圆满劫、三分劫、二分劫、具诤劫",
+      "en": "\"Satya Yuga, age of perfection; Treta Yuga, age of possessing three; Dvapara Yuga, age of possessing two; Kali Yuga, age of strife\""
+    },
+    {
+      "cn": "续、教、窍诀",
+      "en": "\"tantra, transmission, and upadesha\""
+    },
+    {
+      "cn": "伏藏物、伏藏法",
+      "en": "\"terma object, terma doctrine\""
+    },
+    {
+      "cn": "顶上大乐轮、喉间受用轮、心间法轮、脐间幻化轮",
+      "en": "\"the chakra of great bliss at the level of the crown, the chakra of enjoyment at the level of the throat, the chakra of dharma at the level of the heart, the chakra of manifestation at the level of the navel\""
+    },
+    {
+      "cn": "教法、证法",
+      "en": "\"the dharma of transmission, the dharma of realization\""
+    },
+    {
+      "cn": "见解如山直定、修行如海直定、行为显现直定、果位觉性直定",
+      "en": "\"the direct placement in the view like a mountain, the direct placement in meditation like an ocean, the direct placement in conduct with appearances, the direct placement in pristine awareness as the result\""
+    },
+    {
+      "cn": "有戏灌顶、无戏灌顶、极无戏灌顶、最无戏灌顶",
+      "en": "\"the elaborate empowerment, the unelaborate empowerment, the extremely unelaborate empowerment, the ultimately unelaborate empowerment\""
+    },
+    {
+      "cn": "广大班智达派、甚深古萨里派",
+      "en": "\"the extensive pandita approach, the profound kusali approach\""
+    },
+    {
+      "cn": "无有、唯一、平等、自成",
+      "en": "\"the four aspects of non-existence, oneness, openness, and spontaneous presence\""
+    },
+    {
+      "cn": "四相：觉受增上相、觉性如量相、法性现量相、法性尽地相",
+      "en": "\"the four visions of tögal: the vision of the direct recognition of the dharmata, the vision of the increasing experience, the vision of pristine awareness reaching its full extent, the vision of the complete exhaustion of phenomena into dharmata\""
+    },
+    {
+      "cn": "四空智慧：空、极空、大空、一切空",
+      "en": "\"the four wisdoms of emptiness: emptiness, great emptiness, extremely great emptiness, everything as emptiness\""
+    },
+    {
+      "cn": "四喜智慧：喜、胜喜、殊喜、俱生喜",
+      "en": "\"the four wisdoms of joy: joy, supreme joy, exceptional joy, connate joy\""
+    },
+    {
+      "cn": "寂止门引导、胜观门引导",
+      "en": "\"the guidance through the door of shamatha, the guidance through the door of vipashyana\""
+    },
+    {
+      "cn": "圣教大圆满、伏藏大圆满",
+      "en": "\"the Kama Dzogchen, the Terma Dzogchen\""
+    },
+    {
+      "cn": "法界净灯、明点空灯、觉性金刚链",
+      "en": "\"the luminosity of the dhatu of awareness, the luminosity of the empty bindu, the vajra chain of awareness\""
+    },
+    {
+      "cn": "补特伽罗耳传、持明表示传、如来密意传",
+      "en": "\"the oral transmission of spiritual masters, the symbolic indication transmission of the vidyadharas, the direct mind transmission of the buddhas\""
+    },
+    {
+      "cn": "外心部、内界部、密窍诀部",
+      "en": "\"the outer category of mind, the inner category of space, the secret category of pith instructions\""
+    },
+    {
+      "cn": "方便道、解脱道",
+      "en": "\"the path of skillful means, the path of liberation\""
+    },
+    {
+      "cn": "前弘时期、中弘时期、后弘时期",
+      "en": "\"the period of the earlier propagation, the period of the middle propagation, the period of the later propagation\""
+    },
+    {
+      "cn": "红色血脉、白色精脉",
+      "en": "\"the red rasana channel, the white lalana channel\""
+    },
+    {
+      "cn": "讲传十大教派、修传八大教派",
+      "en": "\"the ten great lineages of study, the eight great lineages of attainment\""
+    },
+    {
+      "cn": "宝瓶灌顶、秘密灌顶、智慧灌顶、句宝灌顶",
+      "en": "\"the vase empowerment, the secret empowerment, the wisdom empowerment, the precious word empowerment\""
+    },
+    {
+      "cn": "内三续、外三续",
+      "en": "\"three inner classes of tantra, three outer classes of tantra\""
+    },
+    {
+      "cn": "金刚乘",
+      "en": "Vajrayana"
     }
   ],
   "model_list": [
@@ -10037,8 +10209,9 @@
     "qwen/qwq-32b",
     "anthropic/claude-3.7-sonnet",
     "openai/gpt-4.1",
-    "openai/gpt-4.1-mini",
+    "openai/o4-mini-high",
     "google/gemini-2.5-pro-preview-03-25",
+    "google/gemini-2.5-flash-preview",
     "google/gemini-2.5-pro-exp-03-25:free",
     "x-ai/grok-beta",
     "x-ai/grok-3-mini-beta"

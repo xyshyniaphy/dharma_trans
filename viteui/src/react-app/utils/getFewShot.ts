@@ -14,7 +14,7 @@ export async function getFewShotExamples(
   input: string,
   oneShotData: OneShotEntry[],
   translatePrompt: string,
-  k: number = 2,
+  k: number = 4,
   delimiter: string = '####'
 ): Promise<Message[]> { // Changed return type to Promise<Message[]> as findTopK is async
 

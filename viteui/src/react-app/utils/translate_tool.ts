@@ -88,9 +88,9 @@ const m_processText = async (
     let translatePrompt = "Translate following text into "
   
     if(isAlphabet){
-      translatePrompt = translatePrompt + "'''Chinese''' ";
+      translatePrompt = translatePrompt + "Chinese ";
     }else{
-      translatePrompt = translatePrompt + "'''English''' ";
+      translatePrompt = translatePrompt + "English ";
     }
     
     const fewShotExamples = await getFewShotExamples(trans.input, transData.one_shot, translatePrompt);
