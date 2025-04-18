@@ -1,24 +1,18 @@
-import * as tf from '@tensorflow/tfjs';
+import * as stringSimilarity from 'string-similarity';
 // Import OneShotEntry type
 import { OneShotEntry } from '../interface/trans_data';
 
 // Optional: Set WebGL backend for better performance if supported
-tf.setBackend('webgl');
+// tf.setBackend('webgl');
 
-// 单例 promise 用于加载模型
-let modelPromise: Promise<tf.GraphModel> | null = null;
+// Removed unused modelPromise variable to fix build error (TS6133)
 
 /**
- * 从 TensorFlow Hub 加载多语言 USE GraphModel
- * @returns Promise<tf.GraphModel>
+ * 不需要加载模型，直接使用 string-similarity 库
+ * @returns Promise<any>
  */
-async function loadModel(): Promise<tf.GraphModel> {
-  if (!modelPromise) {
-    // 使用稳定的通用句子编码器英语模型 URL
-    const modelUrl = 'https://tfhub.dev/google/universal-sentence-encoder/4?tfjs-format=file';
-    modelPromise = tf.loadGraphModel(modelUrl, { fromTFHub: true });
-  }
-  return modelPromise;
+async function loadModel(): Promise<any> {
+  return Promise.resolve();
 }
 
 /**
@@ -31,42 +25,30 @@ async function loadModel(): Promise<tf.GraphModel> {
  */
 export async function findTopKSimilarSentences(
   inputSentence: string,
-  sentenceList: OneShotEntry[], // Changed parameter type
+  sentenceList: OneShotEntry[],
   k: number,
-  lang: 'cn' | 'en' // Added lang parameter
-): Promise<OneShotEntry[]> { // Changed return type
-  // Load the model
-  const model = await loadModel();
+  lang: 'cn' | 'en'
+): Promise<OneShotEntry[]> {
+  // 不需要加载模型
+  await loadModel();
 
-  // Extract the sentences based on the specified language
+  // 根据指定的语言提取句子
   const sentencesToCompare = sentenceList.map(entry => entry[lang]);
 
-  // Combine input and list sentences for batch processing
-  const allSentences = [inputSentence, ...sentencesToCompare];
-  // 将字符串数组转换为 tf.Tensor 并生成 embeddings
-  const inputTensor = tf.tensor(allSentences, [allSentences.length], 'string');
-  const embeddingsTensor = model.predict(inputTensor) as tf.Tensor;
-  const embeddings = await embeddingsTensor.array() as number[][];
-  const inputEmbedding = embeddings[0];
-  const listEmbeddings = embeddings.slice(1);
+  // 计算输入句子与列表中每个句子的相似性
+  const similarities = sentencesToCompare.map(sentence =>
+    stringSimilarity.compareTwoStrings(inputSentence, sentence)
+  );
 
-  // Compute cosine similarities
-  const similarities = listEmbeddings.map(emb => {
-    const dotProduct = inputEmbedding.reduce((sum, val, i) => sum + val * emb[i], 0);
-    const normInput = Math.sqrt(inputEmbedding.reduce((sum, val) => sum + val * val, 0));
-    const normEmb = Math.sqrt(emb.reduce((sum, val) => sum + val * val, 0));
-    return dotProduct / (normInput * normEmb);
-  });
-
-  // Pair original OneShotEntry objects with their similarity scores
+  // 将原始 OneShotEntry 对象与它们的相似性分数配对
   const entrySimPairs = sentenceList.map((entry, index) => ({
-    entry, // Keep the original entry
+    entry,
     similarity: similarities[index]
   }));
 
-  // Sort by similarity in descending order
+  // 按相似性降序排列
   entrySimPairs.sort((a, b) => b.similarity - a.similarity);
 
-  // Return the top k OneShotEntry objects
-  return entrySimPairs.slice(0, k).map(pair => pair.entry); // Return the entry object
+  // 返回前 k 个 OneShotEntry 对象
+  return entrySimPairs.slice(0, k).map(pair => pair.entry);
 }
