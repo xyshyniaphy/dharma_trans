@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
+import { TransData } from '../interface/trans_data';
+import { fetchTransData } from '../utils/translate_tool';
 
 // Define Theme type here or import from a shared types file if available
 export type Theme = 'light' | 'dark' | 'auto';
@@ -99,9 +101,21 @@ export const useDTConfig = () => {
           theme: parsedConfig.theme ?? 'dark', // Default theme if missing
           showLeftPanel: parsedConfig.showLeftPanel ?? true // Default showLeftPanel if missing
         };
-        console.log('Config loaded from localStorage:', fullConfig);
-
-        setConfig(fullConfig);
+        // Check integrity of selectedModels against TransData.model_list
+        fetchTransData().then((transData: TransData) => {
+          const validModels = fullConfig.selectedModels.filter(model => transData.model_list.includes(model));
+          if (validModels.length !== fullConfig.selectedModels.length) {
+            console.log('Removed invalid models from selectedModels:', fullConfig.selectedModels.filter(model => !transData.model_list.includes(model)));
+            fullConfig.selectedModels = validModels;
+            setStoredConfig(JSON.stringify(fullConfig));
+          }
+          console.log('Config loaded from localStorage:', fullConfig);
+          setConfig(fullConfig);
+        }).catch((error: unknown) => {
+          console.error('Failed to fetch TransData for model list check:', error);
+          console.log('Config loaded from localStorage without model check:', fullConfig);
+          setConfig(fullConfig);
+        });
       } else {
         migrateConfig();
       }
