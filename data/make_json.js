@@ -45,8 +45,14 @@ const dict = dictLines.map(line => {
     // Split by the first comma only
     const parts = line.split(/,(.+)/);
     if (parts.length >= 2) {
+        const cnText = parts[0].trim();
+        // Skip if 'cn' field has only one character (assuming Chinese characters)
+        if (cnText.length === 1) {
+            console.log(`Skipping dictionary entry with single character: ${cnText}`);
+            return null;
+        }
         // Trim whitespace from both parts
-        return { cn: parts[0].trim(), en: parts[1].trim() };
+        return { cn: cnText, en: parts[1].trim() };
     } else {
         console.warn(`Skipping malformed dictionary line: ${line}`);
         return null; // Indicate a malformed line

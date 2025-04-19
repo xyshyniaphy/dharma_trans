@@ -284,24 +284,12 @@
       "en": "2 objects of knowledge"
     },
     {
-      "cn": "总",
-      "en": "generalities"
-    },
-    {
-      "cn": "别",
-      "en": "particularities"
-    },
-    {
       "cn": "共相",
       "en": "generally characterized phenomena"
     },
     {
       "cn": "自相",
       "en": "self characterized phenomena"
-    },
-    {
-      "cn": "常",
-      "en": "permanent"
     },
     {
       "cn": "无常",
@@ -446,18 +434,6 @@
     {
       "cn": "因明",
       "en": "3-membered proof"
-    },
-    {
-      "cn": "宗",
-      "en": "thesis"
-    },
-    {
-      "cn": "因",
-      "en": "sign"
-    },
-    {
-      "cn": "喻",
-      "en": "example"
     },
     {
       "cn": "三世",
@@ -780,18 +756,6 @@
       "en": "3 poisons"
     },
     {
-      "cn": "贪",
-      "en": "desire"
-    },
-    {
-      "cn": "瞋",
-      "en": "hatred; anger"
-    },
-    {
-      "cn": "痴",
-      "en": "ignorance"
-    },
-    {
       "cn": "三苦",
       "en": "3 sufferings"
     },
@@ -924,10 +888,6 @@
       "en": "conception of [bad] ethics and modes of conduct as supreme"
     },
     {
-      "cn": "疑",
-      "en": "doubt"
-    },
-    {
       "cn": "三无自性",
       "en": "3 identityless phenomena"
     },
@@ -1002,14 +962,6 @@
     {
       "cn": "三善趣",
       "en": "3 happy migrators; 3 happy migrations"
-    },
-    {
-      "cn": "天",
-      "en": "gods"
-    },
-    {
-      "cn": "人",
-      "en": "humans"
     },
     {
       "cn": "阿素洛",
@@ -1564,14 +1516,6 @@
       "en": "regret"
     },
     {
-      "cn": "寻",
-      "en": "investigation"
-    },
-    {
-      "cn": "伺",
-      "en": "analysis"
-    },
-    {
       "cn": "四生",
       "en": "4 types of birth"
     },
@@ -1602,18 +1546,6 @@
     {
       "cn": "四善根",
       "en": "[4 good roots]"
-    },
-    {
-      "cn": "暖",
-      "en": "heat"
-    },
-    {
-      "cn": "顶",
-      "en": "peak"
-    },
-    {
-      "cn": "忍",
-      "en": "forbearance"
     },
     {
       "cn": "世第一法",
@@ -1974,22 +1906,6 @@
     {
       "cn": "四威仪",
       "en": "4 activities"
-    },
-    {
-      "cn": "行",
-      "en": "walking"
-    },
-    {
-      "cn": "住",
-      "en": "standing"
-    },
-    {
-      "cn": "坐",
-      "en": "sitting"
-    },
-    {
-      "cn": "卧",
-      "en": "sleeping"
     },
     {
       "cn": "四记问",
@@ -2436,18 +2352,6 @@
       "en": "4 qualities"
     },
     {
-      "cn": "乐",
-      "en": "joy; bliss"
-    },
-    {
-      "cn": "我",
-      "en": "personality"
-    },
-    {
-      "cn": "净",
-      "en": "purity"
-    },
-    {
       "cn": "四缘",
       "en": "4 conditions"
     },
@@ -2472,24 +2376,12 @@
       "en": "4 concentrations"
     },
     {
-      "cn": "喜",
-      "en": "joy"
-    },
-    {
       "cn": "心一境性",
       "en": "mental one-pointedness"
     },
     {
       "cn": "内等净",
       "en": "joy"
-    },
-    {
-      "cn": "舍",
-      "en": "mindfulness"
-    },
-    {
-      "cn": "念",
-      "en": "introspection"
     },
     {
       "cn": "正知",
@@ -2594,14 +2486,6 @@
     {
       "cn": "五支作法",
       "en": "5-membered proof;"
-    },
-    {
-      "cn": "合",
-      "en": "application"
-    },
-    {
-      "cn": "结",
-      "en": "summary;"
     },
     {
       "cn": "五方佛",
@@ -2764,32 +2648,8 @@
       "en": "5 qualities of desires"
     },
     {
-      "cn": "色",
-      "en": "visible form [as the quality of fire]"
-    },
-    {
-      "cn": "声",
-      "en": "sound [as the quality of space]"
-    },
-    {
-      "cn": "香",
-      "en": "odor [as the quality of earth]"
-    },
-    {
-      "cn": "味",
-      "en": "taste [as the quality of water]"
-    },
-    {
-      "cn": "触",
-      "en": "tangible object [as the quality of wind]"
-    },
-    {
       "cn": "五别境",
       "en": "5 determining mental factors"
-    },
-    {
-      "cn": "欲",
-      "en": "aspiration"
     },
     {
       "cn": "胜解",
@@ -2798,14 +2658,6 @@
     {
       "cn": "三摩地",
       "en": "stabilization"
-    },
-    {
-      "cn": "定",
-      "en": "stabilization"
-    },
-    {
-      "cn": "慧",
-      "en": "knowledge"
     },
     {
       "cn": "五明",
@@ -2850,14 +2702,6 @@
     {
       "cn": "唯识",
       "en": "5 phenomena"
-    },
-    {
-      "cn": "名",
-      "en": "name"
-    },
-    {
-      "cn": "相",
-      "en": "signs"
     },
     {
       "cn": "分别",
@@ -3040,10 +2884,6 @@
       "en": "5 paths"
     },
     {
-      "cn": "位",
-      "en": "5 paths"
-    },
-    {
       "cn": "资粮道",
       "en": "path of accumulation"
     },
@@ -3090,18 +2930,6 @@
     {
       "cn": "五遍行",
       "en": "5 omnipresent mental factors"
-    },
-    {
-      "cn": "受",
-      "en": "feeling"
-    },
-    {
-      "cn": "想",
-      "en": "discrimination"
-    },
-    {
-      "cn": "思",
-      "en": "intention"
     },
     {
       "cn": "作意",
@@ -3206,10 +3034,6 @@
     {
       "cn": "无明",
       "en": "ignorance"
-    },
-    {
-      "cn": "慢",
-      "en": "pride"
     },
     {
       "cn": "掉举",
@@ -3984,10 +3808,6 @@
       "en": "6 root afflictions"
     },
     {
-      "cn": "见",
-      "en": "afflicted view"
-    },
-    {
       "cn": "不正见",
       "en": "afflicted view"
     },
@@ -4130,10 +3950,6 @@
     {
       "cn": "六境",
       "en": "6 objects"
-    },
-    {
-      "cn": "法",
-      "en": "phenomena"
     },
     {
       "cn": "六随念",
@@ -4316,14 +4132,6 @@
       "en": "repaying their kindness"
     },
     {
-      "cn": "慈",
-      "en": "heartwarming love"
-    },
-    {
-      "cn": "悲",
-      "en": "compassion"
-    },
-    {
       "cn": "增上意乐",
       "en": "resolute thought"
     },
@@ -4336,24 +4144,8 @@
       "en": "7-limbed topics"
     },
     {
-      "cn": "蕴",
-      "en": "aggregates"
-    },
-    {
-      "cn": "处",
-      "en": "sources of perception"
-    },
-    {
-      "cn": "界",
-      "en": "sensory spheres"
-    },
-    {
       "cn": "缘起",
       "en": "dependent arising"
-    },
-    {
-      "cn": "食",
-      "en": "food"
     },
     {
       "cn": "圣谛",
@@ -4556,14 +4348,6 @@
       "en": "7 treasures"
     },
     {
-      "cn": "金",
-      "en": "gold"
-    },
-    {
-      "cn": "银",
-      "en": "silver"
-    },
-    {
       "cn": "琉璃",
       "en": "lapis lazuli"
     },
@@ -4680,15 +4464,7 @@
       "en": "afflicted consciousness;"
     },
     {
-      "cn": "意",
-      "en": "afflicted consciousness;"
-    },
-    {
       "cn": "阿赖耶识",
-      "en": "foundation consciousness;"
-    },
-    {
-      "cn": "心",
       "en": "foundation consciousness;"
     },
     {
@@ -4700,32 +4476,8 @@
       "en": "8 worldly concerns"
     },
     {
-      "cn": "得",
-      "en": "gain"
-    },
-    {
       "cn": "不得",
       "en": "loss"
-    },
-    {
-      "cn": "毁",
-      "en": "disgrace"
-    },
-    {
-      "cn": "誉",
-      "en": "fame"
-    },
-    {
-      "cn": "称",
-      "en": "praise"
-    },
-    {
-      "cn": "讥",
-      "en": "blame"
-    },
-    {
-      "cn": "苦",
-      "en": "suffering"
     },
     {
       "cn": "八事",
@@ -4856,10 +4608,6 @@
       "en": "8 groups of gods and serpents"
     },
     {
-      "cn": "龙",
-      "en": "serpents"
-    },
-    {
       "cn": "药叉",
       "en": "demons"
     },
@@ -4906,10 +4654,6 @@
     {
       "cn": "八寒地狱",
       "en": "8 cold hells"
-    },
-    {
-      "cn": "疱",
-      "en": "blistering"
     },
     {
       "cn": "頞部陀",
@@ -5182,18 +4926,6 @@
     {
       "cn": "八断行",
       "en": "8 antidotes"
-    },
-    {
-      "cn": "勤",
-      "en": "effort;"
-    },
-    {
-      "cn": "信",
-      "en": "faith"
-    },
-    {
-      "cn": "安",
-      "en": "pliancy"
     },
     {
       "cn": "八关斋戒",
@@ -5532,14 +5264,6 @@
       "en": "pliancy"
     },
     {
-      "cn": "惭",
-      "en": "shame"
-    },
-    {
-      "cn": "愧",
-      "en": "embarrassment"
-    },
-    {
       "cn": "无贪",
       "en": "non-attachment"
     },
@@ -5560,64 +5284,8 @@
       "en": "10 bases of small afflictions"
     },
     {
-      "cn": "忿",
-      "en": "belligerence"
-    },
-    {
-      "cn": "覆",
-      "en": "concealment"
-    },
-    {
-      "cn": "悭",
-      "en": "miserliness"
-    },
-    {
-      "cn": "嫉",
-      "en": "jealousy"
-    },
-    {
-      "cn": "恼",
-      "en": "spite"
-    },
-    {
-      "cn": "害",
-      "en": "harmfulness"
-    },
-    {
-      "cn": "恨",
-      "en": "resentment"
-    },
-    {
-      "cn": "谄",
-      "en": "dissimulation"
-    },
-    {
-      "cn": "诳",
-      "en": "deceit"
-    },
-    {
-      "cn": "憍",
-      "en": "haughtiness"
-    },
-    {
       "cn": "十方",
       "en": "10 directions"
-    },
-    {
-      "cn": "东",
-      "en": "east"
-    },
-    {
-      "cn": "南",
-      "en": "south"
-    },
-    {
-      "cn": "西",
-      "en": "west"
-    },
-    {
-      "cn": "北",
-      "en": "north"
     },
     {
       "cn": "东南",
@@ -5634,14 +5302,6 @@
     {
       "cn": "东北",
       "en": "north-east"
-    },
-    {
-      "cn": "下",
-      "en": "downward direction"
-    },
-    {
-      "cn": "上",
-      "en": "upward direction"
     },
     {
       "cn": "十不善业道",
@@ -6060,15 +5720,7 @@
       "en": "nature"
     },
     {
-      "cn": "幻",
-      "en": "nature"
-    },
-    {
       "cn": "梦境",
-      "en": "an illusion"
-    },
-    {
-      "cn": "梦",
       "en": "an illusion"
     },
     {
@@ -6080,24 +5732,12 @@
       "en": "a mirage;"
     },
     {
-      "cn": "影",
-      "en": "a mirage;"
-    },
-    {
       "cn": "空花",
       "en": "a sky-flower"
     },
     {
       "cn": "镜像",
       "en": "a reflection in a mirror"
-    },
-    {
-      "cn": "像",
-      "en": "a reflection in a mirror"
-    },
-    {
-      "cn": "响",
-      "en": "an echo"
     },
     {
       "cn": "犍闼婆城",
@@ -6109,10 +5749,6 @@
     },
     {
       "cn": "变化事",
-      "en": "a magic play"
-    },
-    {
-      "cn": "化",
       "en": "a magic play"
     },
     {
@@ -6544,24 +6180,8 @@
       "en": "12 examples of illusory nature"
     },
     {
-      "cn": "虹",
-      "en": "a rainbow"
-    },
-    {
-      "cn": "电",
-      "en": "a bolt of lightning"
-    },
-    {
-      "cn": "泡",
-      "en": "a water bubble"
-    },
-    {
       "cn": "十二缘起",
       "en": "12 branches of dependent-arising"
-    },
-    {
-      "cn": "识",
-      "en": "consciousness"
     },
     {
       "cn": "名色",
@@ -6570,22 +6190,6 @@
     {
       "cn": "六处",
       "en": "6 sources"
-    },
-    {
-      "cn": "爱",
-      "en": "attachment"
-    },
-    {
-      "cn": "取",
-      "en": "grasping"
-    },
-    {
-      "cn": "有",
-      "en": "existence"
-    },
-    {
-      "cn": "生",
-      "en": "birth"
     },
     {
       "cn": "老死",
@@ -6720,10 +6324,6 @@
       "en": "life faculty"
     },
     {
-      "cn": "老",
-      "en": "aging"
-    },
-    {
       "cn": "名身",
       "en": "group of stems"
     },
@@ -6854,30 +6454,6 @@
     {
       "cn": "所触一分",
       "en": "a branch of tangible object"
-    },
-    {
-      "cn": "滑",
-      "en": "smoothness"
-    },
-    {
-      "cn": "涩",
-      "en": "roughness"
-    },
-    {
-      "cn": "重",
-      "en": "heaviness"
-    },
-    {
-      "cn": "冷",
-      "en": "cold"
-    },
-    {
-      "cn": "饥",
-      "en": "hunger"
-    },
-    {
-      "cn": "渴",
-      "en": "thirst"
     },
     {
       "cn": "法处所摄色",
@@ -7116,10 +6692,6 @@
       "en": "impermanence"
     },
     {
-      "cn": "空",
-      "en": "emptiness"
-    },
-    {
       "cn": "非我",
       "en": "selflessness"
     },
@@ -7132,48 +6704,12 @@
       "en": "4 attributes of the truth of the origin of suffering"
     },
     {
-      "cn": "集",
-      "en": "origin of all"
-    },
-    {
-      "cn": "缘",
-      "en": "condition"
-    },
-    {
       "cn": "灭谛四行相",
       "en": "4 attributes of the noble truth of cessation"
     },
     {
-      "cn": "灭",
-      "en": "cessation"
-    },
-    {
-      "cn": "静",
-      "en": "pacification"
-    },
-    {
-      "cn": "妙",
-      "en": "excellence"
-    },
-    {
-      "cn": "离",
-      "en": "renunciation;"
-    },
-    {
       "cn": "道谛四行相",
       "en": "4 features of the noble truth of path"
-    },
-    {
-      "cn": "道",
-      "en": "path"
-    },
-    {
-      "cn": "如",
-      "en": "suitability"
-    },
-    {
-      "cn": "出",
-      "en": "deliverance"
     },
     {
       "cn": "十六罗汉",
@@ -7674,18 +7210,6 @@
     {
       "cn": "次第",
       "en": "order"
-    },
-    {
-      "cn": "时",
-      "en": "time"
-    },
-    {
-      "cn": "方",
-      "en": "area"
-    },
-    {
-      "cn": "数",
-      "en": "number"
     },
     {
       "cn": "二十四心不相应行法",
