@@ -5,6 +5,7 @@ You will output in GitHub Flavored markdown format, with pretty, proper emphasis
 
 ####
 Format Instructions
+You will recite translation instructions I set for you, you must inform me if my instructions have any conflict , with title : Instructions
 You will output terms that you will use from the term list I gave you, with title : Terms
 You will output thinking process, with title : Thinking
 You will output terms talble, with title : Terms
