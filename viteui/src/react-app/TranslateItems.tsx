@@ -147,17 +147,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   return (
     <>
-      <Button 
-        variant="outline-success" 
-        size="sm" 
-        onClick={handleCopyToExcel} 
-        className="mb-2" // Add some margin below the button
-        title="将所有翻译导出为Excel"
-        // Disable button if there's no history AND no current translation
-        disabled={transHistory.length === 0 && !translate} 
-      >
-        <FontAwesomeIcon icon={faFileExcel} /> 导出Excel
-      </Button>
+
       {/* The table ID is not strictly necessary anymore if cleanHtmlForExcel uses querySelector */}
       {/* Keep it for potential future use or specific styling? Removed for now. */}
       <Table bordered hover responsive size="sm" className={`${styles['translation-table']} table-striped`}>
@@ -166,8 +156,18 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
             {/* Adjusted widths potentially */}
             <th style={{ width: "40%" }}>原文</th>
             <th style={{ width: "60%" }}>
-              翻译结果
-              {/* Removed the redundant download icon from header */}
+              翻译结果: 
+              <Button 
+                  variant="outline-success" 
+                  size="sm" 
+                  onClick={handleCopyToExcel} 
+                  className="mb-2" // Add some margin below the button
+                  title="将所有翻译导出为Excel"
+                  // Disable button if there's no history AND no current translation
+                  disabled={transHistory.length === 0 && !translate} 
+                >
+                  <FontAwesomeIcon icon={faFileExcel} /> 导出Excel
+            </Button>
             </th>
           </tr>
         </thead>

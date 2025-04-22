@@ -6,8 +6,8 @@
  * - Display areas for model thinking process and translation results
  * - History management with delete functionality
  */
-import React, { useState } from 'react';
-import { Form, Stack, Button } from 'react-bootstrap'; // Removed Dropdown
+import React, { useState, useRef, useEffect } from 'react';
+import { Form, Button } from 'react-bootstrap'; // Removed Dropdown
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
 import ModelSelector from './ModelSelector'; // Import ModelSelector
@@ -17,6 +17,7 @@ import { Translation } from './interface/translation_interface';
 import { OpenRouterModel } from './hooks/filterModels'; // Import OpenRouterModel
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { fetchTransData } from './utils/translate_tool'; // Import fetchTransData
+import './Input.css'; // Import the CSS file
 
 // Updated Props interface for the Input component
 interface InputProps {
@@ -35,8 +36,23 @@ const Input: React.FC<InputProps> = ({
 
     const [inputText, setInputText] = useState<string>('');
     const [models] = useModelsState(); // Get the full list of available models
+    const textareaRef = useRef<HTMLTextAreaElement>(null); // Ref for the textarea
 
     const [{ }, updateStatus] = useTranslatorStatus();
+
+    // Effect to handle textarea auto-grow
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            // Reset height to recalculate scrollHeight
+            textarea.style.height = 'auto';
+            // Set height based on content unless it's empty
+            const scrollHeight = textarea.scrollHeight;
+            textarea.style.height = `${scrollHeight}px`;
+             // Ensure overflow is handled if needed, but prefer auto height
+            textarea.style.overflowY = 'hidden';
+        }
+    }, [inputText]); // Depend on inputText to trigger resize
 
     async function processText(_event: any): Promise<void> {
         // Use the global config state directly
@@ -100,42 +116,57 @@ const Input: React.FC<InputProps> = ({
 
 
     return (
-        <Stack gap={3} className="h-90 overflow-auto">
-            {/* Input text area */}
-            <Form.Group className="flex-grow-1">
-                <Form.Label className="fw-bold">输入文本：</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    className="h-90"
-                    placeholder="请在此输入需要翻译的文本..."
-                    value={inputText}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                    maxLength={1024}
-                />
-            </Form.Group>
+        // Main container using flexbox layout defined in Input.css
+        <div className="input-container">
+            {/* Header section (Input + Controls), not scrollable */}
+            <div className="input-header">
+                {/* Input text area */}
+                <Form.Group className="flex-grow-1">
+                    <Form.Label className="fw-bold">输入文本：</Form.Label>
+                    <Form.Control
+                        ref={textareaRef} // Add ref to textarea
+                        as="textarea"
+                        rows={1} // Set initial rows to 1
+                        style={{ resize: 'none', overflowY: 'hidden' }} // Initial style for auto-grow
+                        placeholder="请在此输入需要翻译的文本..."
+                        value={inputText}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                            setInputText(e.target.value);
+                            // Manual triggerresize on change might be needed if useEffect isn't sufficient
+                            // const textarea = e.target;
+                            // textarea.style.height = 'auto';
+                            // textarea.style.height = `${textarea.scrollHeight}px`;
+                        }}
+                        maxLength={1024}
+                    />
+                </Form.Group>
 
-            {/* Processing button and ModelSelector */}
-            <div className="d-flex gap-2">
-                 <Button
-                    variant="primary"
-                    // Disable if no input OR no model is selected in the global config state
-                    disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
-                    onClick={processText}
-                    className="flex-grow-1" // Let button take available space
-                 >
-                    翻译
-                </Button>
-                {/* Use ModelSelector, passing only the configured models */}
-                <div style={{ minWidth: '150px' }}> {/* Wrapper to control width if needed */}
-                    <ModelSelector />
+                {/* Processing button and ModelSelector */}
+                <div className="d-flex gap-2 mt-2"> {/* Add margin-top for spacing */}
+                    <Button
+                        variant="primary"
+                        // Disable if no input OR no model is selected in the global config state
+                        disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
+                        onClick={processText}
+                        className="flex-grow-1" // Let button take available space
+                    >
+                        翻译
+                    </Button>
+                    {/* Use ModelSelector, passing only the configured models */}
+                    <div style={{ minWidth: '150px' }}> {/* Wrapper to control width if needed */}
+                        <ModelSelector />
+                    </div>
                 </div>
             </div>
-            {/* Pass the update function down to TranslateItems */}
-            <TranslateItems
-                deleteTranslation={deleteTranslation}
-                updateTranslationExpansion={updateTranslationExpansion}
-            />
-        </Stack>
+
+            {/* Scrollable translations section */}
+            <div className="scrollable-translations">
+                <TranslateItems
+                    deleteTranslation={deleteTranslation}
+                    updateTranslationExpansion={updateTranslationExpansion}
+                />
+            </div>
+        </div>
     );
 };
 

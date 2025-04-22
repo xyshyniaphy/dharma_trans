@@ -1,0 +1,25 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure it fills the parent Col */
+  /* Or use height: calc(100vh - headerHeight - otherOffsets); if needed */
+}
+
+.input-header {
+  /* This section is no longer sticky, just a regular part of the flex layout */
+  padding-bottom: 1rem; /* Maintain some spacing */
+  /* Add flex-shrink: 0; if you want to absolutely prevent it from shrinking */
+  flex-shrink: 0;
+}
+
+.scrollable-translations {
+  flex-grow: 1; /* Allows this div to take up remaining space */
+  overflow-y: auto; /* Makes only this div scrollable */
+  min-height: 0; /* Important for flex-grow and overflow to work correctly in some browsers */
+}
+
+/* Optional: Style for the textarea if needed */
+/* .auto-grow-textarea { */
+/*   resize: none; */
+/*   overflow-y: hidden; */
+/* } */ 

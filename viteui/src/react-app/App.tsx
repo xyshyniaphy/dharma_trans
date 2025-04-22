@@ -56,10 +56,12 @@ const App: React.FC = () => {
               setShowConfigModal={(value) => updateStatus({ showConfigModal: value })}
             />
             <hr />
-            <Row className="h-90">
-                {/* Left Panel - Conditional rendering using config.showLeftPanel */}
+            {/* Make Row take remaining height and behave as flex container */}
+            <Row className="flex-grow-1" style={{ minHeight: 0 }}>
+                {/* Left Panel - Conditional rendering */}
                 {config.showLeftPanel && (
-                    <Col md={3} className="p-3">
+                    // Ensure left panel also stretches if needed or has its own scroll
+                    <Col md={3} className="p-3 d-flex flex-column">
                         <ViewHistory
                             topics={topics}
                             createTopic={createTopic}
@@ -68,8 +70,9 @@ const App: React.FC = () => {
                         />
                     </Col>
                 )}
-                {/* Main Panel - Adjust column size based on config.showLeftPanel */}
-                <Col md={config.showLeftPanel ? 9 : 12} className="p-3">
+                {/* Main Panel - Make Col take remaining height */}
+                <Col md={config.showLeftPanel ? 9 : 12} className="p-3 d-flex flex-column">
+                    {/* Input component will fill this Col via its .input-container height: 100% */}
                     <Input
                         addTranslationToTopic={addTranslationToTopic}
                         deleteTranslation={deleteTranslation}
