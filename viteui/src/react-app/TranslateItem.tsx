@@ -120,6 +120,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
             {/* Model Name (centered) */}
             <Form.Label className="fw-bold mb-0 text-center flex-grow-1">{modelName}</Form.Label>
+            <br/>
 
             {/* Right button group (Delete) */}
             <div className={`${styles['hover-buttons']}`} style={{ minWidth: '30px' }}>
