@@ -6,6 +6,10 @@ import { Translation } from './interface/translation_interface';
 import { faTrash, faCopy, faBrain, faEyeSlash } from '@fortawesome/free-solid-svg-icons'; // Added icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './TranslateItem.module.css';
+// Import Recoil hook to read state
+import { useRecoilValue } from 'recoil';
+// Import the state atom
+import { translatorStatusState } from './state/translatorStatusState';
 // Removed useTranslatorStatus import
 
 // Updated Props interface
@@ -26,6 +30,9 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 }) => {
   // Removed preRef and related useEffect/state
   const markdownRef = useRef(null);
+
+  // Get the global state for hiding thinking divs
+  const { hideAllThinkingDiv } = useRecoilValue(translatorStatusState);
 
   // Translation data or defaults
   const out = translation?.output || '';
@@ -84,6 +91,9 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
 
   // Determine if the thinking section should be available
   const hasThinking = think && think.trim() !== '';
+  // Determine if the thinking section should be rendered (considering global hide flag)
+  // Added check for !hideAllThinkingDiv
+  const shouldRenderThinking = hasThinking && !hideAllThinkingDiv;
 
   return (
     <tr className={styles['translate-row']}>
@@ -121,8 +131,9 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
             </div>
           </div>
 
-          {/* Collapsible Thinking Section */}
-          {hasThinking && (
+          {/* Collapsible Thinking Section - Now respects global hide flag */}
+          {/* Changed condition from hasThinking to shouldRenderThinking */}
+          {shouldRenderThinking && (
             <div className="mb-2"> {/* Add margin below thinking section */}
               <Button
                 variant="outline-primary"
