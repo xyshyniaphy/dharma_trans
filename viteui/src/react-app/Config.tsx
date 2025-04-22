@@ -8,7 +8,6 @@ import { fetchAndFilterModels } from './hooks/filterModels';
 import { useModelsState } from './hooks/modelsHook';
 import { useDTConfig } from './hooks/configHook';
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
-import ModelSelector from './ModelSelector'; // Import the new component
 
 interface ConfigProps {
     clearTopics: () => Promise<void>;
@@ -133,20 +132,7 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
                         <Form.Control type="text" id="apiKeyInput" value={tempApiKey} onChange={handleTempApiKeyChange} />
                         <Button variant="link" href="https://zhuanlan.zhihu.com/p/28203837581" target="_blank" rel="noopener noreferrer" className="text-primary">获取 OpenRouter API 密钥</Button>
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label htmlFor="model-selector-dropdown">选择模型 (可多选):</Form.Label>
-                        {/* Replace Form.Select with ModelSelector */}
-                        <ModelSelector
-                            // selectedModelIds={tempSelectedModelIds} // Removed prop
-                            // onChange={handleTempModelsChange} // Removed prop
-                        />
-                        {/* Remove single model details display */}
-                        {/* <br/> ... */}
-                        <br/>
-                        <Form.Text>
-                            推荐: DeepSeek V3 模型影响速度和质量。选择多个模型将在翻译时依次使用。<br/>Openrouter每天有1000次免费调用额度。<br/>Xai每月有150美元免费额度，但Xai免费额度需要设置
-                        </Form.Text>
-                    </Form.Group>
+
                 </Form>
                 <br/>
                 <Form.Check 
@@ -160,7 +146,7 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
                 />
                 {/* Add button to show Dictionary Viewer */}
                 <Button 
-                    variant="link" 
+                    variant="outline-primary" 
                     onClick={() => setShowDictViewer(true)} 
                     className="ms-3 p-0 align-baseline" // Adjust styling as needed
                 >
