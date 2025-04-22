@@ -67,26 +67,27 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   // Function to handle copying the translation result to Excel file with file dialog
   // Modified to hide thinking divs globally during export
   const handleCopyToExcel = async () => {
-    // Check if there is history to export
     if (transHistory.length === 0 && !translate) {
       console.warn("No translations found to export.");
-      return; // Cannot export if nothing is displayed
+      return;
     }
 
-    // Set the global flag to hide thinking divs
-    setTranslatorStatus(prev => ({ ...prev, hideAllThinkingDiv: true }));
+    // Set flags: hide thinking divs AND indicate processing start
+    setTranslatorStatus(prev => ({ 
+      ...prev, 
+      hideAllThinkingDiv: true, 
+      isProcessing: true // Set isProcessing to true
+    }));
 
     try {
-      // Wait for the next render cycle to ensure UI updates (thinking divs are hidden)
+      // Wait for UI updates (thinking hidden, overlay potentially shown)
       await new Promise(resolve => setTimeout(resolve, 0));
 
-      // Call the imported cleanHtmlForExcel function (expects no arguments)
+      // Call the imported cleanHtmlForExcel function
       const excelBase64Data = cleanHtmlForExcel(); 
       if (!excelBase64Data) {
-        // Error already logged within cleanHtmlForExcel if table not found
         console.error("Failed to get table data for Excel export.");
-        // The finally block will reset the flag.
-        return; 
+        return; // Finally block will reset flags
       }
 
       // Decode base64 to binary array
@@ -128,14 +129,17 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       // Clean up the URL object to release resources and prevent memory leaks
       URL.revokeObjectURL(url);
 
-      console.log("Excel file download dialog should be shown"); // Log to confirm download process
+      console.log("Excel file download dialog should be shown");
 
     } catch (error) {
-      // Catch errors during the process (e.g., from cleanHtmlForExcel or blob creation)
       console.error("Error generating or downloading Excel file:", error); 
     } finally {
-      // Always reset the global flag, regardless of success or error
-      setTranslatorStatus(prev => ({ ...prev, hideAllThinkingDiv: false }));
+      // Always reset flags: show thinking divs AND indicate processing end
+      setTranslatorStatus(prev => ({ 
+        ...prev, 
+        hideAllThinkingDiv: false, 
+        isProcessing: false // Set isProcessing back to false
+      }));
     }
   };
 
