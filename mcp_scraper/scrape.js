@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { parse } = require('node-html-parser');
 const TurndownService = require('turndown');
-const fs = require('fs');
+const fs = require('fs').promises; // Use promises for async file operations
 
 async function scrapeAndConvert() {
   try {
@@ -39,4 +39,4 @@ async function scrapeAndConvert() {
   }
 }
 
-scrapeAndConvert();
+scrapeAndConvert().then(()=>console.log('done'));
