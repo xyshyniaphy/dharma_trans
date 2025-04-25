@@ -21,7 +21,8 @@ function isEnglish(text: string): boolean {
     }
     // Calculate the proportion of English alphabet characters
     // Return true if the proportion is greater than 0.5 (50%)
-    return alphabetCount / text.length > 0.5;
+    // Avoid division by zero for empty strings
+    return text.length > 0 ? alphabetCount / text.length > 0.5 : false;
 }
 
 
@@ -43,7 +44,8 @@ function getCn2EnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
     // Iterate through the input text
     for (let i = 0; i < text.length; i++) {
         // Check substrings starting from the current position up to the max word length
-        for (let len = 1; len <= maxChineseWordLength && i + len <= text.length; len++) {
+        // Iterate backwards from max length to potentially prioritize longer matches slightly
+        for (let len = Math.min(maxChineseWordLength, text.length - i); len >= 1; len--) {
             const potentialWord = text.substring(i, i + len);
             // Check if the potential word exists in the dictionary Map and hasn't been found yet
             if (cn2enMap.has(potentialWord) && !wordsFound.has(potentialWord)) {
@@ -52,6 +54,9 @@ function getCn2EnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
                  results.push(`ch:${potentialWord} en:${englishTranslation}`); // Format: ch:[Chinese] en:[English]
                  // Add the found word to the Set to prevent re-adding
                  wordsFound.add(potentialWord);
+                 // Optional: If longest match is strictly required at a starting position 'i',
+                 // you could break here after finding the first (longest) match.
+                 // break;
             }
         }
     }
@@ -60,37 +65,66 @@ function getCn2EnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
 }
 
 /**
- * Filters the dictionary to find English terms in the text and returns their Chinese translations.
+ * Escapes special characters in a string for use in a regular expression.
+ * @param str The input string.
+ * @returns The string with regex special characters escaped.
+ */
+function escapeRegex(str: string): string {
+    // Escape characters with special meaning in regex: . * + ? ^ $ { } ( ) | [ ] \
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&\'); // $& inserts the matched substring
+}
+
+/**
+ * Filters the dictionary to find English terms (whole words/phrases) in the text
+ * using case-insensitive matching and returns their Chinese translations.
  * @param text The input text (assumed to be English).
  * @param dictionary The dictionary array.
  * @returns A string containing matching dictionary entries, formatted and newline-separated.
  */
 function getEn2CnFilteredDictionary(text: string, dictionary: DictEntry[]): string {
-    // Create a Map from the dictionary for efficient lookup (English -> Chinese)
-    // Note: If multiple Chinese words map to the same English word, the last one in the array wins.
-    const en2cnMap = new Map(dictionary.map(entry => [entry.en.toLowerCase(), entry.cn]));
-    const results: string[] = [];
-    // Convert the input text to lowercase for case-insensitive matching
-    const textLower = text.toLowerCase();
+    // Create maps for efficient lookup:
+    // en2cnMap: lowercase English -> Chinese translation
+    // enOriginalCaseMap: lowercase English -> original English casing
+    const en2cnMap = new Map<string, string>();
+    const enOriginalCaseMap = new Map<string, string>();
 
-    // Iterate through the original dictionary entries to preserve the original English casing in the output
+    // Populate the maps in a single pass through the dictionary
     for (const entry of dictionary) {
-        const englishKey = entry.en;
-        const keyLower = englishKey.toLowerCase();
-        // Check if the lowercase input text includes the lowercase English key and the key exists in our map
-        if (en2cnMap.has(keyLower) && textLower.includes(keyLower)) {
-            const chineseValue = en2cnMap.get(keyLower);
-            // Add the formatted dictionary entry to the results array
-            results.push(`en:${englishKey} ch:${chineseValue}`); // Format: en:[English] ch:[Chinese]
-            // Remove the key from the map after finding it to avoid duplicates if the same English term appears multiple times
-            // or maps to multiple Chinese terms (though the map creation handles the latter)
-            en2cnMap.delete(keyLower);
+        // Ensure entry.en is not null or undefined before processing
+        if (entry.en) {
+            const keyLower = entry.en.toLowerCase();
+            // Store translation, potentially overwriting if duplicates exist (last one wins)
+            en2cnMap.set(keyLower, entry.cn);
+            // Store original casing
+            enOriginalCaseMap.set(keyLower, entry.en);
         }
     }
-     // Join the results array into a single string separated by newlines
-    return results.join('\n');
-}
 
+    // Use a Set to store results and automatically handle duplicates
+    const resultsSet = new Set<string>();
+
+    // Iterate through the unique lowercase English keys from the dictionary
+    for (const keyLower of enOriginalCaseMap.keys()) {
+        // Escape the key for safe use in regex
+        const escapedKey = escapeRegex(keyLower);
+        // Create a regex to find the key as a whole word/phrase, case-insensitive, globally
+        // \b ensures word boundaries (won't match 'cat' in 'caterpillar')
+        const regex = new RegExp(`\\\\b${escapedKey}\\\\b`, 'gi');
+        let match;
+        // Find all occurrences of the key in the input text
+        while ((match = regex.exec(text)) !== null) {
+            // Retrieve the original English casing and the Chinese translation
+            // Use non-null assertion (!) as we know the key exists in both maps
+            const originalEn = enOriginalCaseMap.get(keyLower)!;
+            const chineseValue = en2cnMap.get(keyLower)!;
+            // Add the formatted result to the Set
+            resultsSet.add(`en:${originalEn} ch:${chineseValue}`); // Format: en:[English] ch:[Chinese]
+        }
+    }
+
+     // Convert the Set to an array and join into a newline-separated string
+    return Array.from(resultsSet).join('\n');
+}
 
 /**
  * Detects the language of the text and returns the filtered dictionary entries accordingly.
