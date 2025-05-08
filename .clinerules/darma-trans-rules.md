@@ -15,7 +15,15 @@ This set of guidelines is project-specific for the Darma Trans project, focusing
 - Use TypeScript for type safety in React components.
 - Implement state management with Recoil hooks for sharing states between sub-components.
 - Maintain UI elements in Chinese for localization.
+- Do not remove any comments
 
 ## Project context
 - Build applications for Cloudflare Workers, integrating D1 database and KV storage.
 - Use React and React-Bootstrap for UI components.
+
+## Server Runtime
+- Server code run on cloudflare, using cloudflare workers, d1 database, kv
+
+## Client Runtime
+- typescript, react, react-bootstrap
+- use recoil for state management  
