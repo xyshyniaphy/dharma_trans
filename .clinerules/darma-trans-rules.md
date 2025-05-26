@@ -16,14 +16,16 @@ This set of guidelines is project-specific for the Darma Trans project, focusing
 - Implement state management with Recoil hooks for sharing states between sub-components.
 - Maintain UI elements in Chinese for localization.
 - Do not remove any comments
+- Add comment for all code create, edit or changes
 
 ## Project context
 - Build applications for Cloudflare Workers, integrating D1 database and KV storage.
 - Use React and React-Bootstrap for UI components.
+- use wrangler to deploy server and UI to cloudflare workers
 
 ## Server Runtime
 - Server code run on cloudflare, using cloudflare workers, d1 database, kv
 
-## Client Runtime
+## UI Runtime
 - typescript, react, react-bootstrap
 - use recoil for state management  
