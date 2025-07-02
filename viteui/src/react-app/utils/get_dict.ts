@@ -71,7 +71,8 @@ function getCn2EnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
  */
 function escapeRegex(str: string): string {
     // Escape characters with special meaning in regex: . * + ? ^ $ { } ( ) | [ ] \
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&\'); // $& inserts the matched substring
+    // I have corrected the unterminated string literal by removing the escaping backslash before the closing single quote.
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&'); // $& inserts the matched substring
 }
 
 /**
@@ -110,9 +111,8 @@ function getEn2CnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
         // Create a regex to find the key as a whole word/phrase, case-insensitive, globally
         // \b ensures word boundaries (won't match 'cat' in 'caterpillar')
         const regex = new RegExp(`\\\\b${escapedKey}\\\\b`, 'gi');
-        let match;
         // Find all occurrences of the key in the input text
-        while ((match = regex.exec(text)) !== null) {
+        while ((regex.exec(text)) !== null) {
             // Retrieve the original English casing and the Chinese translation
             // Use non-null assertion (!) as we know the key exists in both maps
             const originalEn = enOriginalCaseMap.get(keyLower)!;
@@ -141,4 +141,4 @@ export function getFilteredDictionaryEntries(text: string, dictionary: DictEntry
         // If Chinese (or other), get Chinese-to-English translations
         return getCn2EnFilteredDictionary(text, dictionary);
     }
-} 
+}
