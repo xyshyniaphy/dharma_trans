@@ -193,7 +193,7 @@ const Input: React.FC<InputProps> = ({
                         {/* Add comment for my changes */}
                         {/* Instruction for translation trigger keys */}
                         <div className="text-muted small mt-1">
-                            Enter to translate, Ctrl+Enter for new line.
+                            按Enter键开始翻译, 按Ctrl+Enter换行.
                         </div>
                     </div>
                     {/* Use ModelSelector, passing only the configured models */}
