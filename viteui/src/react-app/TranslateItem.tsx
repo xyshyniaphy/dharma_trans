@@ -19,6 +19,7 @@ type TranslateItemProps = {
   showInputCell: boolean; // Prop to control rendering of the input cell
   rowSpan: number; // Prop to set the rowSpan for the input cell
   updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void; // Function to update expansion state
+  onToggleExport: (translateId: string) => void;
 };
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
@@ -27,6 +28,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   showInputCell,
   rowSpan,
   updateTranslationExpansion, // Destructure the new prop
+  onToggleExport,
 }) => {
   // Removed preRef and related useEffect/state
   const markdownRef = useRef(null);
@@ -96,13 +98,24 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   const shouldRenderThinking = hasThinking && !hideAllThinkingDiv;
 
   return (
-    <tr className={styles['translate-row']}>
+    <tr className={styles['translate-row']} data-translate-id={translateId}>
       {/* Input Column - Conditionally rendered with rowSpan */}
       {showInputCell && (
         <td className="align-top p-2" rowSpan={rowSpan}>
           {translation?.input || ''}
         </td>
       )}
+
+      {/* Export Checkbox Column */}
+      <td className="align-top p-2 text-center">
+        {translation && (
+          <input
+            type="checkbox"
+            checked={translation.isExport}
+            onChange={() => onToggleExport(translation.translateId)}
+          />
+        )}
+      </td>
 
       {/* Translation Result Column - Now includes collapsible thinking */}
       <td className="align-top p-2">

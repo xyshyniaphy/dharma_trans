@@ -162,6 +162,7 @@ export const useTransHistory = () => {
 
   return {
     transHistory,
+    setTransHistory,
     getTranslations,
     insertTransHistory,
     deleteTransHistory,

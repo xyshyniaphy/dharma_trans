@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMemo } from "react"; // Removed useEffect
 import { TranslateItem } from "./TranslateItem";
 import { Translation } from "./interface/translation_interface";
@@ -19,13 +19,19 @@ type TranslateItemsProps = {
   updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void;
 };
 
-// Helper function to group translations by transBatchId (remains the same)
+// Helper function to group translations by transBatchId
 const groupTranslations = (translations: Translation[]) => {
   const grouped: { [key: string]: Translation[] } = {};
-  translations.forEach((t) => {
+  translations.forEach((originalTranslation) => {
+    // I am creating a mutable copy of the translation object to avoid the "object is not extensible" error.
+    const t = { ...originalTranslation };
     // Initialize isThinkingExpanded if it's undefined
     if (t.isThinkingExpanded === undefined) {
         t.isThinkingExpanded = false;
+    }
+    // Initialize isExport if it's undefined, default to true
+    if (t.isExport === undefined) {
+        t.isExport = true;
     }
     if (!grouped[t.transBatchId]) {
       grouped[t.transBatchId] = [];
@@ -42,15 +48,33 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   deleteTranslation,
   updateTranslationExpansion // Destructure the new prop
 }) => {
-  const { transHistory } = useTransHistory();
+  const { transHistory, setTransHistory } = useTransHistory();
   const [translate, _setTranslate] = useCurrentTranslate(); // Current translation in progress
+  const [allChecked, setAllChecked] = useState(true);
   // Get the setter function for translatorStatusState to control global thinking visibility
   const setTranslatorStatus = useSetRecoilState(translatorStatusState);
-  // Removed translatorStatus and related useEffect
+
+  // Effect to update allChecked state when transHistory changes
+  useEffect(() => {
+    setAllChecked(transHistory.every(t => t.isExport));
+  }, [transHistory]);
 
   // Memoize the grouped translations to avoid re-calculation on every render
-  // The grouping function now initializes isThinkingExpanded if needed
   const groupedHistory = useMemo(() => groupTranslations(transHistory), [transHistory]);
+
+  const handleToggleAll = () => {
+    const newAllChecked = !allChecked;
+    setAllChecked(newAllChecked);
+    const updatedHistory = transHistory.map(t => ({ ...t, isExport: newAllChecked }));
+    setTransHistory(updatedHistory);
+  };
+
+  const handleToggleOne = (translateId: string) => {
+    const updatedHistory = transHistory.map(t =>
+      t.translateId === translateId ? { ...t, isExport: !t.isExport } : t
+    );
+    setTransHistory(updatedHistory);
+  };
 
   // Render the current translation item if it exists
   const currentTransItem = translate ? (
@@ -61,14 +85,16 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       showInputCell={true} // Always show input for the current item
       rowSpan={1} // No row span for the current item
       updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
+      onToggleExport={handleToggleOne}
     />
   ) : null;
 
   // Function to handle copying the translation result to Excel file with file dialog
-  // Modified to hide thinking divs globally during export
   const handleCopyToExcel = async () => {
-    if (transHistory.length === 0 && !translate) {
-      console.warn("No translations found to export.");
+    const itemsToExport = transHistory.filter(t => t.isExport);
+    if (itemsToExport.length === 0) {
+      console.warn("No translations selected to export.");
+      alert("没有选择要导出的翻译。");
       return;
     }
 
@@ -84,7 +110,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       await new Promise(resolve => setTimeout(resolve, 0));
 
       // Call the imported cleanHtmlForExcel function
-      const excelBase64Data = cleanHtmlForExcel(); 
+      const excelBase64Data = cleanHtmlForExcel(itemsToExport.map(t => t.translateId));
       if (!excelBase64Data) {
         console.error("Failed to get table data for Excel export.");
         return; // Finally block will reset flags
@@ -154,10 +180,19 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
         <thead>
           <tr>
             {/* Adjusted widths potentially */}
-            <th style={{ width: "40%" }}>原文</th>
+            <th style={{ width: "35%" }}>原文</th>
+            <th style={{ width: "5%" }}>
+              <input
+                type="checkbox"
+                checked={allChecked}
+                onChange={handleToggleAll}
+                title={allChecked ? "取消全选" : "全选"}
+              />
+              导出
+            </th>
             <th style={{ width: "60%" }}>
-              翻译结果: 
-              <Button 
+              翻译结果:
+              <Button
                   variant="outline-success" 
                   size="sm" 
                   onClick={handleCopyToExcel} 
@@ -187,6 +222,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
                 showInputCell={index === 0} // Only show input cell for the first item in the group
                 rowSpan={index === 0 ? groupSize : 1} // Set rowSpan for the first item
                 updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
+                onToggleExport={handleToggleOne}
               />
             ));
           })}

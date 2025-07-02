@@ -10,7 +10,7 @@
 // Declare DOMPurify for TypeScript, assuming it's loaded globally via script tag
 declare const DOMPurify: any;
 
-export const cleanHtmlForExcel = (): string => {
+export const cleanHtmlForExcel = (translateIds: string[]): string => {
   try {
     // Find the table element
     const tableElement = document.querySelector('table');
@@ -20,6 +20,21 @@ export const cleanHtmlForExcel = (): string => {
 
     // Clone the table to avoid modifying the original DOM directly
     const clonedTable = tableElement.cloneNode(true) as HTMLTableElement;
+
+    // Filter rows to keep only the header and the selected items
+    const rows = Array.from(clonedTable.querySelectorAll('tr'));
+    const bodyRows = rows.slice(1);
+    const filteredBodyRows = bodyRows.filter(row => {
+      const id = row.getAttribute('data-translate-id');
+      return id && translateIds.includes(id);
+    });
+
+    // Rebuild the table body with only the filtered rows
+    const tbody = clonedTable.querySelector('tbody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      filteredBodyRows.forEach(row => tbody.appendChild(row));
+    }
 
     // Sanitize the HTML content of the cloned table
     // Iterate through cells if more granular control is needed,
