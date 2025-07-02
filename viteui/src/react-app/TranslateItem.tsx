@@ -3,7 +3,8 @@ import { Button, Form, Collapse } from 'react-bootstrap'; // Added Collapse
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Translation } from './interface/translation_interface';
-import { faTrash, faCopy, faBrain, faEyeSlash } from '@fortawesome/free-solid-svg-icons'; // Added icons
+// I am adding the faSync icon for the re-input button.
+import { faTrash, faCopy, faBrain, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'; // Added icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './TranslateItem.module.css';
 // Import Recoil hook to read state
@@ -20,6 +21,7 @@ type TranslateItemProps = {
   rowSpan: number; // Prop to set the rowSpan for the input cell
   updateTranslationExpansion: (translateId: string, isExpanded: boolean) => void; // Function to update expansion state
   onToggleExport: (translateId: string) => void;
+  onReInput: (text: string) => void; // I am adding the onReInput prop.
 };
 
 export const TranslateItem: React.FC<TranslateItemProps> = ({
@@ -29,6 +31,7 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
   rowSpan,
   updateTranslationExpansion, // Destructure the new prop
   onToggleExport,
+  onReInput, // I am destructuring the new prop.
 }) => {
   // Removed preRef and related useEffect/state
   const markdownRef = useRef(null);
@@ -102,7 +105,18 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
       {/* Input Column - Conditionally rendered with rowSpan */}
       {showInputCell && (
         <td className="align-top p-2" rowSpan={rowSpan}>
-          {translation?.input || ''}
+          {/* I am adding a container and a button for the re-input functionality. */}
+          <div className={styles['input-cell-container']}>
+            {translation?.input || ''}
+            <Button
+              variant="link"
+              className={`${styles['re-input-button']} p-1 rounded`}
+              onClick={() => onReInput(translation?.input || '')}
+              title="重新输入"
+            >
+              <FontAwesomeIcon icon={faSync} size="sm" />
+            </Button>
+          </div>
         </td>
       )}
 

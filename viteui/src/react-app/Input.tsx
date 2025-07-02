@@ -6,7 +6,9 @@
  * - Display areas for model thinking process and translation results
  * - History management with delete functionality
  */
-import React, { useState, useRef, useEffect } from 'react';
+// I am replacing the local state management with the new Recoil-based hook
+// to synchronize the input text across components.
+import React, { useRef, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap'; // Removed Dropdown
 import { useModelsState } from './hooks/modelsHook';
 import { TranslateItems } from './TranslateItems';
@@ -17,6 +19,7 @@ import { Translation } from './interface/translation_interface';
 import { OpenRouterModel } from './hooks/filterModels'; // Import OpenRouterModel
 import { useTranslatorStatus } from './hooks/useTranslatorStatus';
 import { fetchTransData } from './utils/translate_tool'; // Import fetchTransData
+import { useInputText } from './hooks/inputTextHook'; // Import the new hook
 import './Input.css'; // Import the CSS file
 
 // Updated Props interface for the Input component
@@ -34,7 +37,8 @@ const Input: React.FC<InputProps> = ({
     const { startTranslate } = useTranslatorExe({ addTranslationToTopic });
     const { config } = useDTConfig();
 
-    const [inputText, setInputText] = useState<string>('');
+    // I am replacing the local useState with the useInputText hook to use global state.
+    const { inputText, setInputText } = useInputText();
     const [models] = useModelsState(); // Get the full list of available models
     const textareaRef = useRef<HTMLTextAreaElement>(null); // Ref for the textarea
 

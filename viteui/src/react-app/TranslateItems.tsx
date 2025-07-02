@@ -4,6 +4,7 @@ import { TranslateItem } from "./TranslateItem";
 import { Translation } from "./interface/translation_interface";
 import { useCurrentTranslate } from "./hooks/currentTranslateHook";
 import { useTransHistory } from "./hooks/transHistoryHook";
+import { useInputText } from './hooks/inputTextHook'; // I am importing the new hook to get the setter function.
 import { Table, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesomeIcon
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons'; // Keep Excel icon, remove cloud download
@@ -49,6 +50,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
   updateTranslationExpansion // Destructure the new prop
 }) => {
   const { transHistory, setTransHistory } = useTransHistory();
+  const { setInputText } = useInputText(); // I am getting the setter function from the hook.
   const [translate, _setTranslate] = useCurrentTranslate(); // Current translation in progress
   const [allChecked, setAllChecked] = useState(true);
   // Get the setter function for translatorStatusState to control global thinking visibility
@@ -89,6 +91,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
       rowSpan={1} // No row span for the current item
       updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
       onToggleExport={handleToggleOne}
+      onReInput={setInputText} // I am passing the setter function as a prop.
     />
   ) : null;
 
@@ -226,6 +229,7 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
                 rowSpan={index === 0 ? groupSize : 1} // Set rowSpan for the first item
                 updateTranslationExpansion={updateTranslationExpansion} // Pass down the update function
                 onToggleExport={handleToggleOne}
+                onReInput={setInputText} // I am passing the setter function as a prop.
               />
             ));
           })}
