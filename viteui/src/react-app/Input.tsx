@@ -54,6 +54,38 @@ const Input: React.FC<InputProps> = ({
         }
     }, [inputText]); // Depend on inputText to trigger resize
 
+    // Add comment for my changes
+    // Handle key down events in the textarea for a more robust implementation
+    // - Enter: Trigger translation
+    // - Ctrl+Enter: Insert a new line at the current cursor position
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === 'Enter') {
+            if (event.ctrlKey) {
+                // For Ctrl+Enter, we manually insert a newline character
+                event.preventDefault();
+                const textarea = event.currentTarget;
+                const { selectionStart, selectionEnd, value } = textarea;
+                const newValue =
+                    value.substring(0, selectionStart) +
+                    '\n' +
+                    value.substring(selectionEnd);
+                setInputText(newValue);
+
+                // We need to manually update the cursor position after the state update
+                // Using a timeout to ensure it runs after the re-render
+                setTimeout(() => {
+                    textarea.selectionStart = textarea.selectionEnd = selectionStart + 1;
+                }, 0);
+            } else {
+                // For Enter alone, we prevent the default newline and trigger translation
+                event.preventDefault();
+                if (inputText && config.selectedModels && config.selectedModels.length > 0) {
+                    processText(event);
+                }
+            }
+        }
+    };
+
     async function processText(_event: any): Promise<void> {
         // Use the global config state directly
         if (!config.selectedModels || config.selectedModels.length === 0) {
@@ -137,21 +169,29 @@ const Input: React.FC<InputProps> = ({
                             // textarea.style.height = 'auto';
                             // textarea.style.height = `${textarea.scrollHeight}px`;
                         }}
+                        onKeyDown={handleKeyDown} // Add keydown handler for Enter/Ctrl+Enter
                         maxLength={1024}
                     />
                 </Form.Group>
 
                 {/* Processing button and ModelSelector */}
-                <div className="d-flex gap-2 mt-2"> {/* Add margin-top for spacing */}
-                    <Button
-                        variant="primary"
-                        // Disable if no input OR no model is selected in the global config state
-                        disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
-                        onClick={processText}
-                        className="flex-grow-1" // Let button take available space
-                    >
-                        翻译
-                    </Button>
+                <div className="d-flex gap-2 mt-2 align-items-start"> {/* Add margin-top for spacing */}
+                    <div className="flex-grow-1">
+                        <Button
+                            variant="primary"
+                            // Disable if no input OR no model is selected in the global config state
+                            disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
+                            onClick={processText}
+                            className="w-100" // Let button take available space
+                        >
+                            翻译
+                        </Button>
+                        {/* Add comment for my changes */}
+                        {/* Instruction for translation trigger keys */}
+                        <div className="text-muted small mt-1">
+                            Enter to translate, Ctrl+Enter for new line.
+                        </div>
+                    </div>
                     {/* Use ModelSelector, passing only the configured models */}
                     <div style={{ minWidth: '150px' }}> {/* Wrapper to control width if needed */}
                         <ModelSelector />

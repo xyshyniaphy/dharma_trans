@@ -7,6 +7,7 @@ Dharma Trans is a powerful translation application built with a modern tech stac
 -   **Real-time Translation**: Get instant translations for your text.
 -   **Translation History**: View and manage your past translations.
 -   **Model Selection**: Choose from various translation models to suit your needs.
+-   **Keyboard Shortcuts**: Press `Enter` to translate and `Ctrl+Enter` to create a new line in the input field.
 -   **Selective Export to Excel**: A new "导出" (Export) column with checkboxes allows you to select specific translations to be exported to an Excel file.
 -   **Chinese UI**: The user interface is fully localized in Chinese.
 
