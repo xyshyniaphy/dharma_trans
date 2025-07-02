@@ -56,8 +56,11 @@ export const TranslateItems: React.FC<TranslateItemsProps> = ({
 
   // Effect to update allChecked state when transHistory changes
   useEffect(() => {
-    setAllChecked(transHistory.every(t => t.isExport));
-  }, [transHistory]);
+    // I am ensuring all items are checked by default when the history changes.
+    const updatedHistory = transHistory.map(t => ({ ...t, isExport: true }));
+    setTransHistory(updatedHistory);
+    setAllChecked(true);
+  }, [transHistory.length]);
 
   // Memoize the grouped translations to avoid re-calculation on every render
   const groupedHistory = useMemo(() => groupTranslations(transHistory), [transHistory]);

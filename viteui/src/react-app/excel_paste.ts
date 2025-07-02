@@ -36,6 +36,22 @@ export const cleanHtmlForExcel = (translateIds: string[]): string => {
       filteredBodyRows.forEach(row => tbody.appendChild(row));
     }
 
+    // I am removing the "导出" column from the table before exporting to Excel.
+    const headerCells = Array.from(clonedTable.querySelectorAll('th'));
+    headerCells[1].remove();
+    const bodyCells = Array.from(clonedTable.querySelectorAll('td'));
+    bodyCells.forEach((cell, index) => {
+        if (index % 3 === 1) {
+            cell.remove();
+        }
+    });
+
+    // I am removing the "导出Excel" button from the table before exporting to Excel.
+    const exportButton = clonedTable.querySelector('button');
+    if (exportButton) {
+        exportButton.remove();
+    }
+
     // Sanitize the HTML content of the cloned table
     // Iterate through cells if more granular control is needed,
     // but sanitizing the whole outerHTML is simpler here.
