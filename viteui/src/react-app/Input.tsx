@@ -174,7 +174,7 @@ const Input: React.FC<InputProps> = ({
                             // textarea.style.height = `${textarea.scrollHeight}px`;
                         }}
                         onKeyDown={handleKeyDown} // Add keydown handler for Enter/Ctrl+Enter
-                        maxLength={1024}
+                        maxLength={4064}
                     />
                 </Form.Group>
 
