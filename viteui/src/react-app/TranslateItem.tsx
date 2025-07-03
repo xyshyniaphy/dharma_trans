@@ -111,7 +111,10 @@ export const TranslateItem: React.FC<TranslateItemProps> = ({
             <Button
               variant="link"
               className={`${styles['re-input-button']} p-1 rounded`}
-              onClick={() => onReInput(translation?.input || '')}
+              onClick={() => {
+                onReInput(translation?.input || '');
+                window.scrollTo(0, 0);
+              }}
               title="重新输入"
             >
               <FontAwesomeIcon icon={faSync} size="sm" />
