@@ -158,7 +158,20 @@ const Input: React.FC<InputProps> = ({
             <div className="input-header">
                 {/* Input text area */}
                 <Form.Group className="flex-grow-1">
-                    <Form.Label className="fw-bold">输入文本：</Form.Label>
+                    {/* Add comment for my changes */}
+                    {/* Add a clear button next to the label, disabled when there is no input text. */}
+                    <div className="d-flex align-items-center mb-1">
+                        <Form.Label className="fw-bold mb-0">输入文本：</Form.Label>
+                        <Button
+                            variant={inputText ? "primary" : "secondary"}
+                            size="sm"
+                            className="ms-2"
+                            disabled={!inputText}
+                            onClick={() => setInputText('')}
+                        >
+                            清空
+                        </Button>
+                    </div>
                     <Form.Control
                         ref={textareaRef} // Add ref to textarea
                         as="textarea"

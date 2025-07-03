@@ -5,6 +5,7 @@
 
 Key features include:
 - An auto-growing textarea for user input to accommodate varying text lengths.
+- A "清空" (Clear) button to quickly clear the input text.
 - A "翻译" (Translate) button and keyboard shortcuts (`Enter` to translate, `Ctrl+Enter` for a new line) to trigger the translation workflow.
 - An instruction label to inform users about the keyboard shortcuts.
 - Integration with a `ModelSelector` component, allowing users to see which models are active.
