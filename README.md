@@ -38,4 +38,10 @@ Dharma Trans is a powerful translation application built with a modern tech stac
     npm run dev
     ```
 
+## Recent Changes
+*   **2025-07-03: Fix Config Save Logic**
+    *   Corrected the save logic in the configuration modal to allow saving the API key without requiring a model to be selected.
+    *   Resolved a build error by removing an unused variable.
+    *   See `changes/20250703_fix_config_save_logic.md` for more details.
+
 ---

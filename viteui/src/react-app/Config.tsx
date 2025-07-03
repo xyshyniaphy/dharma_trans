@@ -23,7 +23,7 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
     const { explain, apiKey  } = config;
 
     const [tempApiKey, setTempApiKey] = useState(apiKey);
-    const [models, setModels] = useModelsState(); // Keep for checking if models are loaded for save/disable logic
+    const [, setModels] = useModelsState(); // setModels is used to load the models list
     const [showDictViewer, setShowDictViewer] = useState(false); // State for DictViewer modal
 
     const [{ showConfigModal }, updateStatus] = useTranslatorStatus();
@@ -101,21 +101,18 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
     };
 
     function saveAndClose(): void {
-        // Update condition to check config.selectedModels length directly
-        // Also ensure models have loaded and API key is present
-        if (models.length > 0 && tempApiKey.length >= 10 && config.selectedModels && config.selectedModels.length > 0) {
+        // API key is required to be at least 10 characters long.
+        if (tempApiKey.length >= 10) {
             console.log('Saving API Key:', tempApiKey);
-            console.log('Saving selected model IDs from config:', config.selectedModels);
             // Only need to save apiKey if it changed, selectedModels is updated directly by ModelSelector
             if (tempApiKey !== apiKey) {
                 updateConfig({ apiKey: tempApiKey });
             }
-            // updateConfig({ apiKey: tempApiKey, selectedModels: config.selectedModels }); // selectedModels already updated
             handleHideConfigModal();
         } else {
             // Optionally provide feedback if save conditions aren't met
-            console.warn("Save conditions not met. API Key and at least one model must be selected (check config).");
-            alert("Please ensure you have entered a valid API key and selected at least one model using the dropdown.");
+            console.warn("Save conditions not met. API Key must be valid.");
+            alert("Please ensure you have entered a valid API key.");
         }
     }
     if (!showConfigModal) return null;
@@ -163,8 +160,8 @@ const Config: React.FC<ConfigProps> = ({ clearTopics }) => {
                     <input type="file" id="import-history" accept=".json" onChange={handleImportHistory} hidden />
                 </Button> */}
                 <Button variant="outline-warning" onClick={handleHideConfigModal}>取消</Button>
-                {/* Update save button disabled condition to check config.selectedModels */}
-                <Button variant="success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10 || !config.selectedModels || config.selectedModels.length === 0}>保存</Button>
+                {/* Update save button disabled condition to only check for API key */}
+                <Button variant="success" onClick={saveAndClose} disabled={!tempApiKey || tempApiKey.length < 10}>保存</Button>
 
             </Modal.Footer>
 
