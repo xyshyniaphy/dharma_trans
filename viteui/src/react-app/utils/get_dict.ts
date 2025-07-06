@@ -70,10 +70,12 @@ function getCn2EnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
  * @returns The string with regex special characters escaped.
  */
 function escapeRegex(str: string): string {
-    // Escape characters with special meaning in regex: . * + ? ^ $ { } ( ) | [ ] \
-    // I have corrected the unterminated string literal by removing the escaping backslash before the closing single quote.
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&'); // $& inserts the matched substring
+    // Escape characters with special meaning in regex.
+    // The backslash '\' must be added to the character set.
+    // The replacement string must be '\\$&' to prepend a backslash.
+    return str.replace(/[.*+?^${}()|[\]\-\\]/g, '\\$&');
 }
+
 
 /**
  * Filters the dictionary to find English terms (whole words/phrases) in the text
@@ -109,8 +111,8 @@ function getEn2CnFilteredDictionary(text: string, dictionary: DictEntry[]): stri
         // Escape the key for safe use in regex
         const escapedKey = escapeRegex(keyLower);
         // Create a regex to find the key as a whole word/phrase, case-insensitive, globally
-        // \b ensures word boundaries (won't match 'cat' in 'caterpillar')
-        const regex = new RegExp(`\\\\b${escapedKey}\\\\b`, 'gi');
+        // ensures word boundaries (won't match 'cat' in 'caterpillar')
+        const regex = new RegExp(`\\b${escapedKey}\\b`, 'gi');
         // Find all occurrences of the key in the input text
         while ((regex.exec(text)) !== null) {
             // Retrieve the original English casing and the Chinese translation
