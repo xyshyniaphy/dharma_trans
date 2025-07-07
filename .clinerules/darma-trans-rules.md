@@ -17,6 +17,7 @@ This set of guidelines is project-specific for the Darma Trans project, focusing
 - Maintain UI elements in Chinese for localization.
 - Do not remove any comments
 - Add comment for all code create, edit or changes
+- Do not generate or modify any regular expressions (regex). The user will provide any necessary regex.
 
 ## Project context
 - Build applications for Cloudflare Workers, integrating D1 database and KV storage.
@@ -28,4 +29,4 @@ This set of guidelines is project-specific for the Darma Trans project, focusing
 
 ## UI Runtime
 - typescript, react, react-bootstrap
-- use recoil for state management  
+- use recoil for state management
