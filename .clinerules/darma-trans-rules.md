@@ -7,6 +7,7 @@ This set of guidelines is project-specific for the Darma Trans project, focusing
 
 ## Development workflow
 - Use Windows commands for all operations, as the OS is Windows 11.
+- Use ";" to concat commands, do not use "&&" to concat commands, as the OS is Windows 11.
 - Ensure all changes include added comments to explain modifications, without removing existing comments.
 - Do not alter useEffect dependencies in React components.
 - Develop with awareness of Cloudflare Workers environment, avoiding assumptions about server-side execution.
