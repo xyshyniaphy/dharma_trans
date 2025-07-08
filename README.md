@@ -11,7 +11,7 @@ Dharma Trans is a powerful translation application built with a modern tech stac
 -   **Re-Input from History**: A refresh icon appears on hover over the original text in the history, allowing you to quickly re-populate the input field for re-translation. Clicking the icon also automatically scrolls the page to the top.
 -   **Selective Export to Excel**: A new "导出" (Export) column with checkboxes allows you to select specific translations to be exported to an Excel file.
 -   **Clear Button**: A "清空" (Clear) button allows for quick clearing of the input text area.
--   **Character Counter**: An indicator displays the current number of characters in the input field versus the maximum allowed.
+-   **Character Counter**: The character count is now displayed inside the "翻译" (Translate) button, updating as you type.
 -   **Chinese UI**: The user interface is fully localized in Chinese.
 
 ## Tech Stack

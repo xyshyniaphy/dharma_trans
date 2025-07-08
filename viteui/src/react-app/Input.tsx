@@ -162,20 +162,17 @@ const Input: React.FC<InputProps> = ({
                     {/* Add a clear button next to the label, disabled when there is no input text. */}
                     {/* Add comment for my changes */}
                     {/* Add a clear button and character count indicator next to the label. */}
-                    <div className="d-flex align-items-center justify-content-between mb-1">
-                        <div className="d-flex align-items-center">
-                            <Form.Label className="fw-bold mb-0">输入文本：</Form.Label>
-                            <Button
-                                variant={inputText ? "primary" : "secondary"}
-                                size="sm"
-                                className="ms-2"
-                                disabled={!inputText}
-                                onClick={() => setInputText('')}
-                            >
-                                清空
-                            </Button>
-                        </div>
-                        <small className="text-muted">{`${inputText.length} / 4064`}</small>
+                    <div className="d-flex align-items-center mb-1">
+                        <Form.Label className="fw-bold mb-0">输入文本：</Form.Label>
+                        <Button
+                            variant={inputText ? "primary" : "secondary"}
+                            size="sm"
+                            className="ms-2"
+                            disabled={!inputText}
+                            onClick={() => setInputText('')}
+                        >
+                            清空
+                        </Button>
                     </div>
                     <Form.Control
                         ref={textareaRef} // Add ref to textarea
@@ -199,14 +196,20 @@ const Input: React.FC<InputProps> = ({
                 {/* Processing button and ModelSelector */}
                 <div className="d-flex gap-2 mt-2 align-items-start"> {/* Add margin-top for spacing */}
                     <div className="flex-grow-1">
+                        {/* Add comment for my changes */}
+                        {/* Move character count into the translate button */}
                         <Button
                             variant="primary"
-                            // Disable if no input OR no model is selected in the global config state
                             disabled={!inputText || !config.selectedModels || config.selectedModels.length === 0}
                             onClick={processText}
-                            className="w-100" // Let button take available space
+                            className="w-100 d-flex align-items-center justify-content-center"
                         >
-                            翻译
+                            <span>翻译</span>
+                            {inputText.length > 0 && (
+                                <span className="ms-3 text-light">
+                                    {`${inputText.length} / 4064`}
+                                </span>
+                            )}
                         </Button>
                         {/* Add comment for my changes */}
                         {/* Instruction for translation trigger keys */}
